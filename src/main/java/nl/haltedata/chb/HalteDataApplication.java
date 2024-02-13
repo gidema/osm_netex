@@ -3,6 +3,8 @@ package nl.haltedata.chb;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,12 +17,19 @@ import nl.haltedata.chb.dto.QuayDto;
 import nl.haltedata.chb.dto.QuayRepository;
 import nl.haltedata.chb.dto.StopPlaceDto;
 import nl.haltedata.chb.dto.StopplaceRepository;
+import nl.haltedata.chb.mapping.QuayMapper;
+import nl.haltedata.chb.mapping.StopPlaceMapper;
 
 @SpringBootApplication
 public class HalteDataApplication {
+        private Logger logger = LoggerFactory.getLogger(HalteDataApplication.class);
+
     private List<StopPlaceDto> stopplaceDtos = new LinkedList<>();
     private List<QuayDto> quayDtos = new LinkedList<>();
 
+    private QuayMapper quayMapper = new QuayMapper();
+    private StopPlaceMapper stopPlaceMapper = new StopPlaceMapper();
+    
     public static void main(String[] args) {
         SpringApplication.run(HalteDataApplication.class, args);
     }
@@ -31,6 +40,8 @@ public class HalteDataApplication {
         return args -> {
             var dataReader = new ChbDataReader();
             var chbData = dataReader.readChbData("/home/gertjan/Downloads/ExportCHB20240102013106.xml");
+            var stopPlaces = chbData.getStopplaces();
+            logger.info("Read {} stop places from the CHB source file", stopPlaces.size());
             chbData.getStopplaces().forEach(this::handleStopPlaces);
             stopplaceRepository.saveAll(stopplaceDtos);
             quayRepository.saveAll(quayDtos);
@@ -42,46 +53,12 @@ public class HalteDataApplication {
     }
 
     private void handleStopplace(Stopplace stopPlace) {
-        stopplaceDtos.add(mapStopPlace(stopPlace));
+        stopplaceDtos.add(stopPlaceMapper.map(stopPlace, null));
         stopPlace.getQuays().getQuay().forEach(quay -> handleQuay(quay, stopPlace));
     }
 
     private void handleQuay(Quay quay, Stopplace stopPlace) {
-        QuayDto dto = mapQuay(quay, stopPlace);
+        QuayDto dto = quayMapper.map(quay, stopPlace);
         quayDtos.add(dto);
-    }
-    
-    private StopPlaceDto mapStopPlace(Stopplace stopplace) {
-        var dto = new StopPlaceDto();
-
-        dto.setId(stopplace.getID());
-        dto.setValidfrom(stopplace.getValidfrom().toGregorianCalendar());
-        dto.setStopplacecode(stopplace.getStopplacecode());
-        dto.setStopplacetype(stopplace.getStopplacetype());
-        dto.setPublicname(stopplace.getStopplacename().getPublicname());
-        dto.setTown(stopplace.getStopplacename().getTown());
-        dto.setPublicnamemedium(stopplace.getStopplacename().getPublicnamemedium());
-        dto.setPublicnamelong(stopplace.getStopplacename().getPublicnamelong());
-        dto.setDescription(stopplace.getStopplacename().getDescription());
-        dto.setStopplaceindication(stopplace.getStopplacename().getStopplaceindication());
-        dto.setStreet(stopplace.getStopplacename().getStreet());
-        dto.setStopplacestatus(stopplace.getStopplacestatusdata().getStopplacestatus());
-        dto.setMutationdate(stopplace.getMutationdate().toGregorianCalendar());
-        dto.setUiccode(stopplace.getUiccode());
-        dto.setInternalname(stopplace.getInternalname());
-        dto.setStopplaceowner(stopplace.getStopplaceowner().getStopplaceownercode());
-        dto.setPlacecode(stopplace.getPlacecode());
-        return dto;
-    }
-    
-    private QuayDto mapQuay(Quay quay, Stopplace stopPlace) {
-        var quayDto = new QuayDto();
-        quayDto.setID(quay.getID());
-        quayDto.setStopPlaceId(stopPlace.getID());
-        quayDto.setMutationdate(quay.getMutationdate().toGregorianCalendar());
-        quayDto.setOnlygetout(quay.isOnlygetout());
-        quayDto.setQuaycode(quay.getQuaycode());
-        quayDto.setValidfrom(quay.getValidfrom().toGregorianCalendar());
-        return quayDto;
     }
 }

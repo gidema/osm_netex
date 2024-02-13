@@ -1,15 +1,17 @@
 package nl.haltedata.chb.dto;
 
-import java.util.GregorianCalendar;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "stop_place", schema = "chb")
 public class StopPlaceDto {
     @Id
     protected String id;
-    protected GregorianCalendar validfrom;
+    protected LocalDateTime validfrom;
     protected String stopplacecode;
     protected String stopplacetype;
     protected String publicname;
@@ -20,7 +22,7 @@ public class StopPlaceDto {
     protected String stopplaceindication;
     protected String street;
     protected String stopplacestatus;
-    protected GregorianCalendar mutationdate;
+    protected LocalDateTime mutationdate;
     protected Long uiccode;
     protected String internalname;
     protected String stopplaceowner;
@@ -34,11 +36,11 @@ public class StopPlaceDto {
         this.id = id;
     }
 
-    public GregorianCalendar getValidfrom() {
+    public LocalDateTime getValidfrom() {
         return validfrom;
     }
 
-    public void setValidfrom(GregorianCalendar validfrom) {
+    public void setValidfrom(LocalDateTime validfrom) {
         this.validfrom = validfrom;
     }
 
@@ -122,11 +124,11 @@ public class StopPlaceDto {
         this.stopplacestatus = stopplacestatus;
     }
 
-    public GregorianCalendar getMutationdate() {
+    public LocalDateTime getMutationdate() {
         return mutationdate;
     }
 
-    public void setMutationdate(GregorianCalendar mutationdate) {
+    public void setMutationdate(LocalDateTime mutationdate) {
         this.mutationdate = mutationdate;
     }
 
