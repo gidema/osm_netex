@@ -1,5 +1,7 @@
 package nl.haltedata.chb;
 
+import java.time.Instant;
+import static java.time.temporal.ChronoUnit.SECONDS;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,12 +41,20 @@ public class HalteDataApplication {
             QuayRepository quayRepository) {
         return args -> {
             var dataReader = new ChbDataReader();
-            var chbData = dataReader.readChbData("/home/gertjan/Downloads/ExportCHB20240102013106.xml");
+            var instant = Instant.now();
+            var chbData = dataReader.readChbData("/home/gertjan/Downloads/ExportCHB20240213013231.xml");
             var stopPlaces = chbData.getStopplaces();
-            logger.info("Read {} stop places from the CHB source file", stopPlaces.size());
+            logger.info("Read {} stop places from the CHB source file in {} seconds.", stopPlaces.get(0).getStopplace().size(),
+                    SECONDS.between(instant, Instant.now()));
             chbData.getStopplaces().forEach(this::handleStopPlaces);
+            instant = Instant.now();
             stopplaceRepository.saveAll(stopplaceDtos);
+            logger.info("Saved {} stop places to the database in {} seconds.", stopplaceDtos.size(),
+                    SECONDS.between(instant, Instant.now()));
+            instant = Instant.now();
             quayRepository.saveAll(quayDtos);
+            logger.info("Saved {} quays to the database in {} seconds.", quayDtos.size(),
+                    SECONDS.between(instant, Instant.now()));
         };
     }
 

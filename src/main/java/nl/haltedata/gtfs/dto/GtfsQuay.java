@@ -14,6 +14,7 @@ public class GtfsQuay {
     private String refIfopt;
     private String place;
     private String name;
+    private String operator;
     private Point coordinates;
 
     private Long stopAreaId = null;
@@ -58,6 +59,14 @@ public class GtfsQuay {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getOperator() {
+        return operator;
+    }
+
+    public void setOperator(String operator) {
+        this.operator = operator;
     }
 
     public Point getCoordinates() {

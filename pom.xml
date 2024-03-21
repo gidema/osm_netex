@@ -13,7 +13,10 @@
       <proj4j.version>1.3.0</proj4j.version>
       <chb.version>8.4.2</chb.version>
       <commons-csv.version>1.10.0</commons-csv.version>
+      <commons-logging.version>1.2</commons-logging.version>
       <osmosis.version>0.49.2</osmosis.version>
+      <jakarta.inject.version>2.0.1</jakarta.inject.version>
+	  <netex-java.version>2.0.15</netex-java.version>
 	</properties>
   <parent>
     <groupId>org.springframework.boot</groupId>
@@ -43,17 +46,31 @@
     <artifactId>spring-boot-starter-web</artifactId>
   </dependency>    
   <dependency>
+    <groupId>org.springframework.batch</groupId>
+    <artifactId>spring-batch-core</artifactId>
+  </dependency>
+  <dependency>
     <groupId>jakarta.persistence</groupId>
     <artifactId>jakarta.persistence-api</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>jakarta.inject</groupId>
+    <artifactId>jakarta.inject-api</artifactId>
+    <version>${jakarta.inject.version}</version>
   </dependency>
   <dependency>
     <groupId>org.postgresql</groupId>
     <artifactId>postgresql</artifactId>
   </dependency>
     <dependency>
-    	<groupId>org.springframework.boot</groupId>
-    	<artifactId>spring-boot-starter-data-jpa</artifactId>
-  </dependency>  
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+  </dependency>
+  
   <dependency>
   	<groupId>org.openstreetmap.osmosis</groupId>
   	<artifactId>osmosis-core</artifactId>
@@ -101,6 +118,11 @@
   	<groupId>nl.gertjanidema.nlgeo</groupId>
   	<artifactId>chbhaltebestand</artifactId>
   	<version>${chb.version}</version>
+  </dependency>
+  <dependency>
+    <groupId>org.entur</groupId>
+    <artifactId>netex-java-model</artifactId>
+    <version>${netex-java.version}</version>
   </dependency>
 </dependencies>
   <build>

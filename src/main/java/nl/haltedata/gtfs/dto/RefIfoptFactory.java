@@ -23,21 +23,23 @@ public class RefIfoptFactory {
     private static Map<String, String> templateMap = buildTemplateMap();
     
     public static String createIfopt(GtfsQuay quay) {
-        String ifoptCode = quay.getQuayCode();
+        String quayCode = quay.getQuayCode();
         String template = null;
-        if (ifoptCode.startsWith("HA")) {
-            ifoptCode = ifoptCode.replace("HA", "");
+        if (quayCode.startsWith("HA")) {
+            quayCode = quayCode.replace("HA", "");
             template = "31000000";
         }    
-        if (ifoptCode.length() < 8) {
-            if (template == null) {
-                template = templateMap.get(quay.getPlace());
-            }
-            if (template != null) {
-                ifoptCode = template.substring(0, 8 - ifoptCode.length()) + ifoptCode;
-            }
+        if (quayCode.length() < 8 && template == null) {
+            template = templateMap.get(quay.getPlace());
         }
-        return ifoptCode;
+        if (template != null) {
+             quayCode = template.substring(0, 8 - quayCode.length()) + quayCode;
+             return "NL:Q:" + quayCode;
+        }
+        if (quayCode.length() == 8) {
+            return "NL:Q:" + quayCode;
+        }
+        return "Q:" + quayCode;
     }
     
     private static Map<String, String> buildTemplateMap() {

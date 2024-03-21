@@ -1,5 +1,7 @@
 package nl.haltedata.gtfs.mapping;
 
+import java.util.Map;
+
 import org.apache.commons.csv.CSVRecord;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -11,12 +13,14 @@ import nl.haltedata.tools.CsvMapper;
 
 public class QuayMapper implements CsvMapper<GtfsQuay> {
 
-    private GeometryFactory geometryFactory;
+    private final GeometryFactory geometryFactory;
+    private final Map<Long, String> operators;
 
     // switch to injection
-    public QuayMapper(GeometryFactory geometryFactory) {
+    public QuayMapper(GeometryFactory geometryFactory, Map<Long, String> operators) {
         super();
         this.geometryFactory = geometryFactory;
+        this.operators = operators;
     }
 
     @Override
@@ -46,6 +50,7 @@ public class QuayMapper implements CsvMapper<GtfsQuay> {
         String wcBoarding = getString(rec, 8);
         if (wcBoarding != null) quay.setWheelchairBoarding(wcBoarding.equals("1"));
         quay.setRefIfopt(RefIfoptFactory.createIfopt(quay));
+        quay.setOperator(operators.get(quay.getQuayId()));
         return quay;
     }
 

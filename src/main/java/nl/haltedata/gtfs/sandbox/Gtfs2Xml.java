@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -20,6 +21,7 @@ import nl.haltedata.gtfs.QuayReader;
 import nl.haltedata.gtfs.dto.GtfsQuay;
 /**
  * Quick and dirty script to create an osm xml file with chb quays(platforms)
+ * This version does't add operators (De Lijn)
  * 
  */
 public class Gtfs2Xml {
@@ -35,7 +37,7 @@ public class Gtfs2Xml {
     }
     
     private void read() {
-        QuayReader reader = new QuayReader();
+        QuayReader reader = new QuayReader(new HashMap<>());
         try (
             BufferedWriter witer = new BufferedWriter(new FileWriter(target));
             XmlWriter xmlWriter = new XmlWriter(witer);         
@@ -69,6 +71,7 @@ public class Gtfs2Xml {
             tags.add(new Tag("public_transport", "platform"));
             tags.add(new Tag("name", quay.getName()));
             tags.add(new Tag("ref:IFOPT", "NL:Q:" + quay.getRefIfopt()));
+            tags.add(new Tag("operator", quay.getOperator()));
             if (quay.getWheelchairBoarding() != null) {
                 tags.add(new Tag("wheelchair", quay.getWheelchairBoarding() ? "yes" : "no"));            
             }

@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import org.apache.commons.csv.CSVFormat;
@@ -22,8 +23,14 @@ public class QuayReader {
                         "parent_station","stop_timezone","wheelchair_boarding","platform_code","zone_id"};
 
     // TODO Inject
-    private GeometryFactory geometryFactory = new GeometryFactory();
-    private QuayMapper quayMapper = new QuayMapper(geometryFactory);
+    private final GeometryFactory geometryFactory = new GeometryFactory();
+   
+    private final QuayMapper quayMapper;
+    
+    public QuayReader(Map<Long, String> operators) {
+        super();
+        this.quayMapper = new QuayMapper(geometryFactory, operators);
+    }
 
     public void read(File source, Consumer<GtfsQuay> quayConsumer) {
         try (Reader reader = new BufferedReader(new FileReader(source));
