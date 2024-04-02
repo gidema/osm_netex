@@ -18,6 +18,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import nl.haltedata.gtfs.dto.GtfsQuay;
 import nl.haltedata.gtfs.mapping.QuayMapper;
 
+@Deprecated
 public class QuayReader {
     final private static String[] header = {"stop_id","stop_code","stop_name","stop_lat","stop_lon","location_type",
                         "parent_station","stop_timezone","wheelchair_boarding","platform_code","zone_id"};

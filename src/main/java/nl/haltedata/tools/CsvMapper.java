@@ -4,6 +4,7 @@ import java.time.LocalTime;
 
 import org.apache.commons.csv.CSVRecord;
 
+@Deprecated
 public interface CsvMapper<T> {
     public T map(CSVRecord rec);
     

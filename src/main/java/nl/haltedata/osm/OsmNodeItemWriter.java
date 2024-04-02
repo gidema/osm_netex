@@ -84,6 +84,13 @@ public class OsmNodeItemWriter<T> extends AbstractItemStreamItemWriter<T>
             this.resource = resource;
         }
         
+        
+        @Override
+        public void close() {
+            OutputState outputState = getOutputState();
+            if (outputState != null) outputState.close();
+        }
+
         // Returns object representing state.
         protected OutputState getOutputState() {
             if (state == null) {
@@ -141,6 +148,10 @@ public class OsmNodeItemWriter<T> extends AbstractItemStreamItemWriter<T>
                 initialized = false;
                 restarted = false;
                 try {
+                    if (xmlWriter != null) {
+                        xmlWriter.complete();
+                        xmlWriter.close();
+                    }
                     if (outputBufferedWriter != null) {
                         outputBufferedWriter.close();
                     }

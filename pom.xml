@@ -14,6 +14,7 @@
       <chb.version>8.4.2</chb.version>
       <commons-csv.version>1.10.0</commons-csv.version>
       <commons-logging.version>1.2</commons-logging.version>
+      <commons-net.version>3.6</commons-net.version>
       <osmosis.version>0.49.2</osmosis.version>
       <jakarta.inject.version>2.0.1</jakarta.inject.version>
 	  <netex-java.version>2.0.15</netex-java.version>
@@ -22,7 +23,7 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <relativePath />
-    <version>3.2.1</version>
+    <version>3.2.3</version>
   </parent>
 <dependencies>
   <dependency>
@@ -50,6 +51,10 @@
     <artifactId>spring-batch-core</artifactId>
   </dependency>
   <dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-oxm</artifactId>
+  </dependency>
+  <dependency>
     <groupId>jakarta.persistence</groupId>
     <artifactId>jakarta.persistence-api</artifactId>
   </dependency>
@@ -70,7 +75,11 @@
     <groupId>org.projectlombok</groupId>
     <artifactId>lombok</artifactId>
   </dependency>
-  
+  <dependency>
+    <groupId>commons-net</groupId>
+    <artifactId>commons-net</artifactId>
+    <version>${commons-net.version}</version>
+  </dependency>
   <dependency>
   	<groupId>org.openstreetmap.osmosis</groupId>
   	<artifactId>osmosis-core</artifactId>

@@ -85,18 +85,6 @@ public class BatchImportConfigForGtfsQuays {
         return job;
     }
 
-//    /**
-//     * Creates and returns a {@link JpaItemWriter} bean for persisting entities.
-//     *
-//     * @return a configured JpaItemWriter for writing entities.
-//     */
-//    @Bean
-//    JpaItemWriter<GtfsQuay> writer() {
-//        JpaItemWriter<GtfsQuay> writer = new JpaItemWriter<GtfsQuay>();
-//        writer.setEntityManagerFactory(entityManagerFactory);
-//        return writer;
-//    }
-//
     /**
      * Creates and returns a {@link JpaItemWriter} bean for persisting entities.
      *

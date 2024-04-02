@@ -1,4 +1,4 @@
-package nl.haltedata.chb.mapping;
+package nl.haltedata.tools;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;

@@ -7,6 +7,7 @@ import org.locationtech.jts.geom.Point;
 import nl.chb.Quay;
 import nl.chb.Stopplace;
 import nl.haltedata.chb.dto.QuayDto;
+import nl.haltedata.tools.RdToWgs84Transformation;
 
 public class QuayMapper implements DTOMapper<Quay, Stopplace, QuayDto> {
     // TODO Inject
