@@ -4,39 +4,45 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import nl.chb.Quay;
 import nl.chb.Stopplace;
-import nl.haltedata.chb.dto.QuayDto;
+import nl.haltedata.chb.dto.ChbQuay;
 import nl.haltedata.tools.RdToWgs84Transformation;
 
-public class QuayMapper implements DTOMapper<Quay, Stopplace, QuayDto> {
-    // TODO Inject
-    private GeometryFactory geometryFactory = new GeometryFactory();
-    private RdToWgs84Transformation transformation = new RdToWgs84Transformation();
+public class QuayMapper implements ParentChildMapper<Quay, ChbQuay, Stopplace> {
+    @Inject
+    @Named("rdGeometryFactory")
+    private GeometryFactory rdGeometryFactory;
+    
+    @Inject
+    private RdToWgs84Transformation transformation;
     
     @Override
-    public QuayDto map(Quay quay, Stopplace stopPlace) {
-        var quayDto = new QuayDto();
-        quayDto.setID(quay.getID());
-        quayDto.setStopPlaceId(stopPlace.getID());
-        quayDto.setStopPlaceName(stopPlace.getStopplacename().getPublicname());
-        quayDto.setStopPlaceLongName(stopPlace.getStopplacename().getPublicnamelong());
-        quayDto.setMutationdate(quay.getMutationdate());
-        quayDto.setOnlygetout(quay.isOnlygetout());
-        quayDto.setQuaycode(quay.getQuaycode());
-        quayDto.setValidfrom(quay.getValidfrom());
-        quayDto.setQuayType(quay.getQuaytypedata().getQuaytype());
-        quayDto.setQuayStatus(quay.getQuaystatusdata().getQuaystatus());
+    public ChbQuay map(Quay quay, Stopplace stopPlace) {
+        var chbQuay = new ChbQuay();
+        chbQuay.setID(quay.getID());
+        chbQuay.setStopPlaceId(stopPlace.getID());
+        chbQuay.setStopPlaceName(stopPlace.getStopplacename().getPublicname());
+        chbQuay.setStopPlaceLongName(stopPlace.getStopplacename().getPublicnamelong());
+        chbQuay.setMutationdate(quay.getMutationdate());
+        chbQuay.setOnlygetout(quay.isOnlygetout());
+        chbQuay.setQuaycode(quay.getQuaycode());
+        chbQuay.setValidfrom(quay.getValidfrom());
+        chbQuay.setQuayType(quay.getQuaytypedata().getQuaytype());
+        chbQuay.setQuayStatus(quay.getQuaystatusdata().getQuaystatus());
         int rdX = quay.getQuaylocationdata().getRdX();
         int rdY = quay.getQuaylocationdata().getRdY();
-        Point rdPoint = geometryFactory.createPoint(new Coordinate(rdX, rdY));
-        quayDto.setCoordinates(transformation.transform(rdPoint));
-        quayDto.setBearing(quay.getQuaybearing().getCompassdirection());
-        quayDto.setTown(quay.getQuaylocationdata().getTown());
-        quayDto.setLevel(quay.getQuaylocationdata().getLevel());
-        quayDto.setStreet(quay.getQuaylocationdata().getStreet());
-        quayDto.setLocation(quay.getQuaylocationdata().getLocation());  
+        Point rdPoint = rdGeometryFactory.createPoint(new Coordinate(rdX, rdY));
+        chbQuay.setRdLocation(rdPoint);
+        chbQuay.setWgsLocation(transformation.transform(rdPoint));
+        chbQuay.setBearing(quay.getQuaybearing().getCompassdirection());
+        chbQuay.setTown(quay.getQuaylocationdata().getTown());
+        chbQuay.setLevel(quay.getQuaylocationdata().getLevel());
+        chbQuay.setStreet(quay.getQuaylocationdata().getStreet());
+        chbQuay.setLocation(quay.getQuaylocationdata().getLocation());  
 
-        return quayDto;
+        return chbQuay;
     }
 }

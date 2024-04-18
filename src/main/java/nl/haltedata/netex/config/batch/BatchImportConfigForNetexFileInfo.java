@@ -56,12 +56,14 @@ public class BatchImportConfigForNetexFileInfo {
      */
     @SuppressWarnings("static-method")
     @Bean
-    Job exportJob(JobRepository jobRepository, Step step1)  {
+    Job exportJob(JobRepository jobRepository, Step step1, Step step2)  {
         return new JobBuilder("importNetexFileInfoJob", jobRepository)
             .start(step1)
+            .next(step2)
             .build();
     }
 
+    
     /**
      * Defines the main batch step which includes reading, processing (if any), and writing.
      *
@@ -70,8 +72,8 @@ public class BatchImportConfigForNetexFileInfo {
      * @return a configured Step for reading and writing Contact entities.
      */
     @Bean
-    Step step1(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
-        return new StepBuilder("step1", jobRepository)
+    Step step2(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new StepBuilder("step2", jobRepository)
             .<NetexFileInfo, NetexFileInfo>chunk(1000, transactionManager)
             .reader(reader())  // null path just for type resolution
             .writer(writer())

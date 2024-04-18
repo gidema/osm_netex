@@ -8,7 +8,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "stop_place", schema = "chb")
-public class StopPlaceDto {
+public class ChbStopPlace {
     @Id
     protected String id;
     protected LocalDateTime validfrom;

@@ -23,5 +23,5 @@ public class NetexQuay {
     private Point rdLocation;
     private Point wgsLocation;
     private String userStopCode;
-    private String refIfopt;
+    private String userStopOwnerCode;
 }

@@ -1,4 +1,4 @@
-package nl.haltedata.netex.controllers;
+package nl.haltedata.chb.controllers;
 
 import java.nio.file.Path;
 import java.util.Collection;
@@ -22,14 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import nl.haltedata.gtfs.ImportStatus;
-import nl.haltedata.netex.ndov.NetexFileCache;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/importNetex")
-public class ImportScheduledStopPointController {
-    private static Path folder = NetexFileCache.CACHE_FOLDER; 
-    private static String JOB_NAME = "importNetexScheduledStopPointJob";
+@RequestMapping("/importChbPsa")
+public class ImportChbPsaController {
+    private static Path psaFile = Path.of("/home/gertjan/projects/NLGeo/Haltedata/chb/PassengerStopAssignmentExportCHB20240414013035_8.1.1.xml.gz"); 
+    private static String JOB_NAME = "chbPsaImportJob";
 
     private final JobLauncher jobLauncher;
     private final JobRegistry jobRegistry;
@@ -45,7 +44,7 @@ public class ImportScheduledStopPointController {
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/start")
     public ResponseEntity<String> handle() throws Exception {
-        JobParameters params = new JobParametersBuilder().addString("filePath", folder.toString())
+        JobParameters params = new JobParametersBuilder().addString("filePath", psaFile.toString())
                 .addString("JobID", String.valueOf(System.currentTimeMillis())).toJobParameters();
         var job = jobRegistry.getJob(JOB_NAME);
         jobLauncher.run(job, params);

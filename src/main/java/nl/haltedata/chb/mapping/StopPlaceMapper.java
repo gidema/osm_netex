@@ -1,13 +1,13 @@
 package nl.haltedata.chb.mapping;
 
 import nl.chb.Stopplace;
-import nl.haltedata.chb.dto.StopPlaceDto;
+import nl.haltedata.chb.dto.ChbStopPlace;
 
-public class StopPlaceMapper implements DTOMapper<Stopplace, Void, StopPlaceDto> {
+public class StopPlaceMapper implements ParentChildMapper<Stopplace, ChbStopPlace, Void> {
     
     @Override
-    public StopPlaceDto map(Stopplace stopplace, Void dummy) {
-        var dto = new StopPlaceDto();
+    public ChbStopPlace map(Stopplace stopplace, Void dummy) {
+        var dto = new ChbStopPlace();
 
         dto.setId(stopplace.getID());
         dto.setValidfrom(stopplace.getValidfrom());

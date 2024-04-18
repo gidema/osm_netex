@@ -45,7 +45,7 @@ public class NetexQuayProcessor implements ItemProcessor<JAXBElement<ScheduledSt
         }
         if (stop.getPrivateCode() != null && "UserStopCode".equals(stop.getPrivateCode().getType())) {
             quay.setUserStopCode(stop.getPrivateCode().getValue());
-            quay.setRefIfopt(String.format("NL:Q:%s", stop.getPrivateCode().getValue()));
+            quay.setUserStopOwnerCode(getOwnerCodeFromId(stop.getId()));
         }
         var rd = stop.getLocation();
         if (rd != null) {
@@ -69,5 +69,9 @@ public class NetexQuayProcessor implements ItemProcessor<JAXBElement<ScheduledSt
             quay.setTariffZones(String.join(";", zones));
         }
         return quay;       
+    }
+    
+    private static String getOwnerCodeFromId(String id) {
+        return id.split(":")[0];
     }
 }

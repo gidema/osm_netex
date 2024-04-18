@@ -126,7 +126,7 @@
   <dependency>
   	<groupId>nl.gertjanidema.nlgeo</groupId>
   	<artifactId>chbhaltebestand</artifactId>
-  	<version>${chb.version}</version>
+  	<version>8.4.2</version>
   </dependency>
   <dependency>
     <groupId>org.entur</groupId>
@@ -148,5 +148,4 @@
       </plugin>
     </plugins>
   </build>
-
 </project>

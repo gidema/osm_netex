@@ -13,7 +13,7 @@ import nl.haltedata.gtfs.config.batch.BatchImportConfigForSpecialQuays;
 
 @Configuration
 @EnableBatchProcessing(modular = true)
-public class BatchConfig {
+public class GtfsBatchConfig {
     @Bean
     ApplicationContextFactory importGtfsAgenciesConfig() {
         return new GenericApplicationContextFactory(BatchImportConfigForGtfsAgencies.class);
