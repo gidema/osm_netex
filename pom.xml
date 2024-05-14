@@ -144,7 +144,9 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <release>17</release>
+          <parameters>true</parameters>
         </configuration>
+        
       </plugin>
     </plugins>
   </build>

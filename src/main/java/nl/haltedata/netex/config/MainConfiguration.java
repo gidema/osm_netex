@@ -11,8 +11,8 @@ import nl.haltedata.tools.RdToWgs84Transformation;
 public class MainConfiguration {
     @SuppressWarnings("static-method")
     @Bean
-    GeometryFactory geometryFactory() {
-        return new GeometryFactory();
+    GeometryFactory wsgGeometryFactory() {
+        return new GeometryFactory(new PrecisionModel(), 4326);
     }
     
     @SuppressWarnings("static-method")

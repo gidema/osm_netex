@@ -23,7 +23,7 @@ import nl.haltedata.osm.OsmNodeItemWriter;
 @Configuration
 @RequiredArgsConstructor
 @EnableBatchProcessing
-public class BatchExportConfigForOsmNextexQuays {
+public class BatchExportConfigForOsmNetexQuays {
 
     private final EntityManagerFactory entityManagerFactory;
 
@@ -60,14 +60,19 @@ public class BatchExportConfigForOsmNextexQuays {
      *
      * @return a configured OsmNodeItemWriter for writing entities.
      */
-    @SuppressWarnings("static-method")
     @Bean
     @StepScope
     OsmNodeItemWriter<NetexQuay> writer(@Value("#{jobParameters['filePath']}") String path) {
-        OsmNodeItemWriter<NetexQuay> writer = new OsmNodeItemWriter<>(new QuayNodeFactory());
+        OsmNodeItemWriter<NetexQuay> writer = new OsmNodeItemWriter<>(quayNodeFactory());
         FileSystemResource osmFile = new FileSystemResource(path);
         writer.setResource(osmFile);
         return writer;
+    }
+    
+    @SuppressWarnings("static-method")
+    @Bean
+    QuayNodeFactory quayNodeFactory() {
+        return new QuayNodeFactory();
     }
 
     /**

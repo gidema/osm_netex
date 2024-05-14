@@ -5,6 +5,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import java.lang.Boolean;
 
 import java.time.LocalDateTime;
 
@@ -23,6 +24,8 @@ public class ChbQuay {
     private String stopPlaceLongName;
     private Boolean onlygetout;
     private String quaycode;
+    private String quayName;
+    private String stopSideCode;
     private LocalDateTime validfrom;
     private LocalDateTime mutationdate;
     private String quayType;

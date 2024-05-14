@@ -1,6 +1,5 @@
 package nl.haltedata.chb.controllers;
 
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 
@@ -25,9 +24,8 @@ import nl.haltedata.gtfs.ImportStatus;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/importChb")
+@RequestMapping("/chb/importQuay")
 public class ImportChbQuayController {
-    private static Path quayFile = Path.of("/home/gertjan/projects/NLGeo/Haltedata/chb/ExportCHB20240404013604.xml.gz"); 
     private static String JOB_NAME = "chbQuayImportJob";
 
     private final JobLauncher jobLauncher;
@@ -44,8 +42,7 @@ public class ImportChbQuayController {
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/start")
     public ResponseEntity<String> handle() throws Exception {
-        JobParameters params = new JobParametersBuilder().addString("filePath", quayFile.toString())
-                .addString("JobID", String.valueOf(System.currentTimeMillis())).toJobParameters();
+        JobParameters params = new JobParametersBuilder().addString("JobID", String.valueOf(System.currentTimeMillis())).toJobParameters();
         var job = jobRegistry.getJob(JOB_NAME);
         jobLauncher.run(job, params);
 

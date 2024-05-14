@@ -7,15 +7,14 @@ import javax.xml.stream.XMLStreamException;
 
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemStreamException;
-import org.springframework.batch.item.ItemStreamReader;
+import org.springframework.batch.item.file.ResourceAwareItemReaderItemStream;
 import org.springframework.batch.item.xml.StaxEventItemReader;
+import org.springframework.core.io.Resource;
 
-import nl.haltedata.chb.mapping.ParentChildMapper;
-
-public abstract class StaxParentChildEventItemReader<C, CT, P> implements ItemStreamReader<CT> {
+public abstract class StaxParentChildEventItemReader<C, CT, P> implements ResourceAwareItemReaderItemStream<CT> {
     private final ParentChildMapper<C, CT, P> mapper;
     private final StaxEventItemReader<P> parentReader;
-    private Iterator<C> quayIterator;
+    private Iterator<C> childIterator;
     private P parent;
     
     public StaxParentChildEventItemReader(StaxEventItemReader<P> parentReader,
@@ -28,6 +27,8 @@ public abstract class StaxParentChildEventItemReader<C, CT, P> implements ItemSt
     @Override
     public void open(ExecutionContext executionContext) throws ItemStreamException {
         parentReader.open(executionContext);
+        // Save the execution context.
+        // We need it to open the parent reader, once the resource is set.
     }
 
     @Override
@@ -37,16 +38,25 @@ public abstract class StaxParentChildEventItemReader<C, CT, P> implements ItemSt
 
     @Override
     public CT read() throws IOException, XMLStreamException {
-        if (quayIterator == null) {
+        if (childIterator == null) {
             var hasNext = nextParent();
             if (!hasNext) return null;
         }
-        while (!quayIterator.hasNext()) {
+        while (!childIterator.hasNext()) {
             var hasNext = nextParent();
             if (!hasNext) return null;        
         }
-        var quay = quayIterator.next();
-        return mapper.map(quay, parent);
+        var quay = childIterator.next();
+        try {
+            return mapper.map(quay, parent);
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+    }
+
+    @Override
+    public void setResource(Resource resource) {
+        parentReader.setResource(resource);
     }
 
     protected abstract Iterator<C> getChildIterator(P p);
@@ -55,7 +65,7 @@ public abstract class StaxParentChildEventItemReader<C, CT, P> implements ItemSt
         try {
             this.parent = parentReader.read();
             if (parent == null) return false;
-            quayIterator = getChildIterator(parent);
+            childIterator = getChildIterator(parent);
         } catch (Exception e) {
             throw new IOException(e);
         }

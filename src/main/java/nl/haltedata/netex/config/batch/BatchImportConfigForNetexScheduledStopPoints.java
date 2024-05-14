@@ -1,6 +1,7 @@
 package nl.haltedata.netex.config.batch;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.rutebanken.netex.model.ScheduledStopPoint;
 import org.springframework.batch.core.Job;
@@ -16,16 +17,13 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.database.JpaCursorItemReader;
 import org.springframework.batch.item.database.JpaItemWriter;
-import org.springframework.batch.item.file.MultiResourceItemReader;
 import org.springframework.batch.item.xml.StaxEventItemReader;
 import org.springframework.batch.item.xml.builder.StaxEventItemReaderBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -33,12 +31,11 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.xml.bind.JAXBElement;
 import lombok.RequiredArgsConstructor;
 import nl.haltedata.netex.dto.NetexQuay;
 import nl.haltedata.netex.dto.NetexQuayRepository;
 import nl.haltedata.netex.mapping.NetexQuayProcessor;
-import nl.haltedata.tools.GzipFileSystemResource;
+import nl.haltedata.tools.GzipAwareMultiResourceItemReader;
 
 @Configuration
 @RequiredArgsConstructor
@@ -46,62 +43,40 @@ import nl.haltedata.tools.GzipFileSystemResource;
 public class BatchImportConfigForNetexScheduledStopPoints {
 
     private final EntityManagerFactory entityManagerFactory;
-
-//    /**
-//     * Creates and returns a {@link ItemReader} bean for netex scheduledStopPoint entities.
-//     *
-//     * @return a configured JpaItemReader.
-//     */
-//    @Bean
-//    @StepScope
-//    StaxEventItemReader<JAXBElement<ScheduledStopPoint>> reader(@Value("#{jobParameters['filePath']}") String path) {
-//        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-//        marshaller.setClassesToBeBound(ScheduledStopPoint.class);
-// 
-//        return new StaxEventItemReaderBuilder<JAXBElement<ScheduledStopPoint>>()
-//                .name("scheduledStopPointReader")
-//                .resource(new FileSystemResource(path))
-//                .addFragmentRootElements("ScheduledStopPoint")
-//                .unmarshaller(marshaller)
-//                .build();
-//    }
-    
+ 
     @Bean
     @StepScope
-    ItemReader<JAXBElement<ScheduledStopPoint>> reader(@Value("#{jobParameters['filePath']}") String path) {
-        Resource[] compressedResources = null;
-        Resource[] uncompressedResources = null;
-        var patternResolver = new PathMatchingResourcePatternResolver();   
+    ItemReader<ScheduledStopPoint> reader(@Value("#{jobParameters['filePath']}") String path) {
         try {
-            compressedResources = patternResolver.getResources("file:" + path + "/*.xml.gz");
-            uncompressedResources = new Resource[compressedResources.length];
-            for (int i =0; i < compressedResources.length; i++) {
-                uncompressedResources[i] = new GzipFileSystemResource(compressedResources[i].getFile().toPath());
-            }
+            var patternResolver = new PathMatchingResourcePatternResolver();   
+            Resource[] resources = patternResolver.getResources("file:" + path + "/*.xml.gz");
+//            resources = Arrays.copyOfRange(resources, 0, 1);
+            var reader = new GzipAwareMultiResourceItemReader<ScheduledStopPoint>();
+            reader.setResources(resources);
+            reader.setDelegate(createEventItemReader());
+            return reader;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        MultiResourceItemReader<JAXBElement<ScheduledStopPoint>> reader = new MultiResourceItemReader<>();
-        reader.setResources(uncompressedResources);
-        reader.setDelegate(createEventItemReader());
-        return reader;
     }
     
-    private static StaxEventItemReader<JAXBElement<ScheduledStopPoint>> createEventItemReader() {
-        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        marshaller.setClassesToBeBound(ScheduledStopPoint.class);
-        return new StaxEventItemReaderBuilder<JAXBElement<ScheduledStopPoint>>()
+    private StaxEventItemReader<ScheduledStopPoint> createEventItemReader() {
+        return new StaxEventItemReaderBuilder<ScheduledStopPoint>()
            .name("scheduledStopPointReader")
            .addFragmentRootElements("ScheduledStopPoint")
-           .unmarshaller(marshaller)
+           .unmarshaller(scheduledStopPointMarshaller())
            .build();
     }
     
-    JpaCursorItemReader<ScheduledStopPoint> _reader() {
-        JpaCursorItemReader<ScheduledStopPoint> reader = new JpaCursorItemReader<>();
-        reader.setEntityManagerFactory(entityManagerFactory);
-        return reader;
+    @SuppressWarnings("static-method")
+    @Bean
+    Jaxb2Marshaller scheduledStopPointMarshaller() {
+        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+        marshaller.setMappedClass(ScheduledStopPoint.class);
+        marshaller.setClassesToBeBound(ScheduledStopPoint.class);
+        return marshaller;
     }
+
     /**
      * Creates and returns a {@link JpaItemWriter} bean for persisting entities.
      *
@@ -154,7 +129,7 @@ public class BatchImportConfigForNetexScheduledStopPoints {
     @Bean
     Step step2(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new StepBuilder("step2", jobRepository)
-            .<JAXBElement<ScheduledStopPoint>, NetexQuay>chunk(1000, transactionManager)
+            .<ScheduledStopPoint, NetexQuay>chunk(1000, transactionManager)
             .reader(reader(null))  // null path just for type resolution
             .processor(processor())
             .writer(writer())
@@ -166,6 +141,7 @@ public class BatchImportConfigForNetexScheduledStopPoints {
         return new QuayTruncater();
     }
 
+    @SuppressWarnings("static-method")
     @Bean
     NetexQuayProcessor processor() {
         return new NetexQuayProcessor();
@@ -183,7 +159,6 @@ public class BatchImportConfigForNetexScheduledStopPoints {
         @Override
         public void beforeStep(StepExecution stepExecution) {
             quayRepository.deleteAll();
-            int i=0;
         }
 
         @Override

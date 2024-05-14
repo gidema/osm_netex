@@ -26,7 +26,7 @@ import nl.haltedata.netex.ndov.NetexFileCache;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/importNetex")
+@RequestMapping("/importNetexQuay")
 public class ImportScheduledStopPointController {
     private static Path folder = NetexFileCache.CACHE_FOLDER; 
     private static String JOB_NAME = "importNetexScheduledStopPointJob";

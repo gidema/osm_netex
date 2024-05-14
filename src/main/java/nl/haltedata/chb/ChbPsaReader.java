@@ -7,7 +7,7 @@ import org.springframework.batch.item.xml.StaxEventItemReader;
 import nl.chb.psa.Quay;
 import nl.chb.psa.Userstopcodedata;
 import nl.haltedata.chb.dto.ChbPsa;
-import nl.haltedata.chb.mapping.ParentChildMapper;
+import nl.haltedata.tools.ParentChildMapper;
 import nl.haltedata.tools.StaxParentChildEventItemReader;
 
 public class ChbPsaReader extends StaxParentChildEventItemReader<Userstopcodedata, ChbPsa, Quay> {

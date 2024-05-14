@@ -7,7 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "stop_place", schema = "chb")
+@Table(schema = "chb")
 public class ChbStopPlace {
     @Id
     protected String id;

@@ -23,7 +23,6 @@ public class NdovNetexService implements Closeable {
 
     private FTPClient ftpClient;
     private List<String> agencyFolders;
-    private List<NetexFileInfo> files;
     
     private void connect() throws IOException {
         if (ftpClient != null && ftpClient.isAvailable()) return;

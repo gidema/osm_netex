@@ -7,7 +7,7 @@ import org.springframework.batch.item.xml.StaxEventItemReader;
 import nl.chb.Quay;
 import nl.chb.Stopplace;
 import nl.haltedata.chb.dto.ChbQuay;
-import nl.haltedata.chb.mapping.ParentChildMapper;
+import nl.haltedata.tools.ParentChildMapper;
 import nl.haltedata.tools.StaxParentChildEventItemReader;
 
 public class ChbQuayReader extends StaxParentChildEventItemReader<Quay, ChbQuay, Stopplace> {

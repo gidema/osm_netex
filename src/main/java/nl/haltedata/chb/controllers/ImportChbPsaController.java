@@ -1,6 +1,5 @@
 package nl.haltedata.chb.controllers;
 
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 
@@ -25,9 +24,8 @@ import nl.haltedata.gtfs.ImportStatus;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/importChbPsa")
+@RequestMapping("/chb/importPsa")
 public class ImportChbPsaController {
-    private static Path psaFile = Path.of("/home/gertjan/projects/NLGeo/Haltedata/chb/PassengerStopAssignmentExportCHB20240414013035_8.1.1.xml.gz"); 
     private static String JOB_NAME = "chbPsaImportJob";
 
     private final JobLauncher jobLauncher;
@@ -44,8 +42,7 @@ public class ImportChbPsaController {
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/start")
     public ResponseEntity<String> handle() throws Exception {
-        JobParameters params = new JobParametersBuilder().addString("filePath", psaFile.toString())
-                .addString("JobID", String.valueOf(System.currentTimeMillis())).toJobParameters();
+        JobParameters params = new JobParametersBuilder().addString("JobID", String.valueOf(System.currentTimeMillis())).toJobParameters();
         var job = jobRegistry.getJob(JOB_NAME);
         jobLauncher.run(job, params);
 

@@ -3,6 +3,7 @@ package nl.haltedata.chb.mapping;
 import nl.chb.psa.Quay;
 import nl.chb.psa.Userstopcodedata;
 import nl.haltedata.chb.dto.ChbPsa;
+import nl.haltedata.tools.ParentChildMapper;
 
 public class ChbPsaMapper implements ParentChildMapper<Userstopcodedata, ChbPsa, Quay> {
     

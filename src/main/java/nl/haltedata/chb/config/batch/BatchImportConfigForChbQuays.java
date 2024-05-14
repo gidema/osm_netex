@@ -1,5 +1,7 @@
 package nl.haltedata.chb.config.batch;
 
+import java.nio.file.Path;
+
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
@@ -16,7 +18,6 @@ import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.xml.StaxEventItemReader;
 import org.springframework.batch.item.xml.builder.StaxEventItemReaderBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -36,6 +37,8 @@ import nl.haltedata.tools.GzipFileSystemResource;
 @RequiredArgsConstructor
 @EnableBatchProcessing
 public class BatchImportConfigForChbQuays {
+    private static Path quayFile = Path.of("/home/gertjan/projects/NLGeo/Haltedata/chb/ExportCHB20240507013819.xml.gz"); 
+
     public static String JOB_NAME = "chbQuayImportJob";
 
     private final EntityManagerFactory entityManagerFactory;
@@ -43,8 +46,8 @@ public class BatchImportConfigForChbQuays {
 
     @Bean
     @StepScope
-    ChbQuayReader quayReader(@Value("#{jobParameters['filePath']}") String path) {
-        return new ChbQuayReader(stopplaceReader(path), quayMapper());
+    ChbQuayReader quayReader() {
+        return new ChbQuayReader(stopplaceReader(), quayMapper());
     }
     
     @SuppressWarnings("static-method")
@@ -55,10 +58,10 @@ public class BatchImportConfigForChbQuays {
     
     @Bean
     @StepScope
-    StaxEventItemReader<Stopplace> stopplaceReader(@Value("#{jobParameters['filePath']}") String path) {
+    StaxEventItemReader<Stopplace> stopplaceReader() {
         return new StaxEventItemReaderBuilder<Stopplace>()
             .name("chbStopplaceReader")
-            .resource(new GzipFileSystemResource(path))
+            .resource(new GzipFileSystemResource(quayFile))
             .addFragmentRootElements("stopplace")
             .unmarshaller(stopplaceMarshaller())
             .build();
@@ -125,7 +128,7 @@ public class BatchImportConfigForChbQuays {
     Step step2(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new StepBuilder("step2", jobRepository)
             .<ChbQuay, ChbQuay>chunk(1000, transactionManager)
-            .reader(quayReader(null))  // null path just for type resolution
+            .reader(quayReader())  // null path just for type resolution
             .writer(writer())
             .build();
     }

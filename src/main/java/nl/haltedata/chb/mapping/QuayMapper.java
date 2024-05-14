@@ -9,6 +9,7 @@ import jakarta.inject.Named;
 import nl.chb.Quay;
 import nl.chb.Stopplace;
 import nl.haltedata.chb.dto.ChbQuay;
+import nl.haltedata.tools.ParentChildMapper;
 import nl.haltedata.tools.RdToWgs84Transformation;
 
 public class QuayMapper implements ParentChildMapper<Quay, ChbQuay, Stopplace> {
@@ -26,6 +27,8 @@ public class QuayMapper implements ParentChildMapper<Quay, ChbQuay, Stopplace> {
         chbQuay.setStopPlaceId(stopPlace.getID());
         chbQuay.setStopPlaceName(stopPlace.getStopplacename().getPublicname());
         chbQuay.setStopPlaceLongName(stopPlace.getStopplacename().getPublicnamelong());
+        chbQuay.setQuayName(quay.getQuaynamedata().getQuayname());
+        chbQuay.setStopSideCode(quay.getQuaynamedata().getStopsidecode());
         chbQuay.setMutationdate(quay.getMutationdate());
         chbQuay.setOnlygetout(quay.isOnlygetout());
         chbQuay.setQuaycode(quay.getQuaycode());

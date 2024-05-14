@@ -1,4 +1,4 @@
-package nl.haltedata.chb.mapping;
+package nl.haltedata.tools;
 
 /**
  * Map an entity to an other type with the possibility to read data from
@@ -10,6 +10,6 @@ package nl.haltedata.chb.mapping;
  */
 public interface ParentChildMapper<I, O, P> {
 
-    public O map(I entity, P parent);
+    public O map(I entity, P parent) throws Exception;
 
 }

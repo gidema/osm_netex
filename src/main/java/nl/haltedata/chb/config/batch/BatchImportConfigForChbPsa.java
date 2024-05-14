@@ -1,5 +1,7 @@
 package nl.haltedata.chb.config.batch;
 
+import java.nio.file.Path;
+
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
@@ -16,7 +18,6 @@ import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.xml.StaxEventItemReader;
 import org.springframework.batch.item.xml.builder.StaxEventItemReaderBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -36,15 +37,17 @@ import nl.haltedata.tools.GzipFileSystemResource;
 @RequiredArgsConstructor
 @EnableBatchProcessing
 public class BatchImportConfigForChbPsa {
+    private static Path filePath = Path.of("/home/gertjan/projects/NLGeo/Haltedata/chb/PassengerStopAssignmentExportCHB20240507013913.xml.gz"); 
+
     public static String JOB_NAME = "chbPsaImportJob";
 
     private final EntityManagerFactory entityManagerFactory;
 
 
     @Bean
-    @StepScope
-    ChbPsaReader psaReader(@Value("#{jobParameters['filePath']}") String path) {
-        return new ChbPsaReader(quayReader(path), psaMapper());
+//    @StepScope
+    ChbPsaReader psaReader() {
+        return new ChbPsaReader(quayReader(), psaMapper());
     }
     
     @SuppressWarnings("static-method")
@@ -55,10 +58,10 @@ public class BatchImportConfigForChbPsa {
     
     @Bean
     @StepScope
-    StaxEventItemReader<Quay> quayReader(@Value("#{jobParameters['filePath']}") String path) {
+    StaxEventItemReader<Quay> quayReader() {
         return new StaxEventItemReaderBuilder<Quay>()
             .name("chbPsaQuayReader")
-            .resource(new GzipFileSystemResource(path))
+            .resource(new GzipFileSystemResource(filePath))
             .addFragmentRootElements("quay")
             .unmarshaller(stopplaceMarshaller())
             .build();
@@ -125,7 +128,7 @@ public class BatchImportConfigForChbPsa {
     Step step2(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new StepBuilder("step2", jobRepository)
             .<ChbPsa, ChbPsa>chunk(1000, transactionManager)
-            .reader(psaReader(null))  // null path just for type resolution
+            .reader(psaReader())  // null path just for type resolution
             .writer(writer())
             .build();
     }

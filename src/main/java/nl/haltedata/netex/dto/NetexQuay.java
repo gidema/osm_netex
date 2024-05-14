@@ -20,6 +20,7 @@ public class NetexQuay {
     private String name;
     private String shortName;
     private String place;
+    private String routePointRef;
     private Point rdLocation;
     private Point wgsLocation;
     private String userStopCode;
