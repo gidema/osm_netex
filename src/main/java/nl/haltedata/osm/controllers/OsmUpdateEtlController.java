@@ -7,6 +7,7 @@ import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.explore.JobExplorer;
@@ -41,7 +42,9 @@ public class OsmUpdateEtlController {
     @GetMapping("/start")
     public ResponseEntity<String> handle() throws Exception {
         var job = jobRegistry.getJob(JOB_NAME);
-        jobLauncher.run(job, new JobParameters());
+        jobLauncher.run(job, new JobParametersBuilder()
+                .addString("JobID", String.valueOf(System.currentTimeMillis()))
+                .toJobParameters());
         return ResponseEntity.ok().body("Batch job has been invoked");
     }
 

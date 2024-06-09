@@ -107,8 +107,8 @@ SELECT data.*,
     end_quay.stopplace_code AS end_stopplace_code
 INTO osm_pt.osm_route_data
 FROM data
-JOIN osm_pt.osm_route_platform start_quay ON start_quay.osm_route_id = data.osm_route_id AND start_quay.platform_location_type = 'start'
-JOIN osm_pt.osm_route_platform end_quay ON end_quay.osm_route_id = data.osm_route_id AND end_quay.platform_location_type = 'end';
+JOIN osm_pt.osm_route_quay start_quay ON start_quay.osm_route_id = data.osm_route_id AND start_quay.platform_location_type = 'start'
+JOIN osm_pt.osm_route_quay end_quay ON end_quay.osm_route_id = data.osm_route_id AND end_quay.platform_location_type = 'end';
 """;
     
     private final EntityManagerFactory entityManagerFactory;
