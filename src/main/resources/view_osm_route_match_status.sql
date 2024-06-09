@@ -40,9 +40,11 @@ SELECT osm_rt.network, osm_rt.relation_id AS osm_route_id, osm_rt.name, osm_rt.t
 	WHEN endpoint_and_count_matches.osm_route_id IS NOT NULL THEN '3 Endpoints and quay count match'
 	WHEN endpoint_matches.osm_route_id IS NOT NULL THEN '4 Endpoints match'
 	ELSE '9 No match'
-	END AS matching
+	END AS matching,
+	oki.issue
 FROM osm_pt.osm_routes osm_rt
 LEFT JOIN stopplace_matches stop_match ON stop_match.osm_route_id = osm_rt.relation_id
 LEFT JOIN quay_matches quay_match ON quay_match.osm_route_id = osm_rt.relation_id
 LEFT JOIN endpoint_and_count_matches ON endpoint_and_count_matches.osm_route_id = osm_rt.relation_id
 LEFT JOIN endpoint_matches ON endpoint_matches.osm_route_id = osm_rt.relation_id
+LEFT JOIN osm_pt.osm_route_known_issues oki ON oki.osm_route_id = osm_rt.relation_id
