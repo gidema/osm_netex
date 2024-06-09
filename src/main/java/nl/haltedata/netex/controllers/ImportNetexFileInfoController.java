@@ -21,12 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import nl.haltedata.gtfs.ImportStatus;
 import nl.haltedata.netex.dto.NetexFileRepository;
-import nl.haltedata.netex.dto.NetexLatestFile;
 import nl.haltedata.netex.ndov.NetexFileCache;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/importNetexFileInfo")
+@RequestMapping("/netex/importFileInfo")
 public class ImportNetexFileInfoController {
     private static String JOB_NAME = "importNetexFileInfoJob";
 
@@ -105,21 +104,21 @@ public class ImportNetexFileInfoController {
         return ResponseEntity.ok().body(response);
     }
     
-    /**
-     * Endpoint to retrieve the latest file per transport area.
-     *
-     * @return Response indicating if the batch job was invoked successfully.
-     * @throws Exception if any error occurs during job launch.
-     */
-    @CrossOrigin(origins = "http://localhost:4200")
-    @GetMapping("/latest")
-    public ResponseEntity<List<NetexLatestFile>> getLatestFile() throws Exception {
-        var files = fileRepository.getLatestFiles();
-        files.forEach(file -> {
-            System.out.println(file.getFileName());
-        });
-        return ResponseEntity.ok().body(files);
-    }
+//    /**
+//     * Endpoint to retrieve the latest file per transport area.
+//     *
+//     * @return Response indicating if the batch job was invoked successfully.
+//     * @throws Exception if any error occurs during job launch.
+//     */
+//    @CrossOrigin(origins = "http://localhost:4200")
+//    @GetMapping("/latest")
+//    public ResponseEntity<List<NetexLatestFile>> getLatestFile() throws Exception {
+//        var files = fileRepository.getLatestFiles();
+//        files.forEach(file -> {
+//            System.out.println(file.getFileName());
+//        });
+//        return ResponseEntity.ok().body(files);
+//    }
 
     /**
      * Endpoint to update the file cache.

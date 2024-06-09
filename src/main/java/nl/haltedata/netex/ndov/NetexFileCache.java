@@ -30,12 +30,12 @@ public class NetexFileCache {
     
     private List<NetexLatestFile> getMissingFiles() {
         List<NetexLatestFile> missingFiles = new ArrayList<>();
-        for (NetexLatestFile file : fileRepository.getLatestFiles()) {
-            var fileName = file.getFileName();
-            if (Files.notExists(CACHE_FOLDER.resolve(fileName))) {
-                missingFiles.add(file);
-            }
-        }
+//        for (NetexLatestFile file : fileRepository.getLatestFiles()) {
+//            var fileName = file.getFileName();
+//            if (Files.notExists(CACHE_FOLDER.resolve(fileName))) {
+//                missingFiles.add(file);
+//            }
+//        }
         return missingFiles;
     }
     

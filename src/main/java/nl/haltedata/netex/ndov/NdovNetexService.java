@@ -1,6 +1,7 @@
 package nl.haltedata.netex.ndov;
 
 import java.io.Closeable;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -73,7 +74,8 @@ public class NdovNetexService implements Closeable {
         connect();
         try (FileOutputStream outputStream = new FileOutputStream(cacheFile.toFile())) {
             var ftpPath = String.format("%s/%s", agencyId.toLowerCase(), fileName);
-            ftpClient.retrieveFile(ftpPath, outputStream);
+            var succes  = ftpClient.retrieveFile(ftpPath, outputStream);
+            if (!succes) throw new FileNotFoundException(fileName);
         }
     }
 

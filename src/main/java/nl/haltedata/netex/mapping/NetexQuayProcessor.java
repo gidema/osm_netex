@@ -48,7 +48,9 @@ public class NetexQuayProcessor implements ItemProcessor<ScheduledStopPoint, Net
         quay.setRdLocation(rdLocation);
         quay.setWgsLocation(rdToWgs.transform(rdLocation));
         quay.setRoutePointRef(getRoutePointRef(stop));
-        quay.setTariffZones(String.join(";", getTariffZones(stop)));
+        quay.setTariffZones(getTariffZones(stop));
+        quay.setForBoarding(stop.isForBoarding() == null ? true : stop.isForBoarding()); 
+        quay.setForAlighting(stop.isForAlighting() == null ? true : stop.isForAlighting());
         return quay;
     }
     
@@ -61,13 +63,6 @@ public class NetexQuayProcessor implements ItemProcessor<ScheduledStopPoint, Net
         return new StopName(parts[0], null);                
     }
     
-//        <projections>
-//        <PointProjection id="QBUZZ:PointProjection:50002
-//400">
-//            <ProjectToPointRef nameOfRefClass="RoutePoin
-//t" ref="QBUZZ:RoutePoint:50002400"/>
-//        </PointProjection>
-//    </projections>
     private Point getRdPoint(ScheduledStopPoint stop) {
         var rd = stop.getLocation();
         if (rd == null) return null;

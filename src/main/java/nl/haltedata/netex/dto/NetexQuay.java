@@ -1,5 +1,7 @@
 package nl.haltedata.netex.dto;
 
+import java.util.List;
+
 import org.locationtech.jts.geom.Point;
 
 import jakarta.persistence.Entity;
@@ -16,7 +18,7 @@ public class NetexQuay {
     @Id
     private String id;
     private String stopAreaId;
-    private String tariffZones;
+    private List<String> tariffZones;
     private String name;
     private String shortName;
     private String place;
@@ -25,4 +27,6 @@ public class NetexQuay {
     private Point wgsLocation;
     private String userStopCode;
     private String userStopOwnerCode;
+    private Boolean forBoarding;
+    private Boolean forAlighting;
 }
