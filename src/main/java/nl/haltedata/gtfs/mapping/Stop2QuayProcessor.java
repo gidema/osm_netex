@@ -5,7 +5,6 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.springframework.batch.item.ItemProcessor;
 
-import nl.haltedata.gtfs.SpecialOperatorsService;
 import nl.haltedata.gtfs.dto.GtfsCsvStop;
 import nl.haltedata.gtfs.dto.GtfsQuay;
 import nl.haltedata.gtfs.dto.RefIfoptFactory;
@@ -13,12 +12,10 @@ import nl.haltedata.gtfs.dto.RefIfoptFactory;
 public class Stop2QuayProcessor implements ItemProcessor<GtfsCsvStop, GtfsQuay> {
  
     private final GeometryFactory geometryFactory;
-    private final SpecialOperatorsService operatorsService;
 
-    public Stop2QuayProcessor(GeometryFactory geometryFactory, SpecialOperatorsService operatorsService) {
+    public Stop2QuayProcessor(GeometryFactory geometryFactory) {
         super();
         this.geometryFactory = geometryFactory;
-        this.operatorsService = operatorsService;
     }
 
     @Override
@@ -55,8 +52,6 @@ public class Stop2QuayProcessor implements ItemProcessor<GtfsCsvStop, GtfsQuay> 
         Integer wcBoarding = stop.getWheelchairBoarding();
         if (wcBoarding != null) quay.setWheelchairBoarding(wcBoarding.equals(1));
         quay.setRefIfopt(RefIfoptFactory.createIfopt(quay));
-        quay.setOperator(operatorsService.getOperator(quay.getQuayId()));
-
         return quay;
     }
 }

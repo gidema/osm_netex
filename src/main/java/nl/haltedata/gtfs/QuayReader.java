@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.function.Consumer;
 
 import org.apache.commons.csv.CSVFormat;
@@ -28,9 +27,9 @@ public class QuayReader {
    
     private final QuayMapper quayMapper;
     
-    public QuayReader(Map<Long, String> operators) {
+    public QuayReader() {
         super();
-        this.quayMapper = new QuayMapper(geometryFactory, operators);
+        this.quayMapper = new QuayMapper(geometryFactory);
     }
 
     public void read(File source, Consumer<GtfsQuay> quayConsumer) {

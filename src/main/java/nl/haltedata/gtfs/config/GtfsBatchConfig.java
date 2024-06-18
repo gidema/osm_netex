@@ -9,27 +9,24 @@ import org.springframework.context.annotation.Configuration;
 import nl.haltedata.gtfs.config.batch.BatchExportConfigForOsmGtfsQuays;
 import nl.haltedata.gtfs.config.batch.BatchImportConfigForGtfsAgencies;
 import nl.haltedata.gtfs.config.batch.BatchImportConfigForGtfsQuays;
-import nl.haltedata.gtfs.config.batch.BatchImportConfigForSpecialQuays;
 
 @Configuration
 @EnableBatchProcessing(modular = true)
 public class GtfsBatchConfig {
-    @Bean
+    @SuppressWarnings("static-method")
+	@Bean
     ApplicationContextFactory importGtfsAgenciesConfig() {
         return new GenericApplicationContextFactory(BatchImportConfigForGtfsAgencies.class);
     }
     
-    @Bean
+    @SuppressWarnings("static-method")
+	@Bean
     ApplicationContextFactory importGtsfQuaysConfig() {
         return new GenericApplicationContextFactory(BatchImportConfigForGtfsQuays.class);
     }
 
-    @Bean
-    ApplicationContextFactory importGtsfSpecialQuaysConfig() {
-        return new GenericApplicationContextFactory(BatchImportConfigForSpecialQuays.class);
-    }
-
-    @Bean
+    @SuppressWarnings("static-method")
+	@Bean
     ApplicationContextFactory exportGtsfQuays2OsmConfig() {
         return new GenericApplicationContextFactory(BatchExportConfigForOsmGtfsQuays.class);
     }

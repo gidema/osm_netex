@@ -7,19 +7,16 @@ import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.boot.context.properties.bind.BindException;
 
-import nl.haltedata.gtfs.SpecialOperatorsService;
 import nl.haltedata.gtfs.dto.GtfsQuay;
 import nl.haltedata.gtfs.dto.RefIfoptFactory;
 
 public class QuayFieldSetMapper implements FieldSetMapper<GtfsQuay> {
  
     private GeometryFactory geometryFactory;
-    private SpecialOperatorsService operatorsService;
 
-    public QuayFieldSetMapper(GeometryFactory geometryFactory, SpecialOperatorsService operatorsService) {
+    public QuayFieldSetMapper(GeometryFactory geometryFactory) {
         super();
         this.geometryFactory = geometryFactory;
-        this.operatorsService = operatorsService;
     }
 
     @Override
@@ -49,8 +46,6 @@ public class QuayFieldSetMapper implements FieldSetMapper<GtfsQuay> {
         String wcBoarding = fieldSet.readString(8);
         if (wcBoarding != null) quay.setWheelchairBoarding(wcBoarding.equals("1"));
         quay.setRefIfopt(RefIfoptFactory.createIfopt(quay));
-        quay.setOperator(operatorsService.getOperator(quay.getQuayId()));
-
         return quay;
     }
 }

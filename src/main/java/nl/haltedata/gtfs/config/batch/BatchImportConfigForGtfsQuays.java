@@ -24,7 +24,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
-import nl.haltedata.gtfs.SpecialOperatorsService;
 import nl.haltedata.gtfs.dto.GtfsCsvStop;
 import nl.haltedata.gtfs.dto.GtfsQuay;
 import nl.haltedata.gtfs.mapping.Stop2QuayProcessor;
@@ -115,15 +114,10 @@ public class BatchImportConfigForGtfsQuays {
             .build();
     }
     
-    @Bean
-    Stop2QuayProcessor processor() {
-        return new Stop2QuayProcessor(new GeometryFactory(), specialOperatorsService());
-    }
-    
     @SuppressWarnings("static-method")
-    @Bean
-    SpecialOperatorsService specialOperatorsService() {
-        return new SpecialOperatorsService();
+	@Bean
+    Stop2QuayProcessor processor() {
+        return new Stop2QuayProcessor(new GeometryFactory());
     }
     
     @Bean
@@ -138,7 +132,8 @@ public class BatchImportConfigForGtfsQuays {
         return importListener();
     }
 
-    @Bean
+    @SuppressWarnings("static-method")
+	@Bean
     @JobScope
     GtfsQuayImportListener importListener(){
         return  new GtfsQuayImportListener();
