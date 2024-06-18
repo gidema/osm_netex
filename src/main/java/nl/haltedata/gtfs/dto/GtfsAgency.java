@@ -9,7 +9,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(schema = "chb")
+@Table(schema = "gtfs")
 public class GtfsAgency {
     @Id
     private String agencyId;

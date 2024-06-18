@@ -11,7 +11,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(schema = "chb")
+@Table(schema = "gtfs")
 public class GtfsQuay {
     @Id
     private Long quayId;

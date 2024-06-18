@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity()
-@Table(schema = "chb")
+@Table(schema = "gtfs")
 @Getter
 @Setter
 public class GtfsSpecialQuay {
