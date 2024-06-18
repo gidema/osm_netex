@@ -129,6 +129,11 @@
   	<version>8.4.2</version>
   </dependency>
   <dependency>
+  	<groupId>nl.gertjanidema.nlgeo</groupId>
+  	<artifactId>chb_psa</artifactId>
+  	<version>8.2.0</version>
+  </dependency>
+  <dependency>
     <groupId>org.entur</groupId>
     <artifactId>netex-java-model</artifactId>
     <version>${netex-java.version}</version>
@@ -145,9 +150,15 @@
         <configuration>
           <release>17</release>
           <parameters>true</parameters>
-        </configuration>
-        
+        </configuration>       
       </plugin>
     </plugins>
   </build>
+  <repositories>
+    <repository>
+      <id>gertjanidema.nl</id>
+      <url>http://maven.gertjanidema.nl/</url>
+    </repository>
+  </repositories>
+
 </project>
