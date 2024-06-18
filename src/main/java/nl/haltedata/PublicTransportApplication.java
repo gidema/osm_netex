@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
 @ComponentScan(basePackages = { "nl.haltedata.chb", "nl.haltedata.gtfs", "nl.haltedata.netex", "nl.haltedata.osm"  },
@@ -13,10 +14,16 @@ import org.springframework.context.annotation.FilterType;
         @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.netex.config.batch.*"),
         @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.chb.config.batch.*"),
         @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.osm.config.batch.*")})
+@Import(MainConfiguration.class)
 public class PublicTransportApplication {
-    private Logger logger = LoggerFactory.getLogger(PublicTransportApplication.class);
+    private static Logger LOG = LoggerFactory
+    	      .getLogger(PublicTransportApplication.class);
 
-    public static void main(String[] args) {
-        SpringApplication.run(PublicTransportApplication.class, args);
+    @SuppressWarnings("resource")
+	public static void main(String[] args) {
+    	var application = new SpringApplication(PublicTransportApplication.class);
+
+        LOG.info("STARTING THE APPLICATION");
+        application.run(args);
     }
 }

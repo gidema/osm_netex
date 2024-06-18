@@ -16,10 +16,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
 @ComponentScan(basePackages = { "nl.haltedata.netex" },
 excludeFilters = { @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.netex.config.batch.*")})
+@Import(MainConfiguration.class)
 public class NetexUpdater implements CommandLineRunner, ApplicationContextAware {
 
     private static Logger LOG = LoggerFactory
