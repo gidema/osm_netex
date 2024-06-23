@@ -20,7 +20,6 @@ import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.xml.StaxEventItemReader;
 import org.springframework.batch.item.xml.builder.StaxEventItemReaderBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -35,6 +34,7 @@ import nl.haltedata.netex.dto.NetexPointOnRouteRepository;
 import nl.haltedata.netex.dto.NetexRoute;
 import nl.haltedata.netex.mapping.NetexRouteProcessor;
 import nl.haltedata.netex.mapping.PointOnRouteMapper;
+import nl.haltedata.netex.ndov.NdovService;
 import nl.haltedata.tools.GzipAwareMultiResourceItemReader;
 
 @Configuration
@@ -42,11 +42,15 @@ import nl.haltedata.tools.GzipAwareMultiResourceItemReader;
 @EnableBatchProcessing
 public class BatchImportConfigForNetexRoutes {
 
+    @Inject
+    NdovService ndovService;
+
     private final EntityManagerFactory entityManagerFactory;
 
     @Bean
     @StepScope
-    ItemReader<Route> multiResourceReader(@Value("#{jobParameters['filePath']}") String path) {
+    ItemReader<Route> multiResourceReader() {
+        var path = ndovService.getNetexTempPath();
         var patternResolver = new PathMatchingResourcePatternResolver();   
         try {
             Resource[] resources = patternResolver.getResources("file:" + path + "/*.xml.gz");
@@ -140,7 +144,7 @@ public class BatchImportConfigForNetexRoutes {
     Step step2(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new StepBuilder("step2", jobRepository)
             .<Route, NetexRoute>chunk(1000, transactionManager)
-            .reader(multiResourceReader(null))  // null path just for type resolution
+            .reader(multiResourceReader())
             .processor(processor())
             .writer(writer())
             .build();

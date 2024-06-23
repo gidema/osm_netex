@@ -12,6 +12,7 @@ import nl.haltedata.netex.config.batch.BatchImportConfigForNetexLines;
 import nl.haltedata.netex.config.batch.BatchImportConfigForNetexRoutePoints;
 import nl.haltedata.netex.config.batch.BatchImportConfigForNetexRoutes;
 import nl.haltedata.netex.config.batch.BatchImportConfigForNetexScheduledStopPoints;
+import nl.haltedata.netex.config.batch.NetexEtlUpdateConfig;
 
 @Configuration
 @EnableBatchProcessing(modular = true)
@@ -46,6 +47,12 @@ public class NetexBatchConfig {
         return new GenericApplicationContextFactory(BatchImportConfigForNetexFileInfo.class);
     }
     
+    @SuppressWarnings("static-method")
+    @Bean
+    ApplicationContextFactory updateNetexEtlConfig() {
+        return new GenericApplicationContextFactory(NetexEtlUpdateConfig.class);
+    }
+
     @SuppressWarnings("static-method")
     @Bean
     ApplicationContextFactory exportNetexOsmQuays() {

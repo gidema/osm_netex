@@ -1,7 +1,6 @@
 package nl.haltedata.netex.config.batch;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.rutebanken.netex.model.Route;
 import org.springframework.batch.core.Job;
@@ -21,7 +20,6 @@ import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.xml.StaxEventItemReader;
 import org.springframework.batch.item.xml.builder.StaxEventItemReaderBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -36,6 +34,7 @@ import nl.haltedata.netex.NetexPointOnRouteReader;
 import nl.haltedata.netex.dto.NetexPointOnRoute;
 import nl.haltedata.netex.dto.NetexPointOnRouteRepository;
 import nl.haltedata.netex.mapping.PointOnRouteMapper;
+import nl.haltedata.netex.ndov.NdovService;
 import nl.haltedata.tools.GzipAwareMultiResourceItemReader;
 
 @Configuration
@@ -43,11 +42,15 @@ import nl.haltedata.tools.GzipAwareMultiResourceItemReader;
 @EnableBatchProcessing
 public class BatchImportConfigForNetexRoutePoints {
 
+    @Inject
+    NdovService ndovService;
+
     private final EntityManagerFactory entityManagerFactory;
 
     @Bean
     @StepScope
-    ItemReader<NetexPointOnRoute> multiResourceReader(@Value("#{jobParameters['filePath']}") String path) {
+    ItemReader<NetexPointOnRoute> multiResourceReader() {
+        var path = ndovService.getNetexTempPath();
         var patternResolver = new PathMatchingResourcePatternResolver();   
         try {
             Resource[] resources = patternResolver.getResources("file:" + path + "/*.xml.gz");
@@ -147,7 +150,7 @@ public class BatchImportConfigForNetexRoutePoints {
     Step step2(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new StepBuilder("step2", jobRepository)
             .<NetexPointOnRoute, NetexPointOnRoute>chunk(1000, transactionManager)
-            .reader(multiResourceReader(null))  // null path just for type resolution
+            .reader(multiResourceReader())
             .writer(writer())
             .build();
     }

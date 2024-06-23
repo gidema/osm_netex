@@ -7,6 +7,7 @@ import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobInstance;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.explore.JobExplorer;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import nl.haltedata.gtfs.ImportStatus;
 import nl.haltedata.netex.dto.NetexFileRepository;
-import nl.haltedata.netex.ndov.NetexFileCache;
 
 @RestController
 @RequiredArgsConstructor
@@ -43,8 +43,9 @@ public class ImportNetexFileInfoController {
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/start")
     public ResponseEntity<String> handle() throws Exception {
+        JobParameters params = new JobParametersBuilder().addString("JobID", String.valueOf(System.currentTimeMillis())).toJobParameters();
         var job = jobRegistry.getJob(JOB_NAME);
-        jobLauncher.run(job, new JobParameters());
+        jobLauncher.run(job, params);
         return ResponseEntity.ok().body("Batch job has been invoked");
     }
 
@@ -120,17 +121,17 @@ public class ImportNetexFileInfoController {
 //        return ResponseEntity.ok().body(files);
 //    }
 
-    /**
-     * Endpoint to update the file cache.
-     *
-     * @return Response indicating if the batch job was invoked successfully.
-     * @throws Exception if any error occurs during job launch.
-     */
-    @CrossOrigin(origins = "http://localhost:4200")
-    @GetMapping("/update")
-    public ResponseEntity<String> updateFiles() throws Exception {
-        var cache = new NetexFileCache(fileRepository);
-        cache.update();
-        return ResponseEntity.ok().body("Ok");
-    } 
+//    /**
+//     * Endpoint to update the file cache.
+//     *
+//     * @return Response indicating if the batch job was invoked successfully.
+//     * @throws Exception if any error occurs during job launch.
+//     */
+//    @CrossOrigin(origins = "http://localhost:4200")
+//    @GetMapping("/update")
+//    public ResponseEntity<String> updateFiles() throws Exception {
+//        var cache = new NetexFileCache(fileRepository);
+//        cache.update();
+//        return ResponseEntity.ok().body("Ok");
+//    } 
 }

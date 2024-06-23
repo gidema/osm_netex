@@ -17,3 +17,13 @@ CREATE TABLE IF NOT EXISTS osm_pt.osm_route_data
 
 ALTER TABLE IF EXISTS osm_pt.osm_route_data
     OWNER to nlgis;
+    
+CREATE TABLE IF NOT EXISTS osm_pt.osm_route_known_issues
+(
+    osm_route_id bigint NOT NULL,
+    issue character varying COLLATE pg_catalog."default",
+    CONSTRAINT osm_route_known_issues_pkey PRIMARY KEY (osm_route_id)
+);
+
+ALTER TABLE IF EXISTS osm_pt.osm_route_known_issues
+    OWNER to postgres;

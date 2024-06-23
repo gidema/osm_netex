@@ -66,6 +66,7 @@ module HalteData {
     opens nl.haltedata.netex.config to spring.core, spring.context, spring.beans;
     opens nl.haltedata.netex.config.batch to spring.core, spring.context, spring.beans;
     opens nl.haltedata.netex.mapping to spring.core, spring.beans;
+    opens nl.haltedata.netex.ndov to spring.core, spring.beans;
     opens nl.haltedata.osm.config to spring.core, spring.context, spring.beans;
     opens nl.haltedata.osm.config.batch to spring.core, spring.context, spring.beans;
     opens nl.haltedata.chb.dto;

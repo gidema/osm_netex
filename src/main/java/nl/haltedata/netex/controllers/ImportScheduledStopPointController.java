@@ -1,6 +1,5 @@
 package nl.haltedata.netex.controllers;
 
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,19 +21,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import nl.haltedata.gtfs.ImportStatus;
-import nl.haltedata.netex.ndov.NetexFileCache;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/importNetexQuay")
 public class ImportScheduledStopPointController {
-    private static Path folder = NetexFileCache.CACHE_FOLDER; 
     private static String JOB_NAME = "importNetexScheduledStopPointJob";
 
     private final JobLauncher jobLauncher;
     private final JobRegistry jobRegistry;
     private final JobExplorer jobExplorer;
-
 
     /**
      * Endpoint to start the import batch job.
@@ -45,7 +41,7 @@ public class ImportScheduledStopPointController {
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/start")
     public ResponseEntity<String> handle() throws Exception {
-        JobParameters params = new JobParametersBuilder().addString("filePath", folder.toString())
+        JobParameters params = new JobParametersBuilder()
                 .addString("JobID", String.valueOf(System.currentTimeMillis())).toJobParameters();
         var job = jobRegistry.getJob(JOB_NAME);
         jobLauncher.run(job, params);

@@ -1,9 +1,10 @@
 package nl.haltedata.netex.config.batch;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.rutebanken.netex.model.ScheduledStopPoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
@@ -21,7 +22,6 @@ import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.xml.StaxEventItemReader;
 import org.springframework.batch.item.xml.builder.StaxEventItemReaderBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
@@ -35,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 import nl.haltedata.netex.dto.NetexQuay;
 import nl.haltedata.netex.dto.NetexQuayRepository;
 import nl.haltedata.netex.mapping.NetexQuayProcessor;
+import nl.haltedata.netex.ndov.NdovService;
 import nl.haltedata.tools.GzipAwareMultiResourceItemReader;
 
 @Configuration
@@ -42,12 +43,18 @@ import nl.haltedata.tools.GzipAwareMultiResourceItemReader;
 @EnableBatchProcessing
 public class BatchImportConfigForNetexScheduledStopPoints {
 
+    private static Logger LOG = LoggerFactory.getLogger(NdovService.class);
+    
+    @Inject
+    NdovService ndovService;
+
     private final EntityManagerFactory entityManagerFactory;
  
     @Bean
     @StepScope
-    ItemReader<ScheduledStopPoint> reader(@Value("#{jobParameters['filePath']}") String path) {
+    ItemReader<ScheduledStopPoint> reader() {
         try {
+            var path = ndovService.getNetexTempPath();
             var patternResolver = new PathMatchingResourcePatternResolver();   
             Resource[] resources = patternResolver.getResources("file:" + path + "/*.xml.gz");
 //            resources = Arrays.copyOfRange(resources, 0, 1);
@@ -130,7 +137,7 @@ public class BatchImportConfigForNetexScheduledStopPoints {
     Step step2(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new StepBuilder("step2", jobRepository)
             .<ScheduledStopPoint, NetexQuay>chunk(1000, transactionManager)
-            .reader(reader(null))  // null path just for type resolution
+            .reader(reader())
             .processor(processor())
             .writer(writer())
             .build();

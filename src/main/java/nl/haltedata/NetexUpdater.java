@@ -37,7 +37,8 @@ public class NetexUpdater implements CommandLineRunner, ApplicationContextAware 
     }
 
     private ApplicationContext applicationContext;
- 
+    
+
     @Override
     public void run(String... args) {
         LOG.info("EXECUTING : command line runner");
@@ -47,17 +48,18 @@ public class NetexUpdater implements CommandLineRunner, ApplicationContextAware 
         try {
             var parameters = new JobParametersBuilder()
                 .addString("JobID", String.valueOf(System.currentTimeMillis()))
-                .addString("filePath", "/home/gertjan/.public_transport/netex")
                 .toJobParameters();
 //            job = jobRegistry.getJob("importNetexFileInfoJob");
 //            jobLauncher.run(job, parameters);
-            job = jobRegistry.getJob("importNetexScheduledStopPointJob");
-            jobLauncher.run(job, parameters);
-            job = jobRegistry.getJob("importNetexLineJob");
-            jobLauncher.run(job, parameters);
-            job = jobRegistry.getJob("importNetexRouteJob");
-            jobLauncher.run(job, parameters);
-            job = jobRegistry.getJob("importNetexRoutePointJob");
+//            job = jobRegistry.getJob("importNetexScheduledStopPointJob");
+//            jobLauncher.run(job, parameters);
+//            job = jobRegistry.getJob("importNetexLineJob");
+//            jobLauncher.run(job, parameters);
+//            job = jobRegistry.getJob("importNetexRouteJob");
+//            jobLauncher.run(job, parameters);
+//            job = jobRegistry.getJob("importNetexRoutePointJob");
+//            jobLauncher.run(job, parameters);
+            job = jobRegistry.getJob("netexEtlUpdateJob");
             jobLauncher.run(job, parameters);
             
         } catch (Exception e) {
