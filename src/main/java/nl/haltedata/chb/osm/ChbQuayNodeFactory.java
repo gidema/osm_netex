@@ -26,7 +26,8 @@ public class ChbQuayNodeFactory implements OsmNodeFactory<ChbQuay> {
         tags.add(new Tag("public_transport", "platform"));
         tags.add(new Tag("name", quay.getQuayName()));
         tags.add(new Tag("ref:IFOPT", quay.getQuaycode()));
-        if (quay.getStopSideCode() != null) {
+        tags.add(new Tag("bus", "yes"));
+        if (quay.getStopSideCode() != null && !quay.getStopSideCode().isBlank()) {
             tags.add(new Tag("ref", quay.getStopSideCode()));
         }
 //        tags.add(new Tag("operator", quay.getOperator()));
