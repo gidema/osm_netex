@@ -49,16 +49,16 @@ public class NetexUpdater implements CommandLineRunner, ApplicationContextAware 
             var parameters = new JobParametersBuilder()
                 .addString("JobID", String.valueOf(System.currentTimeMillis()))
                 .toJobParameters();
-//            job = jobRegistry.getJob("importNetexFileInfoJob");
-//            jobLauncher.run(job, parameters);
-//            job = jobRegistry.getJob("importNetexScheduledStopPointJob");
-//            jobLauncher.run(job, parameters);
-//            job = jobRegistry.getJob("importNetexLineJob");
-//            jobLauncher.run(job, parameters);
-//            job = jobRegistry.getJob("importNetexRouteJob");
-//            jobLauncher.run(job, parameters);
-//            job = jobRegistry.getJob("importNetexRoutePointJob");
-//            jobLauncher.run(job, parameters);
+            job = jobRegistry.getJob("importNetexFileInfoJob");
+            jobLauncher.run(job, parameters);
+            job = jobRegistry.getJob("importNetexScheduledStopPointJob");
+            jobLauncher.run(job, parameters);
+            job = jobRegistry.getJob("importNetexLineJob");
+            jobLauncher.run(job, parameters);
+            job = jobRegistry.getJob("importNetexRouteJob");
+            jobLauncher.run(job, parameters);
+            job = jobRegistry.getJob("importNetexRoutePointJob");
+            jobLauncher.run(job, parameters);
             job = jobRegistry.getJob("netexEtlUpdateJob");
             jobLauncher.run(job, parameters);
             
