@@ -1,0 +1,21 @@
+<div class="card my-5">
+  <div class="card-body">
+    <table class="table table-bordered table-striped">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Network name</th>
+          <th scope="col">Country code</th>
+         </tr>
+      </thead>
+      <tbody>
+        @for (network of networks; track network.networkName) {
+          <tr>
+            <td><a [routerLink] = "['/network', network.networkName]">{{ network.networkName }}</a>
+            </td>
+            <td>{{ network.countryCode }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

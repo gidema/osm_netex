@@ -1,0 +1,23 @@
+<div class="container">
+  <!--<h1>{{ this.networkName }} ({{this.countryCode}})</h1>-->
+  <table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Route id</th>
+        <th scope="col">Route name</th>
+        <th scope="col">From</th>
+        <th scope="col">To</th>
+       </tr>
+    </thead>
+    <tbody>
+      @for (route of routes; track route.osmRouteId) {
+        <tr>
+          <td><a [routerLink] = "['/osm/route', route.osmRouteId]">{{ route.osmRouteId }} </a> </td>
+          <td>{{ route.name }} </td>
+          <td>{{ route.from }}</td>
+          <td>{{ route.to }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

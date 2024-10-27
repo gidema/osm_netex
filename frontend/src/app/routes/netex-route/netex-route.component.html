@@ -1,0 +1,14 @@
+<h1>@if (netexRoute) { {{ netexRoute.publicCode}} {{ netexRoute.name}} {{ netexRoute.directionType}}}</h1>
+<div class="card my-5">
+  <div class="card-body">
+    <table class="table table-bordered table-striped">
+      <tbody>
+        @for (quay of routeQuays; track quay.pointOnRouteId) {
+          <tr>
+            <td> {{ quay.place }}, {{ quay.quayName }} @if (quay.stopSideCode) {(Perron {{quay.stopSideCode}}) } <span style="font-size: 12px;">({{ quay.quayCode }})</span></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

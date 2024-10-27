@@ -10,6 +10,7 @@ import nl.haltedata.chb.config.batch.BatchExportConfigForOsmChbQuays;
 import nl.haltedata.chb.config.batch.BatchImportConfigForChbPsa;
 import nl.haltedata.chb.config.batch.BatchImportConfigForChbQuays;
 import nl.haltedata.chb.config.batch.BatchImportConfigForChbStopplace;
+import nl.haltedata.chb.config.batch.ChbEtlUpdateBatch;
 
 @Configuration
 @EnableBatchProcessing(modular = true)
@@ -33,4 +34,10 @@ public class ChbBatchConfig {
     static ApplicationContextFactory exportChbToOsmConfig() {
         return new GenericApplicationContextFactory(BatchExportConfigForOsmChbQuays.class);
     }
+    
+    @Bean
+    static ApplicationContextFactory batchChbEtlUpdateConfig() {
+        return new GenericApplicationContextFactory(ChbEtlUpdateBatch.class);
+    }
+
 }

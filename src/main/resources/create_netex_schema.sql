@@ -115,4 +115,5 @@ CREATE TABLE IF NOT EXISTS netex.netex_file_info
 );
 
 ALTER TABLE IF EXISTS netex.netex_file_info
-    OWNER to nlgis;   
+    OWNER to nlgis;
+       

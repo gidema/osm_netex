@@ -59,6 +59,10 @@ public class NetexUpdater implements CommandLineRunner, ApplicationContextAware 
             jobLauncher.run(job, parameters);
             job = jobRegistry.getJob("importNetexRoutePointJob");
             jobLauncher.run(job, parameters);
+            job = jobRegistry.getJob("importNetexResponsibleAreaJob");
+            jobLauncher.run(job, parameters);
+            job = jobRegistry.getJob("importNetexTypeOfProductCategoryJob");
+            jobLauncher.run(job, parameters);
             job = jobRegistry.getJob("netexEtlUpdateJob");
             jobLauncher.run(job, parameters);
             

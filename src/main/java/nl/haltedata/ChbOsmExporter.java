@@ -23,6 +23,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 
 import nl.haltedata.chb.dto.ChbDtoPackageMarker;
+import nl.haltedata.compare.dto.CompareDtoPackageMarker;
 import nl.haltedata.gtfs.dto.GtfsDtoPackageMarker;
 import nl.haltedata.netex.dto.NetexDtoPackageMarker;
 import nl.haltedata.osm.dto.OsmDtoPackageMarker;
@@ -31,10 +32,11 @@ import nl.haltedata.osm.dto.OsmDtoPackageMarker;
 @ComponentScan(basePackages = { "nl.haltedata.chb" },
 excludeFilters = { @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.chb.config.batch.*")})
 // TODO Only ChbDtoPackageMarker should be necessary here, but somehow Spring wants to load gtfs OSM and Netex repositories as well
-@EntityScan(basePackageClasses = { ChbDtoPackageMarker.class, NetexDtoPackageMarker.class, GtfsDtoPackageMarker.class, OsmDtoPackageMarker.class })
+@EntityScan(basePackageClasses = { ChbDtoPackageMarker.class, NetexDtoPackageMarker.class, GtfsDtoPackageMarker.class,
+        OsmDtoPackageMarker.class, CompareDtoPackageMarker.class })
 @Import(MainConfiguration.class)
 public class ChbOsmExporter implements CommandLineRunner, ApplicationContextAware {
-    @Value("${osm_netex.path.temp}")
+    @Value("${osm_netex.path.results}")
     private Path resultsPath;
     
     private static Logger LOG = LoggerFactory

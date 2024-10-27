@@ -1,0 +1,26 @@
+<div class="card my-5">
+  <div class="card-body">
+    <table class="table table-bordered table-striped">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Osm id</th>
+          <th scope="col">Osm name</th>
+          <th scope="col">Netex id</th>
+          <th scope="col">Netex line name</th>
+          <th scope="col">Netex direction</th>
+         </tr>
+      </thead>
+      <tbody>
+        @for (match of matches; track match.netexRouteId) {
+          <tr>
+            <td> {{ match.osmRouteId }} </td>
+            <td> {{ match.osmRouteName }}</td>
+            <td><a [routerLink] = "['/netex/route', match.netexRouteId]"> {{ match.netexRouteId }}</a></td>
+            <td> {{ match.netexLineName }}</td>
+            <td> {{ match.netexDirection }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

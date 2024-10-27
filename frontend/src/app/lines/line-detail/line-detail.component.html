@@ -1,0 +1,28 @@
+<div class="container">
+  <h1>{{ line.network}}: Line {{ line.lineRef }}</h1>
+  <h2>Routes</h2>
+  <table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Route id</th>
+        <th scope="col">Route direction</th>
+        <th scope="col">Match status</th>
+        <th scope="col">Netex name</th>
+        <th scope="col">Osm route id</th>
+        <th scope="col">Osm name</th>
+   </tr>
+    </thead>
+    <tbody>
+      @for (route of routes; track route.id) {
+        <tr>
+          <td><a [routerLink] = "['/netex/route', route.id]"> {{ route.id }} </a></td>
+          <td>{{ route.directionType }} </td>
+          <td>{{ route.matching }}</td>
+          <td>{{ route.netexName }}</td>
+          <td>{{ route.osmRouteId }}</td>
+          <td>{{ route.osmName }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,23 @@
+<div class="container">
+  <h1>{{ this.networkName }} ({{this.countryCode}})</h1>
+  <table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Line number</th>
+        <th scope="col">Osm name</th>
+        <th scope="col">Netex name</th>
+        <th scope="col">Transport mode</th>
+       </tr>
+    </thead>
+    <tbody>
+      @for (line of lines; track line.id) {
+        <tr>
+          <td><a [routerLink] = "['/line', line.id]">{{ line.lineRef }} </a> </td>
+          <td><a [routerLink] = "['/osm/line', line.osmLineId]">{{ line.osmName }} </a> </td>
+          <td><a [routerLink] = "['/netex/line', line.netexLineId]">{{ line.netexName }} </a> </td>
+          <td>{{ line.transportMode }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

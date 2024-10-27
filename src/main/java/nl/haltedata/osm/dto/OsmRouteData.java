@@ -24,5 +24,4 @@ public class OsmRouteData {
     private String endQuayCode;
     private String startStopplaceCode;
     private String endStopplaceCode;
-
 }

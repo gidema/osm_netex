@@ -7,6 +7,7 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.database.JpaCursorItemReader;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -87,7 +88,19 @@ public class BatchExportConfigForOsmChbQuays {
         return new StepBuilder("step1", jobRepository)
             .<ChbQuay, ChbQuay>chunk(1000, transactionManager)
             .reader(reader())
+            .processor(new QuayFilter())
             .writer(writer(null)) // null path just for type resolution
             .build();
+    }
+    
+    /**
+     * Filter CHB quays. Ignore expired quays
+     */
+    private class QuayFilter implements ItemProcessor<ChbQuay, ChbQuay> {
+        @Override
+        public ChbQuay process(ChbQuay quay) throws Exception {
+            return "expired".equals(quay.getQuayStatus()) ? null : quay;
+        }
+        
     }
 }

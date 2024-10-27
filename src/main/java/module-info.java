@@ -36,12 +36,13 @@ module HalteData {
     requires spring.oxm;
     requires commons.net;
     requires passengerstopassignment;
+    requires java.desktop;
 //    requires hibernate.spatial;
     
     exports nl.haltedata.osm;
     exports nl.haltedata.tools;
     exports nl.haltedata.gtfs;
-    exports nl.haltedata.netex;
+    exports nl.haltedata.compare;
     exports nl.haltedata.gtfs.controllers;
     exports nl.haltedata.gtfs.config.batch;
     exports nl.haltedata.netex.controllers;
@@ -50,6 +51,7 @@ module HalteData {
     exports nl.haltedata.chb.config.batch;
     exports nl.haltedata.osm.controllers;
     exports nl.haltedata.osm.config.batch;
+    exports nl.haltedata.compare.controllers;
     
     opens nl.haltedata to spring.core, spring.context, spring.beans;
     opens nl.haltedata.tools to spring.core;
@@ -61,16 +63,20 @@ module HalteData {
     opens nl.haltedata.chb.config to spring.core, spring.context, spring.beans;
     opens nl.haltedata.chb.config.batch to spring.core, spring.context, spring.beans;
     opens nl.haltedata.chb.mapping to spring.core, spring.beans;
-    opens nl.haltedata.netex to spring.core, spring.beans;
     opens nl.haltedata.netex.osm to spring.core, spring.context, spring.beans;
     opens nl.haltedata.netex.config to spring.core, spring.context, spring.beans;
     opens nl.haltedata.netex.config.batch to spring.core, spring.context, spring.beans;
-    opens nl.haltedata.netex.mapping to spring.core, spring.beans;
-    opens nl.haltedata.netex.ndov to spring.core, spring.beans;
     opens nl.haltedata.osm.config to spring.core, spring.context, spring.beans;
     opens nl.haltedata.osm.config.batch to spring.core, spring.context, spring.beans;
+    opens nl.haltedata.compare.etl to spring.core, spring.context, spring.beans;
+    opens nl.haltedata.osm.controllers to spring.core;
+    opens nl.haltedata.compare.controllers to spring.core;
+    opens nl.haltedata.netex.controllers to spring.core;
+    opens nl.haltedata.chb.controllers to spring.core;
     opens nl.haltedata.chb.dto;
     opens nl.haltedata.gtfs.dto;
     opens nl.haltedata.netex.dto;
     opens nl.haltedata.osm.dto;
+    opens nl.haltedata.compare.dto;
+
 }

@@ -18,6 +18,7 @@ import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.xml.StaxEventItemReader;
 import org.springframework.batch.item.xml.builder.StaxEventItemReaderBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -37,7 +38,13 @@ import nl.haltedata.tools.GzipFileSystemResource;
 @RequiredArgsConstructor
 @EnableBatchProcessing
 public class BatchImportConfigForChbPsa {
-    private static Path filePath = Path.of("/home/gertjan/projects/NLGeo/Haltedata/chb/PassengerStopAssignmentExportCHB20240507013913.xml.gz"); 
+
+    @Value("${osm_netex.path.temp}")
+    private Path tempPath;
+
+    Path getChbFile() {
+        return tempPath.resolve("PassengerStopAssignmentExportCHB.xml.gz");
+    }
 
     public static String JOB_NAME = "chbPsaImportJob";
 
@@ -61,7 +68,7 @@ public class BatchImportConfigForChbPsa {
     StaxEventItemReader<Quay> quayReader() {
         return new StaxEventItemReaderBuilder<Quay>()
             .name("chbPsaQuayReader")
-            .resource(new GzipFileSystemResource(filePath))
+            .resource(new GzipFileSystemResource(getChbFile()))
             .addFragmentRootElements("quay")
             .unmarshaller(stopplaceMarshaller())
             .build();
