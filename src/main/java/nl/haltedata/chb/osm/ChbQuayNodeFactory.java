@@ -22,11 +22,28 @@ public class ChbQuayNodeFactory implements OsmNodeFactory<ChbQuay> {
     @Override
     public Node create(ChbQuay quay, Date timestamp) {
         List<Tag> tags = new LinkedList<>();
-        tags.add(new Tag("highway", "bus_stop"));
         tags.add(new Tag("public_transport", "platform"));
         tags.add(new Tag("name", quay.getQuayName()));
         tags.add(new Tag("ref:IFOPT", quay.getQuaycode()));
-        tags.add(new Tag("bus", "yes"));
+        quay.getTransportModes().forEach(mode -> {
+            switch (mode) {
+            case "bus":
+            case "troleybus":
+                tags.add(new Tag("highway", "bus_stop"));
+                tags.add(new Tag("bus", "yes"));
+                break;
+            case "tram":
+                tags.add(new Tag("railway", "platform"));
+                tags.add(new Tag("tram", "yes"));
+                break;
+            case "water":
+            case "ferry":
+                tags.add(new Tag("ferry", "yes"));
+                break;
+
+            
+            }
+        });
         if (quay.getStopSideCode() != null && !quay.getStopSideCode().isBlank()) {
             tags.add(new Tag("ref", quay.getStopSideCode()));
         }

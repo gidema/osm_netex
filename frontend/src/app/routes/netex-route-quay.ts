@@ -1,8 +1,8 @@
 export class NetexRouteQuay {
-    constructor( 
-        public routeId: String,
+    constructor(
         public pointOnRouteId: String,
-        public quayIndex: String,
+        public routeId: String,
+        public quayIndex: Number,
         public quayCode: String,
         public place: String,
         public quayName: String,

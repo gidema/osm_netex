@@ -8,6 +8,7 @@ import lombok.Setter;
 import java.lang.Boolean;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.locationtech.jts.geom.Point;
 
@@ -22,6 +23,7 @@ public class ChbQuay {
     private String stopPlaceId;
     private String stopPlaceName;
     private String stopPlaceLongName;
+    private List<String> transportModes;
     private Boolean onlygetout;
     private String quaycode;
     private String quayName;

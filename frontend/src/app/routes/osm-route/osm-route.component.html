@@ -1,1 +1,14 @@
-<p>osm-route works!</p>
+<h1>@if (osmRoute) {{{ osmRoute.name}}}</h1>
+<div class="card my-5">
+  <div class="card-body">
+    <table class="table table-bordered table-striped">
+      <tbody>
+        @for (quay of routeQuays; track quay.quayIndex) {
+          <tr>
+            <td> <a href="https://drgl.nl/stop/{{ quay.areaCode }}" target="_blank">{{ quay.quayName }} </a> @if (quay.stopSideCode) {(Perron {{quay.stopSideCode}}) } <span style="font-size: 12px;">({{ quay.quayCode }})</span></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

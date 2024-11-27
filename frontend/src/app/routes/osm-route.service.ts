@@ -10,7 +10,7 @@ export class OsmRouteService {
     private http = inject(HttpClient);
     private lineUrl: string = 'http://localhost:8080/osm/route';
 
-    public findById(routeId: string): Observable<OsmRoute> {
+    public findById(routeId: number): Observable<OsmRoute> {
         return this.http.get<OsmRoute>(this.lineUrl + "/" + routeId);
     }
 

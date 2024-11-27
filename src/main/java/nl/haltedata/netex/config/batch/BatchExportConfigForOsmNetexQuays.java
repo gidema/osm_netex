@@ -63,7 +63,7 @@ public class BatchExportConfigForOsmNetexQuays {
     @Bean
     @StepScope
     OsmNodeItemWriter<NetexQuay> writer(@Value("#{jobParameters['filePath']}") String path) {
-        OsmNodeItemWriter<NetexQuay> writer = new OsmNodeItemWriter<>(quayNodeFactory());
+        OsmNodeItemWriter<NetexQuay> writer = new OsmNodeItemWriter<>(quayNodeFactory(), false);
         FileSystemResource osmFile = new FileSystemResource(path);
         writer.setResource(osmFile);
         return writer;

@@ -5,7 +5,7 @@
       <tbody>
         @for (quay of routeQuays; track quay.pointOnRouteId) {
           <tr>
-            <td> {{ quay.place }}, {{ quay.quayName }} @if (quay.stopSideCode) {(Perron {{quay.stopSideCode}}) } <span style="font-size: 12px;">({{ quay.quayCode }})</span></td>
+            <td> {{ quay.place }}, <a href="https://drgl.nl/stop/{{ quay.stopplaceCode }}" target="_blank">{{ quay.quayName }} </a> @if (quay.stopSideCode) {(Perron {{quay.stopSideCode}}) } <span style="font-size: 12px;">({{ quay.quayCode }})</span></td>
           </tr>
         }
       </tbody>

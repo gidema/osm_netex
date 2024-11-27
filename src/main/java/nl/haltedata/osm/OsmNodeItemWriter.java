@@ -24,12 +24,14 @@ public class OsmNodeItemWriter<T> extends AbstractItemStreamItemWriter<T>
     implements ResourceAwareItemWriterItemStream<T>, InitializingBean {
 
         private OsmNodeFactory<T> nodeFactory;
+        private boolean upload = true;
         private final Date timestamp;
         private WritableResource resource;
         protected OutputState state = null;
 
-        public OsmNodeItemWriter(OsmNodeFactory<T> nodeFactory) {
+        public OsmNodeItemWriter(OsmNodeFactory<T> nodeFactory, boolean upload) {
             super();
+            this.upload = upload;
             this.timestamp = new java.sql.Date(System.currentTimeMillis());
             this.nodeFactory = nodeFactory;
         }
@@ -50,9 +52,10 @@ public class OsmNodeItemWriter<T> extends AbstractItemStreamItemWriter<T>
             }
         }
         
-        private void doOpen(@SuppressWarnings("unused") ExecutionContext executionContext) throws ItemStreamException {
+        private void doOpen(ExecutionContext executionContext) throws ItemStreamException {
             OutputState outputState = getOutputState();
             try {
+                executionContext.putString("upload", upload ? "true" : "false");
                 outputState.initializeBufferedWriter();
             }
             catch (IOException ioe) {

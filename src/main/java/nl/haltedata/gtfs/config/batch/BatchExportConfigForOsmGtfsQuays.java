@@ -59,7 +59,7 @@ public class BatchExportConfigForOsmGtfsQuays {
     @SuppressWarnings("static-method")
     @Bean
     OsmNodeItemWriter<GtfsQuay> writer() {
-        OsmNodeItemWriter<GtfsQuay> writer = new OsmNodeItemWriter<>(new QuayNodeFactory());
+        OsmNodeItemWriter<GtfsQuay> writer = new OsmNodeItemWriter<>(new QuayNodeFactory(), false);
         return writer;
     }
 

@@ -1,7 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpUrlEncodingCodec } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { NetexRouteQuay } from './netex-route-quay';
+
+const codec = new HttpUrlEncodingCodec();
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +16,7 @@ export class NetexRouteQuaysService {
   
 
     public findByRouteId(routeId: string): Observable<NetexRouteQuay[]> {
-        return this.http.get<NetexRouteQuay[]>(this.url + "/" + routeId + "/quays");
+        return this.http.get<NetexRouteQuay[]>(this.url + "/" + codec.encodeValue(routeId) + "/quays");
   }
 
 }

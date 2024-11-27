@@ -103,32 +103,37 @@ FROM quay_data;
   
     private static String update_route_quays_table_sql = """
 TRUNCATE TABLE osm_pt.osm_route_quay;
-INSERT INTO osm_pt.osm_route_quay
+INSERT INTO osm_pt.osm_route_quay (osm_route_id, osm_quay_id, osm_primitive_type,
+  quay_name, quay_index, quay_code, stop_side_code, stopplace_code, quay_location_type,
+  entry_only, exit_only)
 SELECT sub.osm_route_id, 
   sub.osm_quay_id,
   sub.osm_primitive_type,
-  sub.rank AS quay_index,
-  sub.quay_type,
+  sub.quay_name,
+  sub.quay_index,
   sub.quay_code,
   sub.stop_side_code,
   sub.stopplace_code,
-  CASE WHEN sub.rank=1 THEN 'start' WHEN sub.rank = sub.count THEN 'end' ELSE 'middle' END AS quay_location_type
+  CASE WHEN sub.quay_index=1 THEN 'start' WHEN sub.quay_index = sub.count THEN 'end' ELSE 'middle' END AS quay_location_type,
+  sub.entry_only,
+  sub.exit_only
 FROM (
   SELECT mb.relation_id AS osm_route_id,
     mb.member_id AS osm_quay_id,
     mb.member_type AS osm_primitive_type,
-    mb.sequence_id,
-    mb.member_role AS quay_type,
+    osm_quay.name AS quay_name,
     osm_quay.ref_ifopt AS quay_code,
     osm_quay.stop_side_code,
     csp.stopplacecode AS stopplace_code,
     ROW_NUMBER() OVER (
       PARTITION BY mb.relation_id
       ORDER BY mb.sequence_id ASC
-    ) AS "rank",
+    ) AS quay_index,
     COUNT(*) OVER (
       PARTITION BY mb.relation_id
-    ) AS count
+    ) AS count,
+    mb.member_role = 'platform_entry_only' AS entry_only,
+    mb.member_role = 'platform_exit_only' AS exit_only
   FROM relation_members mb
   JOIN osm_pt.osm_route route ON route.osm_route_id = mb.relation_id AND mb.member_role LIKE 'platform%'
   JOIN osm_pt.osm_pt_network nw ON route.network = nw.network_name
@@ -141,13 +146,13 @@ FROM (
 
     private static String update_route_quay2_table_sql = """
 TRUNCATE TABLE osm_pt.osm_route_quay2;
-INSERT INTO osm_pt.osm_route_quay2 (osm_route_id,"rank", osm_quay_node_id, osm_quay_way_id, quay_code,
+INSERT INTO osm_pt.osm_route_quay2 (osm_route_id, quay_index, osm_quay_node_id, osm_quay_way_id, quay_code,
     stop_side_code_n, stop_side_code_w, area_code)
 SELECT osm_route_id,
   ROW_NUMBER() OVER (
       PARTITION BY osm_route_id
       ORDER BY quay_index ASC
-    ) AS "rank",
+    ) AS quay_index,
     osm_quay_node_id,
     osm_quay_way_id,
     quay_code,
@@ -166,8 +171,9 @@ SELECT COALESCE(rqn.osm_route_id, rqw.osm_route_id) AS osm_route_id,
 FROM osm_pt.osm_route_quay rqn
 FULL OUTER JOIN osm_pt.osm_route_quay rqw 
   ON rqn.osm_route_id = rqw.osm_route_id 
-  AND rqn.quay_code = rqw.quay_code
   AND ABS(rqn.quay_index - rqw.quay_index) = 1
+  AND ((rqn.quay_code = rqw.quay_code AND rqn.quay_code IS NOT NULL)
+    OR (rqn.quay_name = rqw.quay_name AND (rqn.quay_code IS NULL OR rqw.quay_code IS NULL)))
 WHERE TRUE
   AND (rqn.osm_primitive_type = 'N' OR rqn.osm_primitive_type IS NULL)
   AND (rqw.osm_primitive_type = 'W' OR rqw.osm_primitive_type IS NULL)
@@ -210,8 +216,8 @@ JOIN osm_pt.osm_route_quay end_quay ON end_quay.osm_route_id = data.osm_route_id
         SELECT route.route_ref AS line_number,
           route.osm_route_id,
           route.network AS network,
-          ARRAY_AGG(route_quay.quay_code ORDER BY route_quay.rank) quay_list,
-          ARRAY_AGG(route_quay.area_code ORDER BY route_quay.rank) stopplace_list,
+          ARRAY_AGG(route_quay.quay_code ORDER BY route_quay.quay_index) quay_list,
+          ARRAY_AGG(route_quay.area_code ORDER BY route_quay.quay_index) stopplace_list,
           CAST(COUNT(route_quay.quay_code) AS INTEGER) AS quay_count,
           route.osm_line_id
         FROM osm_pt.osm_route AS route
@@ -294,7 +300,7 @@ WITH duplicates AS (
   GROUP BY rd.network, rd.line_number, quay_list
   HAVING count(rd.osm_route_id) > 1)
 INSERT INTO osm_pt.osm_duplicate_bus_route
-SElECT rd.osm_route_id
+SElECT DISTINCT rd.osm_route_id
 FROM osm_pt.osm_route_data rd
 JOIN duplicates dup ON rd.line_number = dup.line_number AND rd.quay_list = dup.quay_list
 """;

@@ -8,6 +8,7 @@ import { NetexRouteComponent } from './routes/netex-route/netex-route.component'
 import { LineDetailComponent } from './lines/line-detail/line-detail.component';
 import { OsmLineDetailComponent } from './lines/osm-line-detail/osm-line-detail.component';
 import { NetexLineDetailComponent } from './lines/netex-line-detail/netex-line-detail.component';
+import { OsmRouteComponent } from './routes/osm-route/osm-route.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'list-networks', pathMatch: 'full' },
@@ -18,6 +19,7 @@ export const routes: Routes = [
   { path: 'netex/route/:routeId', component: NetexRouteComponent},
   { path: 'line/:id', component: LineDetailComponent},
   { path: 'osm/line/:osmLineId', component: OsmLineDetailComponent},
+  { path: 'osm/route/:osmRouteId', component: OsmRouteComponent},
   { path: 'netex/line/:netexLineId', component: NetexLineDetailComponent},
   { path: 'network/:networkName/lines', component: LineListComponent},
   { path: '**', component: PageNotFoundComponent }

@@ -21,8 +21,8 @@ export class NetexRouteComponent implements OnInit {
     routeQuays: NetexRouteQuay[] = [];
 
     ngOnInit() {
-        this.activatedRoute.paramMap.subscribe((route: ParamMap) => {
-            this.routeId = route.get('routeId');
+        this.activatedRoute.paramMap.subscribe((paramMap: ParamMap) => {
+            this.routeId = paramMap.get('routeId');
         });
         this.routeService.findById(this.routeId || "").subscribe((data: NetexRoute) => {
             this.netexRoute = data;

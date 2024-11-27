@@ -1,15 +1,11 @@
 export class OsmRouteQuay {
-    constructor(
+    constructor( 
         public osmRouteId: Number,
-        public rank: Number,
-        public osmQuayNodeId: Number,
-        public osmQuayWayId: Number,
+        public quayIndex: Number,
         public quayCode: String,
-        public quayNameN: String,
-        public stopSideCodeN: String,
-        public quayNameW: String,
-        public stopSideCodeW: String,
-        public place: String,
-        public areaCode: String) {}
+        public stopPlaceCode: String,
+        public quayName: String,
+        public stopSideCode: String,
+        public areaCode: String) {};
 }
 

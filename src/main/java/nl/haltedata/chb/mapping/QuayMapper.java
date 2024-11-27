@@ -1,5 +1,7 @@
 package nl.haltedata.chb.mapping;
 
+import java.util.stream.Collectors;
+
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -29,6 +31,9 @@ public class QuayMapper implements ParentChildMapper<Quay, ChbQuay, Stopplace> {
         chbQuay.setStopPlaceLongName(stopPlace.getStopplacename().getPublicnamelong());
         chbQuay.setQuayName(quay.getQuaynamedata().getQuayname());
         chbQuay.setStopSideCode(quay.getQuaynamedata().getStopsidecode());
+        chbQuay.setTransportModes(quay.getQuaytransportmodes().getTransportmodedata()
+            .stream().map(data -> 
+            data.getTransportmode()).collect(Collectors.toList()));
         chbQuay.setMutationdate(quay.getMutationdate());
         chbQuay.setOnlygetout(quay.isOnlygetout());
         chbQuay.setQuaycode(quay.getQuaycode());

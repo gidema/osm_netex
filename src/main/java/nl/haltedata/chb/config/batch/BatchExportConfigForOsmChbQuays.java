@@ -64,7 +64,7 @@ public class BatchExportConfigForOsmChbQuays {
     @Bean
     @StepScope
     OsmNodeItemWriter<ChbQuay> writer(@Value("#{jobParameters['filePath']}") String path) {
-        OsmNodeItemWriter<ChbQuay> writer = new OsmNodeItemWriter<>(quayNodeFactory());
+        OsmNodeItemWriter<ChbQuay> writer = new OsmNodeItemWriter<>(quayNodeFactory(), true);
         FileSystemResource osmFile = new FileSystemResource(path);
         writer.setResource(osmFile);
         return writer;
