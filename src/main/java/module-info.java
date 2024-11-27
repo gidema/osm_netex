@@ -46,7 +46,6 @@ module HalteData {
     exports nl.haltedata.gtfs.controllers;
     exports nl.haltedata.gtfs.config.batch;
     exports nl.haltedata.netex.controllers;
-    exports nl.haltedata.netex.config.batch;
     exports nl.haltedata.chb.controllers;
     exports nl.haltedata.chb.config.batch;
     exports nl.haltedata.osm.controllers;
@@ -62,10 +61,6 @@ module HalteData {
     opens nl.haltedata.chb to spring.core, spring.context, spring.beans;
     opens nl.haltedata.chb.config to spring.core, spring.context, spring.beans;
     opens nl.haltedata.chb.config.batch to spring.core, spring.context, spring.beans;
-    opens nl.haltedata.chb.mapping to spring.core, spring.beans;
-    opens nl.haltedata.netex.osm to spring.core, spring.context, spring.beans;
-    opens nl.haltedata.netex.config to spring.core, spring.context, spring.beans;
-    opens nl.haltedata.netex.config.batch to spring.core, spring.context, spring.beans;
     opens nl.haltedata.osm.config to spring.core, spring.context, spring.beans;
     opens nl.haltedata.osm.config.batch to spring.core, spring.context, spring.beans;
     opens nl.haltedata.compare.etl to spring.core, spring.context, spring.beans;
