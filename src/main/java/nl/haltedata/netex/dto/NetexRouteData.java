@@ -17,11 +17,11 @@ public class NetexRouteData {
     @Id
     private String routeId;
     private List<String> quayList;
-    private List<String> stopplaceList;
+    private List<String> stopPlaceList;
     private Long quayCount;
     private String startQuayCode;
     private String endQuayCode;
-    private String startStopplaceCode;
-    private String endStopplaceCode;
+    private String startStopPlaceCode;
+    private String endStopPlaceCode;
 
 }

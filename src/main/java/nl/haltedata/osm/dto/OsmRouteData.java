@@ -18,10 +18,10 @@ public class OsmRouteData {
     private Long osmRouteId;
     private String network;
     private List<String> quayList;
-    private List<String> stopplaceList;
+    private List<String> stopPlaceList;
     private Integer quayCount;
     private String startQuayCode;
     private String endQuayCode;
-    private String startStopplaceCode;
-    private String endStopplaceCode;
+    private String startStopPlaceCode;
+    private String endStopPlaceCode;
 }

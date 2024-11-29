@@ -104,7 +104,7 @@ FROM quay_data;
     private static String update_route_quays_table_sql = """
 TRUNCATE TABLE osm_pt.osm_route_quay;
 INSERT INTO osm_pt.osm_route_quay (osm_route_id, osm_quay_id, osm_primitive_type,
-  quay_name, quay_index, quay_code, stop_side_code, stopplace_code, quay_location_type,
+  quay_name, quay_index, quay_code, stop_side_code, stop_place_code, quay_location_type,
   entry_only, exit_only)
 SELECT sub.osm_route_id, 
   sub.osm_quay_id,
@@ -113,7 +113,7 @@ SELECT sub.osm_route_id,
   sub.quay_index,
   sub.quay_code,
   sub.stop_side_code,
-  sub.stopplace_code,
+  sub.stop_place_code,
   CASE WHEN sub.quay_index=1 THEN 'start' WHEN sub.quay_index = sub.count THEN 'end' ELSE 'middle' END AS quay_location_type,
   sub.entry_only,
   sub.exit_only
@@ -124,7 +124,7 @@ FROM (
     osm_quay.name AS quay_name,
     osm_quay.ref_ifopt AS quay_code,
     osm_quay.stop_side_code,
-    csp.stopplacecode AS stopplace_code,
+    csp.stop_place_code AS stop_place_code,
     ROW_NUMBER() OVER (
       PARTITION BY mb.relation_id
       ORDER BY mb.sequence_id ASC
@@ -158,7 +158,7 @@ SELECT osm_route_id,
     quay_code,
     stop_side_code_n,
     stop_side_code_w,
-    stopplace_code AS area_code
+    stop_place_code AS area_code
 FROM (
 SELECT COALESCE(rqn.osm_route_id, rqw.osm_route_id) AS osm_route_id,
   LEAST(rqn.quay_index, rqw.quay_index) AS quay_index,
@@ -167,7 +167,7 @@ SELECT COALESCE(rqn.osm_route_id, rqw.osm_route_id) AS osm_route_id,
   COALESCE(rqn.quay_code, rqw.quay_code) AS quay_code,
   rqn.stop_side_code AS stop_side_code_n,
   rqn.stop_side_code AS stop_side_code_w,
-  COALESCE(rqn.stopplace_code, rqw.stopplace_code) AS stopplace_code
+  COALESCE(rqn.stop_place_code, rqw.stop_place_code) AS stop_place_code
 FROM osm_pt.osm_route_quay rqn
 FULL OUTER JOIN osm_pt.osm_route_quay rqw 
   ON rqn.osm_route_id = rqw.osm_route_id 
@@ -187,7 +187,7 @@ WITH data AS (
     route.osm_route_id,
     route.network AS network,
     ARRAY_AGG(route_quay.quay_code ORDER BY route_quay.quay_index) quay_list,
-    ARRAY_AGG(route_quay.stopplace_code ORDER BY route_quay.quay_index) stopplace_list,
+    ARRAY_AGG(route_quay.stop_place_code ORDER BY route_quay.quay_index) stop_place_list,
     CAST(COUNT(route_quay.quay_code) AS INTEGER) AS quay_count,
     route.osm_line_id
   FROM osm_pt.osm_route AS route
@@ -198,12 +198,12 @@ SELECT data.line_number,
     data.osm_route_id,
     data.network AS network,
     data.quay_list,
-    data.stopplace_list,
+    data.stop_place_list,
     data.quay_count,
     start_quay.quay_code AS start_quay_code,
     end_quay.quay_code AS end_quay_code,
-    start_quay.stopplace_code AS start_stopplace_code,
-    end_quay.stopplace_code AS end_stopplace_code,
+    start_quay.stop_place_code AS start_stop_place_code,
+    end_quay.stop_place_code AS end_stop_place_code,
     data.osm_line_id
 FROM data
 JOIN osm_pt.osm_route_quay start_quay ON start_quay.osm_route_id = data.osm_route_id AND start_quay.quay_location_type = 'start'
@@ -217,7 +217,7 @@ JOIN osm_pt.osm_route_quay end_quay ON end_quay.osm_route_id = data.osm_route_id
           route.osm_route_id,
           route.network AS network,
           ARRAY_AGG(route_quay.quay_code ORDER BY route_quay.quay_index) quay_list,
-          ARRAY_AGG(route_quay.area_code ORDER BY route_quay.quay_index) stopplace_list,
+          ARRAY_AGG(route_quay.area_code ORDER BY route_quay.quay_index) stop_place_list,
           CAST(COUNT(route_quay.quay_code) AS INTEGER) AS quay_count,
           route.osm_line_id
         FROM osm_pt.osm_route AS route
@@ -228,64 +228,35 @@ JOIN osm_pt.osm_route_quay end_quay ON end_quay.osm_route_id = data.osm_route_id
               data.osm_route_id,
               data.network AS network,
               data.quay_list,
-              data.stopplace_list,
+              data.stop_place_list,
               data.quay_count,
               start_quay.quay_code AS start_quay_code,
               end_quay.quay_code AS end_quay_code,
-              start_quay.stopplace_code AS start_stopplace_code,
-              end_quay.stopplace_code AS end_stopplace_code,
+              start_quay.stop_place_code AS start_stop_place_code,
+              end_quay.stop_place_code AS end_stop_place_code,
               data.osm_line_id
           FROM data
           JOIN osm_pt.osm_route_quay start_quay ON start_quay.osm_route_id = data.osm_route_id AND start_quay.quay_location_type = 'start'
           JOIN osm_pt.osm_route_quay end_quay ON end_quay.osm_route_id = data.osm_route_id AND end_quay.quay_location_type = 'end';
 """;
 
-//    private static String update_osm_route_data_table_sql = """
-//TRUNCATE TABLE osm_pt.osm_route_data;
-//WITH data AS (
-//  SELECT route.route_ref AS line_number,
-//    route.osm_route_id,
-//    route.network AS network,
-//    ARRAY_AGG(route_quay.quay_code ORDER BY route_quay.quay_index) quay_list,
-//    ARRAY_AGG(route_quay.stopplace_code ORDER BY route_quay.quay_index) stopplace_list,
-//    CAST(COUNT(route_quay.quay_code) AS INTEGER) AS quay_count,
-//    route.osm_line_id
-//  FROM osm_pt.osm_route AS route
-//  JOIN osm_pt.osm_route_quay AS route_quay ON route_quay.osm_route_id = route.osm_route_id
-//  GROUP BY route.route_ref, route.osm_route_id, route.osm_line_id, route.network)
-//INSERT INTO osm_pt.osm_route_data
-//SELECT data.line_number,
-//    data.osm_route_id,
-//    data.network AS network,
-//    data.quay_list,
-//    data.stopplace_list,
-//    data.quay_count,
-//    start_quay.quay_code AS start_quay_code,
-//    end_quay.quay_code AS end_quay_code,
-//    start_quay.stopplace_code AS start_stopplace_code,
-//    end_quay.stopplace_code AS end_stopplace_code,
-//    data.osm_line_id
-//FROM data
-//JOIN osm_pt.osm_route_quay start_quay ON start_quay.osm_route_id = data.osm_route_id AND start_quay.quay_location_type = 'start'
-//JOIN osm_pt.osm_route_quay end_quay ON end_quay.osm_route_id = data.osm_route_id AND end_quay.quay_location_type = 'end';
-//""";
 
     private static String update_osm_route_master_endpoint_table_sql = """
 TRUNCATE TABLE osm_pt.osm_route_master_endpoint;
 INSERT INTO osm_pt.osm_route_master_endpoint
 SELECT DISTINCT *
     FROM (
-      SELECT master.osm_route_master_id, rd.line_number, rd.start_stopplace_code AS stopplace_code
+      SELECT master.osm_route_master_id, rd.line_number, rd.start_stop_place_code
       FROM osm_pt.osm_route_master_route rmr
         JOIN osm_pt.osm_route_master master ON master.osm_route_master_id = rmr.osm_route_master_id
         JOIN osm_pt.osm_route_data rd ON rd.osm_route_id = rmr.osm_route_id
-      WHERE rd.start_stopplace_code IS NOT NULL
+      WHERE rd.start_stop_place_code IS NOT NULL
       UNION
-      SELECT master.osm_route_master_id, rd.line_number, rd.end_stopplace_code AS stopplace_code
+      SELECT master.osm_route_master_id, rd.line_number, rd.end_stop_place_code
       FROM osm_pt.osm_route_master_route rmr
         JOIN osm_pt.osm_route_master master ON master.osm_route_master_id = rmr.osm_route_master_id
         JOIN osm_pt.osm_route_data rd ON rd.osm_route_id = rmr.osm_route_id
-      WHERE rd.end_stopplace_code IS NOT NULL
+      WHERE rd.end_stop_place_code IS NOT NULL
     ) AS SUB;
 """;
 
@@ -342,8 +313,8 @@ WHERE ST_DISTANCE(sa.rd_centroid, osmq.rd_location) < 100
 -- Lookup missing area_codes in the osm_missing_ifopt_area_code table
 TRUNCATE TABLE osm_pt.osm_link;
 INSERT INTO osm_pt.osm_link
-SELECT DISTINCT rq1.osm_quay_id AS osm_quay1_id, rq1.osm_primitive_type AS osm_primitive_type1, rq1.quay_code AS quay_code1, rq1.stop_side_code AS stop_side_code1, COALESCE(rq1.stopplace_code, mac1.area_code) AS stopplace_code1,
-    rq2.osm_quay_id AS osm_quay2_id, rq2.osm_primitive_type AS osm_primitive_type2, rq2.quay_code AS quay_code2, rq2.stop_side_code AS stop_side_code2, COALESCE(rq2.stopplace_code, mac2.area_code) AS stopplace_code2
+SELECT DISTINCT rq1.osm_quay_id AS osm_quay1_id, rq1.osm_primitive_type AS osm_primitive_type1, rq1.quay_code AS quay_code1, rq1.stop_side_code AS stop_side_code1, COALESCE(rq1.stop_place_code, mac1.area_code) AS stop_place_code1,
+    rq2.osm_quay_id AS osm_quay2_id, rq2.osm_primitive_type AS osm_primitive_type2, rq2.quay_code AS quay_code2, rq2.stop_side_code AS stop_side_code2, COALESCE(rq2.stop_place_code, mac2.area_code) AS stop_place_code2
 FROM osm_pt.osm_route_quay rq1
 JOIN osm_pt.osm_route_quay rq2 ON rq1.osm_route_id = rq2.osm_route_id AND rq2.quay_index = rq1.quay_index + 1
 LEFT JOIN osm_pt.osm_missing_ifopt_area_code mac1 ON mac1.osm_id = rq1.osm_quay_id

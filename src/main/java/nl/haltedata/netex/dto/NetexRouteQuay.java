@@ -20,6 +20,6 @@ public class NetexRouteQuay {
     String lineNumber;
     String quayCode;
     String stopSideCode;
-    String stopplaceCode;
+    String stopPlaceCode;
     String quayLocationType;
 }

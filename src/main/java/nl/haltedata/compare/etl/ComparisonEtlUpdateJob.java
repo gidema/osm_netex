@@ -31,7 +31,7 @@ TRUNCATE TABLE osm_netex_line_match;
 WITH match AS (
   SELECT DISTINCT orme.line_number, orme.osm_route_master_id, nle.netex_line_id
   FROM osm_pt.osm_route_master_endpoint orme
-  JOIN netex.netex_line_endpoint nle ON nle.line_number = orme.line_number AND nle.stopplace_code = orme.stopplace_code)
+  JOIN netex.netex_line_endpoint nle ON nle.line_number = orme.line_number AND nle.stop_place_code = orme.stop_place_code)
 INSERT INTO osm_netex_line_match
 SELECT match.osm_route_master_id, match.netex_line_id, ol.name AS osm_line_name, nl.name AS netex_line_name, ol.network AS osm_network, osmn.country_code AS osm_country_code, match.line_number
 FROM match 
@@ -47,7 +47,7 @@ FROM match
     WITH match AS (
       SELECT DISTINCT orme.line_number, orme.osm_route_master_id, nle.netex_line_id
       FROM osm_pt.osm_route_master_endpoint orme
-      JOIN netex.netex_line_endpoint nle ON nle.line_number = orme.line_number AND nle.stopplace_code = orme.stopplace_code)
+      JOIN netex.netex_line_endpoint nle ON nle.line_number = orme.line_number AND nle.stop_place_code = orme.stop_place_code)
     INSERT INTO all_lines(netex_line_id, osm_line_id, network, transport_mode, country_code, line_ref, product_category)
     SELECT match.netex_line_id, match.osm_route_master_id, ol.network, ol.transport_mode, osmn.country_code, match.line_number, nl.product_category
     FROM match 
@@ -66,8 +66,9 @@ FROM match
     SELECT NULL, line.osm_route_master_id, line.network, line.transport_mode, network.country_code, line.route_ref, NULL
     FROM osm_pt.osm_route_master line
     LEFT JOIN osm_pt.osm_pt_network network ON network.network_name = line.network 
-    WHERE line.osm_route_master_id NOT IN (SELECT osm_line_id FROM all_lines)
-        AND (country_code = 'NL' OR country_code IS NULL);
+    LEFT JOIN all_lines ON line.osm_route_master_id = all_lines.osm_line_id
+    WHERE all_lines.osm_line_id IS NULL
+        AND (network.country_code = 'NL' OR network.country_code IS NULL);
 """;
 
     private static String update_all_routes_table_sql = """
@@ -82,38 +83,38 @@ JOIN netex.netex_unique_route ntx ON ntx.line_number = osm.line_number
   AND ntx.quay_list = osm.quay_list
 LEFT JOIN all_lines line ON line.osm_line_id = osm.osm_line_id
 WHERE osm.osm_route_id NOT IN (SELECT osm_route_id FROM osm_pt.osm_duplicate_bus_route);
--- Add routes with an exact stopplace match between Netex and OSM
+-- Add routes with an exact stop_place match between Netex and OSM
 INSERT INTO all_routes (line_id, osm_route_id, netex_route_id, matching)
 SELECT line.id, osm.osm_route_id, ntx.id AS netex_route_id,
    'Stopplaces match' AS matching
 FROM osm_pt.osm_route_data osm
 JOIN netex.netex_unique_route ntx ON ntx.line_number = osm.line_number
-  AND ntx.stopplace_list = osm.stopplace_list
+  AND ntx.stop_place_list = osm.stop_place_list
 LEFT JOIN all_lines line ON line.osm_line_id = osm.osm_line_id
 WHERE osm.osm_route_id NOT IN (SELECT osm_route_id FROM osm_pt.osm_duplicate_bus_route)
   AND osm.osm_route_id NOT IN (SELECT osm_route_id FROM all_routes)
   AND ntx.id NOT IN (SELECT netex_route_id FROM all_routes);
--- Add routes with matching start- and end stopplaces an matching quay count
+-- Add routes with matching start- and end stop_places an matching quay count
 INSERT INTO all_routes (line_id, osm_route_id, netex_route_id, matching)
 SELECT line.id, osm.osm_route_id, ntx.id AS netex_route_id,
    'Endpoints and quay count match' AS matching
 FROM osm_pt.osm_route_data osm
 JOIN netex.netex_unique_route ntx ON ntx.line_number = osm.line_number
-  AND ntx.start_stopplace_code = osm.start_stopplace_code
-  AND ntx.end_stopplace_code = osm.end_stopplace_code
+  AND ntx.start_stop_place_code = osm.start_stop_place_code
+  AND ntx.end_stop_place_code = osm.end_stop_place_code
   AND ntx.quay_count = osm.quay_count
 LEFT JOIN all_lines line ON line.osm_line_id = osm.osm_line_id
 WHERE osm.osm_route_id NOT IN (SELECT osm_route_id FROM osm_pt.osm_duplicate_bus_route)
   AND osm.osm_route_id NOT IN (SELECT osm_route_id FROM all_routes)
   AND ntx.id NOT IN (SELECT netex_route_id FROM all_routes);
--- Add routes with matching start- and end stopplaces
+-- Add routes with matching start- and end stop_places
 INSERT INTO all_routes (line_id, osm_route_id, netex_route_id, matching)
 SELECT line.id, osm.osm_route_id, ntx.id AS netex_route_id,
    'Endpoints match' AS matching
 FROM osm_pt.osm_route_data osm
 JOIN netex.netex_unique_route ntx ON ntx.line_number = osm.line_number
-  AND ntx.start_stopplace_code = osm.start_stopplace_code
-  AND ntx.end_stopplace_code = osm.end_stopplace_code
+  AND ntx.start_stop_place_code = osm.start_stop_place_code
+  AND ntx.end_stop_place_code = osm.end_stop_place_code
 LEFT JOIN all_lines line ON line.osm_line_id = osm.osm_line_id
 WHERE osm.osm_route_id NOT IN (SELECT osm_route_id FROM osm_pt.osm_duplicate_bus_route)
   AND osm.osm_route_id NOT IN (SELECT osm_route_id FROM all_routes)
@@ -127,13 +128,13 @@ WITH candidates AS (
   SELECT ol.osm_quay1_id AS quay_id, ol.osm_primitive_type1 AS osm_primitive_type, nl.quay_code1 AS quay_code
   FROM osm_pt.osm_link ol
   JOIN netex.netex_link nl
-  ON ol.stopplace_code1 = nl.stopplace_code1 AND ol.stopplace_code2 = nl.stopplace_code2
+  ON ol.stop_place_code1 = nl.stop_place_code1 AND ol.stop_place_code2 = nl.stop_place_code2
   WHERE ol.quay_code1 IS NULL
   UNION
   SELECT ol.osm_quay2_id, ol.osm_primitive_type2 AS osm_primitive_type, nl.quay_code2
   FROM osm_pt.osm_link ol
   JOIN netex.netex_link nl
-  ON ol.stopplace_code1 = nl.stopplace_code1 AND ol.stopplace_code2 = nl.stopplace_code2
+  ON ol.stop_place_code1 = nl.stop_place_code1 AND ol.stop_place_code2 = nl.stop_place_code2
   WHERE ol.quay_code2 IS NULL
 )
 -- Restrict to candidates having 1 match
