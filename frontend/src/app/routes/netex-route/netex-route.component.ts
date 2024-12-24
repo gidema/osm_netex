@@ -17,6 +17,7 @@ export class NetexRouteComponent implements OnInit {
     private routeService = inject(NetexRouteService);
     private routeQuaysService = inject(NetexRouteQuaysService);
     routeId: string | null = null;
+    format: string = "html";
     netexRoute!: NetexRoute;
     routeQuays: NetexRouteQuay[] = [];
 
@@ -24,11 +25,14 @@ export class NetexRouteComponent implements OnInit {
         this.activatedRoute.paramMap.subscribe((paramMap: ParamMap) => {
             this.routeId = paramMap.get('routeId');
         });
+        this.activatedRoute.queryParamMap.subscribe((paramMap: ParamMap) => {
+            this.format = paramMap.get('format') ?? "html";
+        });
         this.routeService.findById(this.routeId || "").subscribe((data: NetexRoute) => {
-            this.netexRoute = data;
+            this.netexRoute = new NetexRoute(data);
         });
         this.routeQuaysService.findByRouteId(this.routeId || "").subscribe((data: NetexRouteQuay[]) => {
-            this.routeQuays = data;
+            this.routeQuays = data.flatMap(quay => new NetexRouteQuay(quay));
     });
     }
 

@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { NetexRoute } from './netex-route';
 import { HttpUrlEncodingCodec } from '@angular/common/http';
 

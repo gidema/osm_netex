@@ -1,4 +1,6 @@
-<h1>@if (osmRoute) {{{ osmRoute.name}}}</h1>
+@if (osmRoute) {
+    <h1>OSM: {{ osmRoute.name}}</h1>
+<p>Colour: <span style = "color: {{osmRoute.colour}};">{{osmRoute.colour}}</span>; osm id = {{ osmRoute.osmRouteId}}</p>
 <div class="card my-5">
   <div class="card-body">
     <table class="table table-bordered table-striped">
@@ -12,3 +14,4 @@
     </table>
   </div>
 </div>
+}

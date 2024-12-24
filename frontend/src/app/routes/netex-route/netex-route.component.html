@@ -1,14 +1,36 @@
-<h1>@if (netexRoute) { {{ netexRoute.publicCode}} {{ netexRoute.name}} {{ netexRoute.directionType}}}</h1>
-<div class="card my-5">
-  <div class="card-body">
-    <table class="table table-bordered table-striped">
-      <tbody>
-        @for (quay of routeQuays; track quay.pointOnRouteId) {
-          <tr>
-            <td> {{ quay.place }}, <a href="https://drgl.nl/stop/{{ quay.stopplaceCode }}" target="_blank">{{ quay.quayName }} </a> @if (quay.stopSideCode) {(Perron {{quay.stopSideCode}}) } <span style="font-size: 12px;">({{ quay.quayCode }})</span></td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
-</div>
+@if (netexRoute) {
+    @if (format == "markdown") {
+# {{ netexRoute.publicCode}} {{ netexRoute.name}} {{ netexRoute.directionType}}<br/>
+<br/>
+## Network: {{ netexRoute.network}}<br/>
+<br/>
+Colour: &lt;span style = "color: #{{netexRoute.colour}};">#{{netexRoute.colour}}&lt;/span>; Id: {{ netexRoute.id}}<br/>
+&lt;br>
+<br/>
+@for (quay of routeQuays; track quay.pointOnRouteId) {
+<br/>    {{ quay.place }}, {{ quay.name }} ({{ quay.quayCode }} ) Links: [drgl](https://drgl.nl/stop/{{ quay.stopplaceCode }})
+                [ u-ov](https://www.u-ov.info/halte/{{ quay.uov }})&lt;br>
+    }
+<br/>
+}
+@else {
+    <h1> {{ netexRoute.publicCode}} {{ netexRoute.name}} {{ netexRoute.directionType}}</h1>
+    <h2>Network: {{ netexRoute.network}}</h2>
+    <p>Colour: <span style = "color: #{{netexRoute.colour}}">#{{netexRoute.colour}}</span>; Id: {{ netexRoute.id}}</p>
+    <div class="card my-5">
+      <div class="card-body">
+        <table class="table table-bordered table-striped">
+          <tbody>
+            @for (quay of routeQuays; track quay.pointOnRouteId) {
+              <tr>
+                <td> {{ quay.place }}, {{ quay.name }} <span style="font-size: 12px;">({{ quay.quayCode }} )
+                    Links: <a href="https://drgl.nl/stop/{{ quay.stopplaceCode }}" target="_blank">drgl </a>
+                    <a href="https://www.u-ov.info/halte/{{ quay.uov }}" target="_blank"> u-ov</a></span></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+}
+}

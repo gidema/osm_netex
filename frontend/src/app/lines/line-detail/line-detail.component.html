@@ -1,3 +1,4 @@
+@if ( line) {
 <div class="container">
   <h1>{{ line.network}}: Line {{ line.lineRef }}</h1>
   <h2>Routes</h2>
@@ -8,6 +9,7 @@
         <th scope="col">Route direction</th>
         <th scope="col">Match status</th>
         <th scope="col">Netex name</th>
+        <th scope="col">Netex sequence</th>
         <th scope="col">Osm route id</th>
         <th scope="col">Osm name</th>
    </tr>
@@ -15,14 +17,16 @@
     <tbody>
       @for (route of routes; track route.id) {
         <tr>
-          <td><a [routerLink] = "['/netex/route/' + route.id]"> {{ route.id }} </a></td>
+          <td><a [routerLink] = "['/netex/quay-sequence/' + route.id]"> {{ route.id }} </a></td>
           <td>{{ route.directionType }} </td>
           <td>{{ route.matching }}</td>
           <td>{{ route.netexName }}</td>
-          <td>{{ route.osmRouteId }}</td>
+          <td><a [routerLink] = "['/netex/quay-sequence', route.netexRouteId]">{{ route.netexRouteId }} </a></td>
+          <td><a [routerLink] = "['/osm/route', route.osmRouteId]">{{ route.osmRouteId }} </a></td>
           <td>{{ route.osmName }}</td>
         </tr>
       }
     </tbody>
   </table>
 </div>
+}
