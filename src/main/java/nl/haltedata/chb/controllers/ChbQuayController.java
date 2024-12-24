@@ -12,7 +12,7 @@ import nl.haltedata.chb.dto.DimChbQuay;
 import nl.haltedata.chb.dto.DimChbQuayRepository;
 
 @RestController
-public class DimChbQuayController {
+public class ChbQuayController {
     
     @Inject
     private DimChbQuayRepository repository;

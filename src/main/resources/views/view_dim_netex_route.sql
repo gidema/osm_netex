@@ -9,7 +9,8 @@ SELECT r.id,
   l.public_code,
   l.colour,
   l.text_colour,
-  l.mobility_impaired_access
+  l.mobility_impaired_access,
+  l.network
 FROM netex.netex_route r
   LEFT JOIN netex.netex_line l ON l.id = r.line_ref;
   

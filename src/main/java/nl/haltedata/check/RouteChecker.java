@@ -142,8 +142,8 @@ public class RouteChecker {
         }
         // No match found, not even with offsetting. Report a mismatch issue and return the
         // mismatch;
-        matchIssues.add(new MajorRouteIssue(tr.tr("Deviating quays at position {0}. Expected {1} ({2}), but found {3}, ({4}).",
-                osmIndex + 1, netexQuay.getQuayName(), netexQuay.getQuayCode(), osmQuay.getName(), osmQuay.getQuayCode())));
+        matchIssues.add(new MajorRouteIssue(tr.tr("Deviating quays at position {0}. Expected {1}, but found {2}.",
+                osmIndex + 1, netexQuay.toString(), osmQuay.toString())));
         osmIndex++;
         netexIndex++;
         return match;

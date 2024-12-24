@@ -1,5 +1,7 @@
 package nl.haltedata.chb.dto;
 
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -20,4 +22,6 @@ public class DimChbQuay {
     private String quayType;
     private String areaType;
     private Integer bearing;
+    private String place;
+    private List<String> transportModes;
 }

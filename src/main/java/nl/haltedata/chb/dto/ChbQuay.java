@@ -25,7 +25,7 @@ public class ChbQuay {
     private String stopPlaceLongName;
     private List<String> transportModes;
     private Boolean onlygetout;
-    private String quaycode;
+    private String quayCode;
     private String quayName;
     private String stopSideCode;
     private LocalDateTime validfrom;

@@ -24,7 +24,7 @@ public class ChbQuayNodeFactory implements OsmNodeFactory<ChbQuay> {
         List<Tag> tags = new LinkedList<>();
         tags.add(new Tag("public_transport", "platform"));
         tags.add(new Tag("name", quay.getQuayName()));
-        tags.add(new Tag("ref:IFOPT", quay.getQuaycode()));
+        tags.add(new Tag("ref:IFOPT", quay.getQuayCode()));
         quay.getTransportModes().forEach(mode -> {
             switch (mode) {
             case "bus":

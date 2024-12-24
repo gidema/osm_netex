@@ -8,13 +8,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.inject.Inject;
-import nl.haltedata.netex.dto.DimNetexRouteQuayRepository;
+import nl.haltedata.netex.dto.NetexQuayInSequence;
+import nl.haltedata.netex.dto.NetexQuayInSequenceRepository;
 
 @RestController
-public class DimNetexRouteQuayController {
+public class NetexQuayInSequenceController {
 
     @Inject
-    private DimNetexRouteQuayRepository repository;
+    private NetexQuayInSequenceRepository repository;
 
     /**
      * Endpoint to list the data.
@@ -22,9 +23,10 @@ public class DimNetexRouteQuayController {
      * @return
      * @throws Exception if any error occurs during job launch.
      */
+    @SuppressWarnings("exports")
     @CrossOrigin(origins = "http://localhost:4200")
-    @GetMapping("/netex/route/{id}/quays")
-    public List<?> byRouteIdOrderByQuayIndex(@PathVariable("id") String id) throws Exception {
-        return repository.findByRouteIdOrderByQuayIndex(id);
+    @GetMapping("/netex/quay-sequence/{id}/quays")
+    public List<NetexQuayInSequence> bySequenceId(@PathVariable("id") Long id) throws Exception {
+        return repository.findBySequenceId(id);
     }
 }

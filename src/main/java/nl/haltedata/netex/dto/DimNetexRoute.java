@@ -15,6 +15,7 @@ public class DimNetexRoute {
     private String id;
     private String lineId;
     private String name;
+    private String network;
     private String brandingRef;
     private String directionType;
     private String transportMode;
