@@ -138,7 +138,7 @@ FROM (
   JOIN osm_pt.osm_route route ON route.osm_route_id = mb.relation_id AND mb.member_role LIKE 'platform%'
   JOIN osm_pt.osm_pt_network nw ON route.network = nw.network_name
   LEFT JOIN osm_pt.osm_quay ON osm_quay.osm_id = mb.member_id AND osm_quay.osm_primitive_type = mb.member_type
-  LEFT JOIN chb.chb_quay chb_quay ON chb_quay.quaycode = osm_quay.ref_ifopt
+  LEFT JOIN chb.chb_quay chb_quay ON chb_quay.quay_code = osm_quay.ref_ifopt
   LEFT JOIN chb.chb_stop_place csp ON csp.id = chb_quay.stop_place_id
   WHERE nw.country_code = 'NL' AND route.transport_mode LIKE '%bus'
 ) AS sub;
