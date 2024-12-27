@@ -24,7 +24,8 @@ Colour: &lt;span style = "color: #{{netexRoute.colour}};">#{{netexRoute.colour}}
             @for (quay of routeQuays; track quay.pointOnRouteId) {
               <tr>
                 <td> {{ quay.place }}, {{ quay.name }} <span style="font-size: 12px;">({{ quay.quayCode }} )
-                    Links: <a href="https://drgl.nl/stop/{{ quay.stopplaceCode }}" target="_blank">drgl </a>
+                    Links: <a href="https://drgl.nl/stop/{{ quay.stopplaceCode }}" target="_blank">drgl</a>
+                    <a href="https://9292.nl/{{ quay._9292 }}" target="_blank"> 9292.nl</a>
                     <a href="https://www.u-ov.info/halte/{{ quay.uov }}" target="_blank"> u-ov</a></span></td>
               </tr>
             }

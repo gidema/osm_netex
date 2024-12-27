@@ -27,4 +27,11 @@ export class NetexRouteQuay {
         var uov = this.place.toLowerCase() + "-" + this.quayName.toLowerCase();
         return uov.replaceAll(" ", "-").replaceAll("'", "").replaceAll("+", "");
     }
+
+    public get _9292(): string {
+        var place = this.place.toLowerCase().replaceAll(" ", "-").replaceAll("'", "");
+        var quay = this.quayName.toLowerCase().replaceAll(" ", "-").replaceAll("'", "").replaceAll("+", "").replaceAll("/", "-");
+        return place + "/bushalte-" + quay;
+    }
+
 }
