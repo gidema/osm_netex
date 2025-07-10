@@ -8,6 +8,14 @@ body {
   text-align: left;
 }
 
+h1 {
+  color: #0645ad;
+}
+
+h2 {
+  color: rgb(53, 132, 228);
+}
+
 a {
   text-decoration: none;
   color: #0645ad;
@@ -22,3 +30,4 @@ thead > tr {
 td {
     padding:5px;
 }
+

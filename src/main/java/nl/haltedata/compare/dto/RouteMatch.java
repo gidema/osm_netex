@@ -2,23 +2,29 @@ package nl.haltedata.compare.dto;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
-@IdClass(RouteMatchId.class)
+@Table(name = "v_route_match")
 public class RouteMatch {
     @Id
+    private Long id;
+    private Long lineId;
     private Long osmRouteId;
-    private String osmRouteName;
-    @Id
-    private String netexRouteId;
-    private String netexLineName;
-    private String netexDirection;
-    private Integer quayCountDifference;
-    private Boolean startAreaMatch;
-    private Boolean endAreaMatch;
+    private Long netexVariantId;
+    private String network;
+    private Double match_rate;
+    private String matching;
+    private String netexLineNumber;
+    private String netexName;
+    private String directionType;
+    private String osmName;
+    private String osmTransportMode;
+    private String osmLineNumber;
+    private String from;
+    private String to;
 }

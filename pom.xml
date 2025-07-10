@@ -126,8 +126,6 @@
     <artifactId>commons-csv</artifactId>
     <version>${commons-csv.version}</version>
   </dependency>
-  <!-- JAXB Implementation -->
-
   <dependency>
   	<groupId>nl.gertjanidema.nlgeo</groupId>
   	<artifactId>chbhaltebestand</artifactId>

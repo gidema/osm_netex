@@ -22,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 
         /**
          * Endpoint to start the quays export batch job.
-         * Simulates a user uploading a CSV file of contacts.
          *
          * @return Response indicating if the batch job was invoked successfully.
          * @throws Exception if any error occurs during job launch.

@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 
-public interface OsmRouteQuayRepository extends CrudRepository<DimOsmRouteQuay, OsmRouteQuayId> {
+public interface OsmRouteQuayRepository extends CrudRepository<OsmRouteQuay, OsmRouteQuayId> {
 
-    List<DimOsmRouteQuay> findByOsmRouteId(Long osmRouteId);
+    List<OsmRouteQuay> findByOsmRouteId(Long osmRouteId);
 }
 

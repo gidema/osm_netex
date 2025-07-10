@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.inject.Inject;
-import nl.haltedata.osm.dto.DimOsmRouteQuay;
 import nl.haltedata.osm.dto.OsmRouteQuayRepository;
 
 @RestController
@@ -25,7 +24,7 @@ public class OsmRouteQuayController {
      */
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/osm/route/{osmRouteId}/quays")
-    public List<DimOsmRouteQuay> getByRouteId(@PathVariable("osmRouteId") Long osmRouteId) throws Exception {
+    public List<?> getByRouteId(@PathVariable("osmRouteId") Long osmRouteId) throws Exception {
         return routeQuayRepository.findByOsmRouteId(osmRouteId);
     }
 }

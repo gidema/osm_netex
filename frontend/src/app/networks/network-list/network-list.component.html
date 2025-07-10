@@ -5,6 +5,7 @@
         <tr>
           <th scope="col">Network name</th>
           <th scope="col">Country code</th>
+          <th scope="col">Links</th>
          </tr>
       </thead>
       <tbody>
@@ -13,6 +14,7 @@
             <td><a [routerLink] = "['/network', network.networkName]">{{ network.networkName }}</a>
             </td>
             <td>{{ network.countryCode }}</td>
+            <td><a [routerLink] = "['/osm/route/validate', network.networkName]">Validation</a>
           </tr>
         }
       </tbody>

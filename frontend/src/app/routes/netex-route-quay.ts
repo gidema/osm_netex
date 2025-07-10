@@ -13,9 +13,9 @@ export class NetexRouteQuay {
         this.routeId = quay.routeId;
         this.quayIndex = quay.quayIndex;
         this.quayCode = quay.quayCode;
-        this.place = quay.place;
-        this.quayName = quay.quayName;
-        this.stopSideCode = quay.stopSideCode;
+        this.place = quay.place ?? "Unknown";
+        this.quayName = quay.quayName ?? "Unknown";
+        this.stopSideCode = quay.stopSideCode ?? "";
         this.stopplaceCode = quay.stopplaceCode;
     }
 

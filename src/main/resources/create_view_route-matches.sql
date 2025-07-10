@@ -1,5 +1,5 @@
-DROP VIEW IF EXISTS route_match;
-CREATE VIEW route_match AS (
+DROP VIEW IF EXISTS route_match_josm;
+CREATE VIEW route_match_josm AS (
   SELECT osm_rt.osm_route_id AS osm_route_id, 
     osm_rt.name AS osm_route_name,
     ntx_rt.id AS netex_route_id,

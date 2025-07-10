@@ -1,6 +1,6 @@
 package nl.haltedata.chb.dto;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.springframework.data.repository.CrudRepository;
 
@@ -13,6 +13,6 @@ public interface ChbQuayRepository extends CrudRepository<ChbQuay, String> {
 //        
 //    }
 
-    public Iterable<ChbQuay> findAllByQuayCodeIn(List<String> quayCodes);
+    public Iterable<ChbQuay> findAllByQuayCodeIn(Collection<String> quayCodes);
 }
 

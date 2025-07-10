@@ -1,0 +1,34 @@
+@if (network) {
+    <h1>OSM Network: {{ network}}</h1>
+<div class="card my-5">
+  <div class="card-body">
+    <button (click)="sortByLineNumberAsc()">Sort Asc</button>
+    <button (click)="sortByLineNumberDesc()">Desc Desc</button>
+
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Osm id</th>
+            <th scope="col">Line</th>
+            <th scope="col">Name</th>
+            <th scope="col">Transport mode</th>
+            <th scope="col">Status</th>
+            <th scope="col">Known issues</th>
+           </tr>
+        </thead>
+      <tbody>
+        @for (status of selected; track status.osmRouteId) {
+          <tr>
+            <td> {{ status.osmRouteId }} </td>
+            <td> {{ status.line }} </td>
+            <td> {{ status.name }} </td>
+            <td> {{ status.transportMode }} </td>
+            <td> {{ status.matching }} </td>
+            <td> {{ status.issue }} </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+}

@@ -55,7 +55,7 @@ public class RouteChecker {
 
     private final OsmPtRoute osmRoute;
     private final DimNetexRoute netexRoute;
-//    private final RouteMatch routeMatch;
+//    private final RouteMatchJosm routeMatch;
     private List<OsmPtQuay> osmQuays;
     private List<NetexRouteQuay> netexQuays;
     private final List<RouteIssue> matchIssues = new LinkedList<>();

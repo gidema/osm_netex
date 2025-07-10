@@ -9,7 +9,8 @@ import { LineDetailComponent } from './lines/line-detail/line-detail.component';
 import { OsmLineDetailComponent } from './lines/osm-line-detail/osm-line-detail.component';
 import { NetexLineDetailComponent } from './lines/netex-line-detail/netex-line-detail.component';
 import { OsmRouteComponent } from './routes/osm-route/osm-route.component';
-import { NetexQuaySequenceComponent } from './routes/netex-quay-sequence/netex-quay-sequence.component';
+import { NetexRouteVariantComponent } from './routes/netex-route-variant/netex-route-variant.component';
+import { OsmRouteValidatorComponent } from './validation/osm-route-validator/osm-route-validator.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'list-networks', pathMatch: 'full' },
@@ -18,10 +19,11 @@ export const routes: Routes = [
   { path: 'network/:networkName', component: NetworkDetailComponent},
 //  { path: 'netex/route', component: NetexRouteComponent},
   { path: 'netex/route/:routeId', component: NetexRouteComponent},
-  { path: 'netex/quay-sequence/:sequenceId', component: NetexQuaySequenceComponent},
+  { path: 'netex/route-variant/:variantId', component: NetexRouteVariantComponent},
   { path: 'line/:id', component: LineDetailComponent},
   { path: 'osm/line/:osmLineId', component: OsmLineDetailComponent},
   { path: 'osm/route/:osmRouteId', component: OsmRouteComponent},
+  { path: 'osm/route/validate/:network', component: OsmRouteValidatorComponent},
   { path: 'netex/line/:netexLineId', component: NetexLineDetailComponent},
   { path: 'network/:networkName/lines', component: LineListComponent},
   { path: '**', component: PageNotFoundComponent }

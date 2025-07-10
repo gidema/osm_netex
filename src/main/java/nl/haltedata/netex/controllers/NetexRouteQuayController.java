@@ -2,15 +2,12 @@ package nl.haltedata.netex.controllers;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.inject.Inject;
-import nl.haltedata.netex.dto.NetexRouteQuay;
 import nl.haltedata.netex.dto.NetexRouteQuayRepository;
 
 @RestController
@@ -27,7 +24,7 @@ public class NetexRouteQuayController {
      */
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/netex/routequays/{id}")
-    public List<NetexRouteQuay> getRoute(@PathVariable("id") String id) throws Exception {
+    public List<?> getRoute(@PathVariable("id") String id) throws Exception {
         return repository.queryByRouteIdOrderByQuayIndex(id);
     }
 }
