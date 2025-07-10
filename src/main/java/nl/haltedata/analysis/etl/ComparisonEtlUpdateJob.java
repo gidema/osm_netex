@@ -1,4 +1,4 @@
-package nl.haltedata.compare.etl;
+package nl.haltedata.analysis.etl;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;

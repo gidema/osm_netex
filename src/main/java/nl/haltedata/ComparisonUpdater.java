@@ -17,9 +17,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-//@ComponentScan(basePackages = { "nl.haltedata.compare" },
+//@ComponentScan(basePackages = { "nl.haltedata.analysis" },
 //excludeFilters = { @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.osm.config.batch.*")})
-@ComponentScan(basePackages = { "nl.haltedata.compare" })
+@ComponentScan(basePackages = { "nl.haltedata.analysis" })
 public class ComparisonUpdater implements CommandLineRunner, ApplicationContextAware {
 
     private static Logger LOG = LoggerFactory

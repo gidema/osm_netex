@@ -1,4 +1,4 @@
-package nl.haltedata.compare.controllers;
+package nl.haltedata.analysis.controllers;
 
 import java.util.List;
 
@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.inject.Inject;
-import nl.haltedata.compare.dto.RouteMatch;
-import nl.haltedata.compare.dto.RouteMatchRepository;
+import nl.haltedata.analysis.dto.RouteMatch;
+import nl.haltedata.analysis.dto.RouteMatchRepository;
 
 @RestController
 public class RouteMatchController {

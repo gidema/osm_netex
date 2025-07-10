@@ -1,4 +1,4 @@
-package nl.haltedata.compare.controllers;
+package nl.haltedata.analysis.controllers;
 
 import java.util.List;
 
@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.inject.Inject;
-import nl.haltedata.compare.dto.RouteMatchJosm;
-import nl.haltedata.compare.dto.RouteMatchJosmRepository;
+import nl.haltedata.analysis.dto.RouteMatchJosm;
+import nl.haltedata.analysis.dto.RouteMatchJosmRepository;
 
 @RestController
 public class RouteMatchJosmController {

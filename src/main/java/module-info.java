@@ -43,7 +43,7 @@ module HalteData {
     exports nl.haltedata.osm;
     exports nl.haltedata.tools;
     exports nl.haltedata.gtfs;
-    exports nl.haltedata.compare;
+    exports nl.haltedata.analysis;
     exports nl.haltedata.gtfs.controllers;
     exports nl.haltedata.gtfs.config.batch;
     exports nl.haltedata.netex.controllers;
@@ -51,7 +51,7 @@ module HalteData {
     exports nl.haltedata.chb.config.batch;
     exports nl.haltedata.osm.controllers;
     exports nl.haltedata.osm.config.batch;
-    exports nl.haltedata.compare.controllers;
+    exports nl.haltedata.analysis.controllers;
     exports nl.haltedata.validation.controllers;
     
     opens nl.haltedata to spring.core, spring.context, spring.beans;
@@ -66,9 +66,9 @@ module HalteData {
     opens nl.haltedata.chb.config.batch to spring.core, spring.context, spring.beans;
     opens nl.haltedata.osm.config to spring.core, spring.context, spring.beans;
     opens nl.haltedata.osm.config.batch to spring.core, spring.context, spring.beans;
-    opens nl.haltedata.compare.etl to spring.core, spring.context, spring.beans;
+    opens nl.haltedata.analysis.etl to spring.core, spring.context, spring.beans;
     opens nl.haltedata.osm.controllers to spring.core;
-    opens nl.haltedata.compare.controllers to spring.core;
+    opens nl.haltedata.analysis.controllers to spring.core;
     opens nl.haltedata.netex.controllers to spring.core;
     opens nl.haltedata.chb.controllers to spring.core;
     opens nl.haltedata.validation.controllers to spring.core;
@@ -76,6 +76,6 @@ module HalteData {
     opens nl.haltedata.gtfs.dto;
     opens nl.haltedata.netex.dto;
     opens nl.haltedata.osm.dto;
-    opens nl.haltedata.compare.dto;
+    opens nl.haltedata.analysis.dto;
     opens nl.haltedata.validation.model;
 }

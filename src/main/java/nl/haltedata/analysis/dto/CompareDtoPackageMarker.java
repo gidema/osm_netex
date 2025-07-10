@@ -1,4 +1,4 @@
-package nl.haltedata.compare.dto;
+package nl.haltedata.analysis.dto;
 
 public interface CompareDtoPackageMarker {
 	// Marker class for this package

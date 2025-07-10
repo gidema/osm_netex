@@ -1,4 +1,4 @@
-package nl.haltedata.compare.controllers;
+package nl.haltedata.analysis.controllers;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.inject.Inject;
-import nl.haltedata.compare.dto.LineMatch;
-import nl.haltedata.compare.dto.LineRepository;
+import nl.haltedata.analysis.dto.LineMatch;
+import nl.haltedata.analysis.dto.LineRepository;
 import nl.haltedata.netex.dto.DimNetexRoute;
 
 @RestController

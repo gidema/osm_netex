@@ -1,4 +1,4 @@
-package nl.haltedata.compare.dto;
+package nl.haltedata.analysis.dto;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
