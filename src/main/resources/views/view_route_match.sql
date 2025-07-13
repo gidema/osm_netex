@@ -4,8 +4,10 @@
 
 CREATE OR REPLACE VIEW public.v_route_match
  AS
-SELECT match.id,
+ SELECT match.id,
     match.line_id,
+    lm.line_ref AS line_number,
+    lm.line_sort,
     match.osm_route_id,
     match.variant_id AS netex_variant_id,
     match.match_rate,
@@ -26,4 +28,3 @@ SELECT match.id,
 
 ALTER TABLE public.v_route_match
     OWNER TO nlgis;
-

@@ -34,23 +34,26 @@ public class ComparisonEtlUpdateJob {
       SELECT DISTINCT orme.line_number, orme.osm_route_master_id, nle.netex_line_id
       FROM osm_pt.osm_route_master_endpoint orme
       JOIN netex.netex_line_endpoint nle ON nle.line_number = orme.line_number AND nle.stop_place_code = orme.stop_place_code)
-    INSERT INTO line_match(netex_line_id, osm_line_id, network, transport_mode, country_code, line_ref, product_category)
-    SELECT match.netex_line_id, match.osm_route_master_id, ol.network, ol.transport_mode, osmn.country_code, match.line_number, nl.product_category
+    INSERT INTO line_match(netex_line_id, osm_line_id, network, transport_mode, country_code, line_ref, product_category, line_sort)
+    SELECT match.netex_line_id, match.osm_route_master_id, ol.network, ol.transport_mode, osmn.country_code, match.line_number, nl.product_category,
+    CASE WHEN match.line_number ~ '^[0-9]{1,5}$' THEN LPAD(match.line_number, 5, '0') ELSE match.line_number END AS line_sort
     FROM match 
       LEFT JOIN osm_pt.osm_route_master ol ON ol.osm_route_master_id = match.osm_route_master_id
       LEFT JOIN netex.netex_line nl ON nl.id = match.netex_line_id
       LEFT JOIN osm_pt.osm_pt_network osmn ON ol.network = osmn.network_name;
     -- Add Netex lines that have no match
-    INSERT INTO line_match(netex_line_id, osm_line_id, network, transport_mode, country_code, line_ref, product_category)
-    SELECT line.id, NULL, line.network, line.transport_mode, 'NL', line.public_code, line.product_category
+    INSERT INTO line_match(netex_line_id, osm_line_id, network, transport_mode, country_code, line_ref, product_category, line_sort)
+    SELECT line.id, NULL, line.network, line.transport_mode, 'NL', line.public_code, line.product_category,
+    CASE WHEN line.public_code ~ '^[0-9]{1,5}$' THEN LPAD(line.public_code, 5, '0') ELSE line.public_code END AS line_sort
     FROM netex.netex_line line
     WHERE true
         AND line.transport_mode IN ('bus', 'trolleybus')
         AND line.id NOT IN (SELECT netex_line_id FROM line_match)
         AND (line.product_category NOT IN ('Opstapper', 'OV op Maat') OR line.product_category IS NULL);
     -- Add OSM lines that have no match
-    INSERT INTO line_match(netex_line_id, osm_line_id, network, transport_mode, country_code, line_ref, product_category)
-    SELECT NULL, line.osm_route_master_id, line.network, line.transport_mode, network.country_code, line.route_ref, NULL
+    INSERT INTO line_match(netex_line_id, osm_line_id, network, transport_mode, country_code, line_ref, product_category, line_sort)
+    SELECT NULL, line.osm_route_master_id, line.network, line.transport_mode, network.country_code, line.route_ref, NULL,
+    CASE WHEN line_ref ~ '^[0-9]{1,5}$' THEN LPAD(line_ref, 5, '0') ELSE line_ref END AS line_sort
     FROM osm_pt.osm_route_master line
     LEFT JOIN osm_pt.osm_pt_network network ON network.network_name = line.network 
     LEFT JOIN line_match ON line.osm_route_master_id = line_match.osm_line_id
