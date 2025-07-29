@@ -38,6 +38,7 @@ module HalteData {
     requires passengerstopassignment;
     requires java.desktop;
     requires java.net.http;
+    requires org.hibernate.orm.core;
 //    requires hibernate.spatial;
     
     exports nl.haltedata.osm;
@@ -52,7 +53,6 @@ module HalteData {
     exports nl.haltedata.osm.controllers;
     exports nl.haltedata.osm.config.batch;
     exports nl.haltedata.analysis.controllers;
-    exports nl.haltedata.validation.controllers;
     
     opens nl.haltedata to spring.core, spring.context, spring.beans;
     opens nl.haltedata.netex to spring.core, spring.context, spring.beans;
@@ -71,11 +71,9 @@ module HalteData {
     opens nl.haltedata.analysis.controllers to spring.core;
     opens nl.haltedata.netex.controllers to spring.core;
     opens nl.haltedata.chb.controllers to spring.core;
-    opens nl.haltedata.validation.controllers to spring.core;
     opens nl.haltedata.chb.dto;
     opens nl.haltedata.gtfs.dto;
     opens nl.haltedata.netex.dto;
     opens nl.haltedata.osm.dto;
     opens nl.haltedata.analysis.dto;
-    opens nl.haltedata.validation.model;
 }

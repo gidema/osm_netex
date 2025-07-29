@@ -14,7 +14,7 @@ import nl.haltedata.MainConfiguration;
 
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = { "nl.haltedata.osm.dto", "nl.haltedata.chb.dto", "nl.haltedata.analysis.dto", "nl.haltedata.netex.dto",
-            "nl.haltedata.validation.model"})
+            "nl.haltedata.analysis.dto"})
 //@ComponentScan(basePackages = { "nl.haltedata.chb", "nl.haltedata.gtfs", "nl.haltedata.netex", "nl.haltedata.analysis", "nl.haltedata.osm", "nl.haltedata.validation"},
 @ComponentScan(basePackages = { "nl.haltedata.netex", "nl.haltedata.chb", "nl.haltedata.analysis", "nl.haltedata.analysis.dto", "nl.haltedata.osm", "nl.haltedata.validation"},
     excludeFilters = { @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.gtfs.config.batch.*"),

@@ -14,10 +14,12 @@ public class RouteMatch {
     @Id
     private Long id;
     private Long lineId;
+    private String lineNumber;
+    private String lineSort;
     private Long osmRouteId;
     private Long netexVariantId;
     private String network;
-    private Double match_rate;
+    private Double matchRate;
     private String matching;
     private String netexLineNumber;
     private String netexName;

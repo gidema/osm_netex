@@ -24,6 +24,7 @@ public class OsmPtNetworkController {
      * @return
      * @throws Exception if any error occurs during job launch.
      */
+    @SuppressWarnings("exports")
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/list")
     public List<OsmPtNetwork> getNetworks() throws Exception {

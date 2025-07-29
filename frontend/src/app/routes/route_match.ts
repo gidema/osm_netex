@@ -1,10 +1,19 @@
 export class RouteMatch {
+    id!: number;
+    lineId!: number;
     osmRouteId!: number;
-    osmRouteName!: string;
-    netexRouteId!: string;
-    netexLineName!: string;
-    netexDirection!: string;
-    quayCountDifference!: number;
-    startAreaMatch!: boolean;
-    endAreaMatch!: boolean;
+    lineNumber!: String;
+    lineSort!: String;
+    variantId!: number;
+    matchRate!: number;
+    matching!: string;
+    network!: string;
+    netexLineNumber!: string;
+    netexName!: string;
+    directionType!: string;
+    osmName!: string;
+    osmTransportMode!: string;
+    osmLineNumber!: string;
+    from!: string;
+    to!: string;
 }

@@ -3,21 +3,21 @@
     <table class="table table-bordered table-striped">
       <thead class="thead-dark">
         <tr>
-          <th scope="col">Osm id</th>
+          <th scope="col">Osm route id</th>
+          <th scope="col">Match Rate</th>
+          <th scope="col">Matching</th>
+          <th scope="col">Netex line number</th>
           <th scope="col">Osm name</th>
-          <th scope="col">Netex id</th>
-          <th scope="col">Netex line name</th>
-          <th scope="col">Netex direction</th>
          </tr>
       </thead>
       <tbody>
-        @for (match of matches; track match.netexRouteId) {
+        @for (match of selection; track match.id) {
           <tr>
             <td> {{ match.osmRouteId }} </td>
-            <td> {{ match.osmRouteName }}</td>
-            <td><a [routerLink] = "['/netex/route', match.netexRouteId]"> {{ match.netexRouteId }}</a></td>
-            <td> {{ match.netexLineName }}</td>
-            <td> {{ match.netexDirection }}</td>
+            <td> {{ match.matchRate }}</td>
+            <td> {{ match.matching }}</td>
+            <td> {{ match.osmLineNumber }}</td>
+            <td> {{ match.osmName }}</td>
           </tr>
         }
       </tbody>

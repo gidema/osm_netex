@@ -27,4 +27,3 @@ CREATE OR REPLACE VIEW public.v_route_match
      LEFT JOIN line_match lm ON lm.id = match.line_id;
 
 ALTER TABLE public.v_route_match
-    OWNER TO nlgis;

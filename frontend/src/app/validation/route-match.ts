@@ -1,6 +1,8 @@
-export class RouteMatch {
+export class RouteMatch_ {
     public id: Number;
     public lineId: Number;
+    public lineNumber: String;
+    public lineSort: String;
     public osmRouteId: Number;
     public netexVariantId: Number;
     public network: String;
@@ -15,22 +17,22 @@ export class RouteMatch {
     public from: String;
     public to: String;
     
-    public constructor(status: RouteMatch) {
-        this.id = status.id;
-        this.lineId = status.lineId;
-        this.network = status.network;
-        this.osmRouteId = status.osmRouteId;
-        this.netexVariantId = status.netexVariantId;
-        this.match_rate = status.match_rate;
-        this.matching = status.matching;
-        this.netexLineNumber = status.netexLineNumber;
-        this.netexName = status.netexName;
-        this.directionType = status.directionType;
-        this.network = status.network;
-        this.osmName = status.osmName;
-        this.osmTransportMode = status.osmTransportMode;
-        this.osmLineNumber = status.osmLineNumber;
-        this.from = status.from;
-        this.to = status.to;
+    public constructor(match: RouteMatch) {
+        this.id = match.id;
+        this.lineId = match.lineId;
+        this.network = match.network;
+        this.osmRouteId = match.osmRouteId;
+        this.netexVariantId = match.netexVariantId;
+        this.match_rate = match.match_rate;
+        this.matching = match.matching;
+        this.netexLineNumber = match.netexLineNumber;
+        this.netexName = match.netexName;
+        this.directionType = match.directionType;
+        this.network = match.network;
+        this.osmName = match.osmName;
+        this.osmTransportMode = match.osmTransportMode;
+        this.osmLineNumber = match.osmLineNumber;
+        this.from = match.from;
+        this.to = match.to;
     }
 }
