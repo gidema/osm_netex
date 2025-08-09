@@ -16,10 +16,6 @@ import org.springframework.context.annotation.Import;
         @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.chb.config.batch.*"),
         @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.osm.config.batch.*")})
 @EntityScan({"nl.haltedata.analysis.dto", "nl.haltedata.netex.dto", "nl.haltedata.osm.dto", "nl.haltedata.chb.dto", "nl.haltedata.gtfs.dto", "nl.haltedata.validation.model"})
-//@ComponentScan(basePackages = { "nl.haltedata"}, excludeFilters = { @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.gtfs.config.batch.*"),
-//    @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.netex.config.batch.*"),
-//    @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.chb.config.batch.*"),
-//    @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.osm.config.batch.*")})
 @Import(MainConfiguration.class)
 public class PublicTransportApplicationTest {
     private static Logger LOG = LoggerFactory

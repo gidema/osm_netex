@@ -34,8 +34,8 @@ public class PublicTransportApplication {
 
 
     @SuppressWarnings("resource")
-	public static void main(String[] args) {
-    	var application = new SpringApplication(PublicTransportApplication.class);
+    public static void main(String[] args) {
+        var application = new SpringApplication(PublicTransportApplication.class);
 
         LOG.info("STARTING THE APPLICATION");
         application.run(args);

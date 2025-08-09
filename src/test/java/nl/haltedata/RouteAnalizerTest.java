@@ -66,7 +66,8 @@ public class RouteAnalizerTest implements CommandLineRunner {
         analizer.analize(network);
         var report = analizer.getReport();
         try (
-            var writer = new FileWriter(String.format("/home/gertjan/Apps/osm_netex/results/analysis/%s.html", network));
+            var writer = new FileWriter(String.format("/home/gertjan/Apps/osm_netex/results/analysis/%s.html", 
+                network.replace('/', '_')));
         ) {
             writer.write(report);
             writer.close();

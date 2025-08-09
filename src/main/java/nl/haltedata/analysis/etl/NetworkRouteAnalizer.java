@@ -4,9 +4,11 @@ import java.util.Comparator;
 import java.util.Locale;
 import java.util.Objects;
 
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import jakarta.inject.Inject;
+import nl.haltedata.analysis.HtmlRouteReporter;
 import nl.haltedata.analysis.dto.RouteMatch;
 import nl.haltedata.analysis.dto.RouteMatchRepository;
 
@@ -16,22 +18,20 @@ public class NetworkRouteAnalizer {
     private LineSortComparator lineSortcomparator = new LineSortComparator();
     private Locale locale = new Locale("nl");
     
-    @Inject
-    RouteMatchRepository routeMatchRepository;
-    
-    @Inject
-    RouteAnalizerFactory analizerFactory;
+    @Inject ApplicationContext ctx;
+    @Inject RouteMatchRepository routeMatchRepository;
+    @Inject HtmlRouteReporter reporter;
+    @Inject RouteAnalizer routeAnalizer;
     
     public void analize(String network) {
         var routeMatches = routeMatchRepository.findByNetwork(network);
         routeMatches.sort(lineSortcomparator);
-        var sb = new StringBuilder(5000);
+        var sb = new StringBuilder(10000);
         sb.append("<html>\n<body>\n");
         for (var routeMatch : routeMatches) {
-            var routeAnalizer = analizerFactory.getRouteAnalizer(locale);
             if (routeMatch.getMatchRate() > 0 && routeMatch.getMatchRate() < 100) {
-                var analysis = routeAnalizer.analize(routeMatch);
-                sb.append(analysis.getIssueReport());
+                routeAnalizer.analize(routeMatch);
+                sb.append(reporter.report(routeMatch, locale));
             }
         }
         sb.append("</body>\n</html>");
@@ -50,4 +50,11 @@ public class NetworkRouteAnalizer {
             return lineSort1.compareTo(lineSort2);
         }
     }
+    
+//    @SuppressWarnings("static-method")
+//    @Bean
+//    @Scope("prototype")
+//    RouteAnalizer routeAnalizer() {
+//        return new RouteAnalizer();
+//    }
  }

@@ -3,10 +3,8 @@ package nl.haltedata.analysis.dto;
 import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.transaction.annotation.Transactional;
 
-public interface RouteIssueDataRepository extends CrudRepository<RouteIssueData, Long> {
-    List<RouteMatch> findByRouteMatchId(Long routeMatchId);
-    @Transactional
+public interface RouteIssueDataRepository extends CrudRepository<RouteIssueData, RouteMatchId> {
+    List<RouteIssueData> findByRouteMatchId(Long routeMatchId);
     void deleteAllByRouteMatchId(Long routeMatchId);
 }

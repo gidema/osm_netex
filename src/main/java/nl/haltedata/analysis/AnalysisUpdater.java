@@ -1,4 +1,4 @@
-package nl.haltedata;
+package nl.haltedata.analysis;
 
 
 import org.slf4j.Logger;
@@ -11,15 +11,17 @@ import org.springframework.beans.BeansException;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-//@ComponentScan(basePackages = { "nl.haltedata.analysis" },
-//excludeFilters = { @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.osm.config.batch.*")})
-@ComponentScan(basePackages = { "nl.haltedata.analysis" })
+@ComponentScan(basePackages = {"nl.haltedata.analysis"})
+@EntityScan(basePackages = {"nl.haltedata.analysis.dto", "nl.haltedata.osm.dto", "nl.haltedata.netex.dto"})
+@EnableJpaRepositories(basePackages = {"nl.haltedata.analysis.dto", "nl.haltedata.osm.dto","nl.haltedata.netex.dto"})
 public class AnalysisUpdater implements CommandLineRunner, ApplicationContextAware {
 
     private static Logger LOG = LoggerFactory

@@ -53,6 +53,7 @@ module HalteData {
     exports nl.haltedata.osm.controllers;
     exports nl.haltedata.osm.config.batch;
     exports nl.haltedata.analysis.controllers;
+    exports nl.haltedata.analysis.etl;
     
     opens nl.haltedata to spring.core, spring.context, spring.beans;
     opens nl.haltedata.netex to spring.core, spring.context, spring.beans;
@@ -71,6 +72,7 @@ module HalteData {
     opens nl.haltedata.analysis.controllers to spring.core;
     opens nl.haltedata.netex.controllers to spring.core;
     opens nl.haltedata.chb.controllers to spring.core;
+    opens nl.haltedata.analysis to spring.core;
     opens nl.haltedata.chb.dto;
     opens nl.haltedata.gtfs.dto;
     opens nl.haltedata.netex.dto;
