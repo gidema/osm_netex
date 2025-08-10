@@ -6,9 +6,11 @@ import java.util.Objects;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.inject.Inject;
 import nl.haltedata.analysis.HtmlRouteReporter;
+import nl.haltedata.analysis.dto.RouteIssueDataRepository;
 import nl.haltedata.analysis.dto.RouteMatch;
 import nl.haltedata.analysis.dto.RouteMatchRepository;
 
@@ -22,8 +24,11 @@ public class NetworkRouteAnalizer {
     @Inject RouteMatchRepository routeMatchRepository;
     @Inject HtmlRouteReporter reporter;
     @Inject RouteAnalizer routeAnalizer;
+    @Inject RouteIssueDataRepository routeIssueDataRepository;
     
+    @Transactional
     public void analize(String network) {
+        routeIssueDataRepository.deleteByNetwork(network);
         var routeMatches = routeMatchRepository.findByNetwork(network);
         routeMatches.sort(lineSortcomparator);
         var sb = new StringBuilder(10000);

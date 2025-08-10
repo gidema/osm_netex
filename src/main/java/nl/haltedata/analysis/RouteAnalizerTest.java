@@ -1,7 +1,5 @@
-package nl.haltedata;
+package nl.haltedata.analysis;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -22,14 +20,11 @@ import nl.haltedata.analysis.etl.NetworkRouteAnalizer;
 import nl.haltedata.osm.dto.OsmPtNetworkRepository;
 
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = { "nl.haltedata.osm.dto", "nl.haltedata.chb.dto", "nl.haltedata.analysis.dto", "nl.haltedata.netex.dto",
-"nl.haltedata.validation.model", "nl.haltedata.analysis"})
-@ComponentScan(basePackages = { "nl.haltedata.netex", "nl.haltedata.chb", "nl.haltedata.analysis", "nl.haltedata.analysis.dto", "nl.haltedata.osm", "nl.haltedata.validation"},
-excludeFilters = { @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.gtfs.config.batch.*"),
-    @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.netex.config.batch.*"),
-    @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.chb.config.batch.*"),
-    @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.osm.config.batch.*")})
-@EntityScan({"nl.haltedata.analysis.dto", "nl.haltedata.netex.dto", "nl.haltedata.osm.dto", "nl.haltedata.validation.model"})
+@EnableJpaRepositories(basePackages = {"nl.haltedata.analysis.dto", "nl.haltedata.osm.dto", "nl.haltedata.netex.dto"})
+@ComponentScan(basePackages = { "nl.haltedata.analysis"},
+    excludeFilters = { @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.gtfs.config.batch.*")}
+)
+@EntityScan({"nl.haltedata.analysis.dto", "nl.haltedata.netex.dto", "nl.haltedata.osm.dto"})
 public class RouteAnalizerTest implements CommandLineRunner {
 
     @Inject

@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.inject.Inject;
 import nl.haltedata.analysis.QuayMatch;
@@ -61,13 +60,11 @@ public class RouteAnalizer {
     @Inject
     private RouteIssueDataRepository routeIssueDataRepository;
     
-    @Transactional
     public RouteAnalysis analize(Long routeMatchId) {
         var routeMatch = routeMatchRepository.findById(routeMatchId).get();
         return analize(routeMatch);
     }
     
-    @Transactional
     public RouteAnalysis analize(RouteMatch match) {
         var analizer = new Analizer();
         return analizer.analize(match);
@@ -85,7 +82,6 @@ public class RouteAnalizer {
 
         RouteAnalysis analize(RouteMatch match) {
             this.routeMatch = match;
-            routeIssueDataRepository.deleteAllByRouteMatchId(match.getId());
             osmRoute = osmRouteRepository.findById(routeMatch.getOsmRouteId()).get();
             netexRouteVariant = netexRouteVariantRepository.findById(routeMatch.getNetexVariantId()).get();
             // TODO Auto-generated method stub
