@@ -16,7 +16,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import jakarta.inject.Inject;
-import nl.haltedata.analysis.etl.NetworkRouteAnalizer;
+import nl.haltedata.analysis.etl.NetworkRouteAnalyzer;
 import nl.haltedata.osm.dto.OsmPtNetworkRepository;
 
 @SpringBootApplication
@@ -25,18 +25,18 @@ import nl.haltedata.osm.dto.OsmPtNetworkRepository;
     excludeFilters = { @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.gtfs.config.batch.*")}
 )
 @EntityScan({"nl.haltedata.analysis.dto", "nl.haltedata.netex.dto", "nl.haltedata.osm.dto"})
-public class RouteAnalizerTest implements CommandLineRunner {
+public class RouteAnalyzerTest implements CommandLineRunner {
 
     @Inject
     OsmPtNetworkRepository networkRepository;
     
     private static Logger LOG = LoggerFactory
-            .getLogger(RouteAnalizerTest.class);
+            .getLogger(RouteAnalyzerTest.class);
 
     @SuppressWarnings("resource")
     public static void main(String[] args) {
         LOG.info("STARTING THE APPLICATION");
-        new SpringApplicationBuilder(RouteAnalizerTest.class)
+        new SpringApplicationBuilder(RouteAnalyzerTest.class)
             .web(WebApplicationType.NONE)
             .run(args);
         LOG.info("APPLICATION FINISHED");
@@ -44,8 +44,8 @@ public class RouteAnalizerTest implements CommandLineRunner {
     
     @SuppressWarnings("static-method")
     @Bean
-    public NetworkRouteAnalizer analizer() {
-        return new NetworkRouteAnalizer();
+    public NetworkRouteAnalyzer analizer() {
+        return new NetworkRouteAnalyzer();
     }
     
     @Override

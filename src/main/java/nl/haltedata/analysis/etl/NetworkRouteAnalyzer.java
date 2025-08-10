@@ -15,7 +15,7 @@ import nl.haltedata.analysis.dto.RouteMatch;
 import nl.haltedata.analysis.dto.RouteMatchRepository;
 
 @Component
-public class NetworkRouteAnalizer {
+public class NetworkRouteAnalyzer {
     private String report;
     private LineSortComparator lineSortcomparator = new LineSortComparator();
     private Locale locale = new Locale("nl");
@@ -23,11 +23,12 @@ public class NetworkRouteAnalizer {
     @Inject ApplicationContext ctx;
     @Inject RouteMatchRepository routeMatchRepository;
     @Inject HtmlRouteReporter reporter;
-    @Inject RouteAnalizer routeAnalizer;
+    @Inject RouteAnalyzerFactory routeAnalizerFactory;
     @Inject RouteIssueDataRepository routeIssueDataRepository;
     
     @Transactional
     public void analize(String network) {
+        RouteAnalyzer routeAnalizer = routeAnalizerFactory.getAnalyzer();
         routeIssueDataRepository.deleteByNetwork(network);
         var routeMatches = routeMatchRepository.findByNetwork(network);
         routeMatches.sort(lineSortcomparator);
@@ -59,7 +60,7 @@ public class NetworkRouteAnalizer {
 //    @SuppressWarnings("static-method")
 //    @Bean
 //    @Scope("prototype")
-//    RouteAnalizer routeAnalizer() {
-//        return new RouteAnalizer();
+//    RouteAnalyzer routeAnalizer() {
+//        return new RouteAnalyzer();
 //    }
  }
