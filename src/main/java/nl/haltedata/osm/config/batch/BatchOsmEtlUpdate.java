@@ -38,7 +38,7 @@ SELECT rtm.id AS osm_route_master_id,
   CAST((rtm.tags->'colour') AS CHARACTER VARYING) AS colour,
   CAST(NULLIF(regexp_replace((rtm.tags->'ref'), '\\D','','g'), '') AS INTEGER) AS line_number
 FROM relations rtm
-WHERE rtm.tags->'type' = 'route_master' AND rtm.tags->'route_master'  IN ('bus', 'trolleybus', 'tram', 'train');
+WHERE rtm.tags->'type' = 'route_master' AND rtm.tags->'route_master'  IN ('bus', 'trolleybus', 'tram', 'train', 'ferry');
 """;
 
     private static String update_route_master_route_table_sql = """
