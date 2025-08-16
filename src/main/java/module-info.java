@@ -5,7 +5,7 @@
  * 
  */
 module HalteData {
-    requires transitive chbhaltebestand;
+//    requires transitive chbhaltebestand;
     requires transitive spring.core;
     requires transitive org.entur.netex.java.model;
     requires spring.boot;
@@ -22,10 +22,10 @@ module HalteData {
     requires org.locationtech.jts;
     requires java.sql;
     requires java.xml;
-    requires proj4j;
-    requires org.apache.commons.csv;
-    requires osmosis.core;
-    requires osmosis.xml;
+    requires transitive proj4j;
+//    requires org.apache.commons.csv;
+    requires transitive osmosis.core;
+    requires transitive osmosis.xml;
     requires spring.batch.infrastructure;
     requires spring.batch.core;
     requires spring.tx;
@@ -34,8 +34,8 @@ module HalteData {
     requires org.apache.tomcat.embed.core;
     requires spring.jcl;
     requires spring.oxm;
-    requires commons.net;
-    requires passengerstopassignment;
+    requires transitive commons.net;
+//    requires passengerstopassignment;
     requires java.desktop;
     requires java.net.http;
     requires org.hibernate.orm.core;
