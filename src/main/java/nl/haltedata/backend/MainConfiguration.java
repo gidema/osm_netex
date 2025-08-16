@@ -1,4 +1,4 @@
-package nl.haltedata;
+package nl.haltedata.backend;
 
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.PrecisionModel;

@@ -41,12 +41,14 @@ module HalteData {
     requires org.hibernate.orm.core;
 //    requires hibernate.spatial;
     
+    exports nl.haltedata.cli;
+    exports nl.haltedata.backend;
     exports nl.haltedata.osm;
     exports nl.haltedata.tools;
-    exports nl.haltedata.gtfs;
+//    exports nl.haltedata.gtfs;
     exports nl.haltedata.analysis;
-    exports nl.haltedata.gtfs.controllers;
-    exports nl.haltedata.gtfs.config.batch;
+//    exports nl.haltedata.gtfs.controllers;
+//    exports nl.haltedata.gtfs.config.batch;
     exports nl.haltedata.netex.controllers;
     exports nl.haltedata.chb.controllers;
     exports nl.haltedata.chb.config.batch;
@@ -55,13 +57,13 @@ module HalteData {
     exports nl.haltedata.analysis.controllers;
     exports nl.haltedata.analysis.etl;
     
-    opens nl.haltedata to spring.core, spring.context, spring.beans;
-    opens nl.haltedata.netex to spring.core, spring.context, spring.beans;
+    opens nl.haltedata.cli to  spring.core;
+    opens nl.haltedata.backend to spring.core;
     opens nl.haltedata.tools to spring.core;
     opens nl.haltedata.osm to spring.core, spring.context, spring.beans;
-    opens nl.haltedata.gtfs to spring.core, spring.context, spring.beans;
-    opens nl.haltedata.gtfs.config to spring.core, spring.context, spring.beans;
-    opens nl.haltedata.gtfs.config.batch to spring.core, spring.context, spring.beans;
+//    opens nl.haltedata.gtfs to spring.core, spring.context, spring.beans;
+//    opens nl.haltedata.gtfs.config to spring.core, spring.context, spring.beans;
+//    opens nl.haltedata.gtfs.config.batch to spring.core, spring.context, spring.beans;
     opens nl.haltedata.chb to spring.core, spring.context, spring.beans;
     opens nl.haltedata.chb.config to spring.core, spring.context, spring.beans;
     opens nl.haltedata.chb.config.batch to spring.core, spring.context, spring.beans;
@@ -74,7 +76,7 @@ module HalteData {
     opens nl.haltedata.chb.controllers to spring.core;
     opens nl.haltedata.analysis to spring.core;
     opens nl.haltedata.chb.dto;
-    opens nl.haltedata.gtfs.dto;
+//    opens nl.haltedata.gtfs.dto;
     opens nl.haltedata.netex.dto;
     opens nl.haltedata.osm.dto;
     opens nl.haltedata.analysis.dto;

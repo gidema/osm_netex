@@ -1,5 +1,8 @@
 package nl.haltedata.analysis.dto;
 
+import java.util.Comparator;
+import java.util.Objects;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -29,4 +32,13 @@ public class RouteMatch {
     private String osmLineNumber;
     private String from;
     private String to;
+    
+    public static class LineSortComparator implements Comparator<RouteMatch> {
+        @Override
+        public int compare(RouteMatch rm1, RouteMatch rm2) {
+            var lineSort1 = Objects.requireNonNullElse(rm1.getLineSort(), "");
+            var lineSort2 = Objects.requireNonNullElse(rm2.getLineSort(), "");
+            return lineSort1.compareTo(lineSort2);
+        }
+    }
 }

@@ -25,9 +25,9 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 
 import jakarta.inject.Inject;
-import nl.haltedata.MainConfiguration;
+import nl.haltedata.backend.MainConfiguration;
+import nl.haltedata.backend.PublicTransportApplication;
 import nl.haltedata.chb.dto.ChbDtoPackageMarker;
-import nl.haltedata.netex.PublicTransportApplication;
 
 @SpringBootApplication
 @ComponentScan(basePackages = { "nl.haltedata.chb" },

@@ -11,24 +11,26 @@ public interface RouteIssueDataRepository extends CrudRepository<RouteIssueData,
     List<RouteIssueData> findByRouteMatchId(Long routeMatchId);
     
     @Modifying
-    @Query("""
+    @Query(value = """
     DELETE
     FROM public.route_issue_data issue
-    JOIN route_match rm ON issue.route_match_id = rm.id
-    JOIN line_match lm ON lm.id = rm.line_id
-    WHERE lm.network = :network
-""")
-    void deleteByNetwork(@Param("title") String title);
+    WHERE route_match_id IN (
+      SELECT rm.id
+      FROM route_match rm
+      JOIN line_match lm ON lm.id = rm.line_id
+      WHERE lm.network = :network)
+""", nativeQuery = true)
+    void deleteByNetwork(@Param("network") String network);
     
     /**
      * Delete obsolete issue from the table.
      * Obsolete issues have old route_match id's that no longer exist.
      */
     @Modifying
-    @Query("""
+    @Query(value = """
 DELETE FROM public.route_issue_data issue
 WHERE issue.route_match_id NOT IN (
   SELECT id FROM route_match)
-""")
+""", nativeQuery = true)
     void deleteObsolete();
 }

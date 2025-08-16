@@ -1,17 +1,19 @@
 package nl.haltedata.analysis.etl;
 
 import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import jakarta.inject.Inject;
 
 @Component
-public class RouteAnalyzerFactory {
+@Scope("prototype")
+public class NetworkRouteAnalyzerFactory {
 
     @Inject
-    private ObjectFactory<RouteAnalyzer> objectFactory;
+    private ObjectFactory<NetworkRouteAnalyzer> objectFactory;
 
-    public RouteAnalyzer getAnalyzer() {
+    public NetworkRouteAnalyzer getAnalyzer() {
         return objectFactory.getObject();
     }
 }

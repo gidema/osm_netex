@@ -1,0 +1,48 @@
+responsible_area_ref,authority,transport_companies,brand,start_date,end_date
+Achterhoek-Rivierenland,Provincie Gelderland,{Arriva},,2010-12-12 00:00:00,2025-12-13 00:00:00
+Airport Shuttle Lelystad,Provincie Flevoland,{Arriva},,2020-04-01 00:00:00,2030-03-31 00:00:00
+Amstelland-Meerlanden,Vervoerregio Amsterdam,{Connexxion},,2017-12-10 00:00:00,2032-12-11 00:00:00
+Arnhem Nijmegen,Provincie Gelderland,{Hermes},Breng,2012-12-09 00:00:00,2026-06-27 00:00:00
+Bus Rotterdam,MRDH,{RET},,2019-12-15 00:00:00,2034-12-09 00:00:00
+Busvervoer Almere,Gemeente Almere,{Keolis Nederland},,2017-12-10 00:00:00,2027-12-11 00:00:00
+"Drechtsteden, Molenlanden en Gorinchem",Provincie Zuid-Holland,{Qbuzz},,2018-12-09 00:00:00,2033-12-10 00:00:00
+Fast Ferry Vlissingen-Breskens,Provincie Zeeland,{Westerschelde Ferry BV},,2024-01-01 00:00:00,2027-12-31 00:00:00
+FlexRRReis Flevoland,Provincie Flevoland,{Willemsen-De Koning},,2025-07-01 00:00:00,2031-06-30 00:00:00
+Friese Waddenveren Oost,Ministerie van Infrastructuur en Waterstaat,{Wagenborg},,2014-04-09 00:00:00,2029-01-08 00:00:00
+Friese Waddenveren West,Ministerie van Infrastructuur en Waterstaat,{Rederij Doeksen},,2014-04-18 00:00:00,2029-01-08 00:00:00
+Fryslân,Provincie Fryslân,{Qbuzz},,2024-12-15 00:00:00,2034-12-09 00:00:00
+Gooi en Vechtstreek,Provincie Noord-Holland,{Transdev},,2021-07-11 00:00:00,2030-12-14 00:00:00
+Groningen-Drenthe,OV-bureau Groningen-Drenthe (OVBGD),{Qbuzz},,2019-12-15 00:00:00,2029-12-08 00:00:00
+Haaglanden Stad,MRDH,{HTM},,2019-12-15 00:00:00,2034-12-09 00:00:00
+Haaglanden Streek,MRDH,{EBS},,2019-08-25 00:00:00,2030-12-14 00:00:00
+Haarlem-IJmond,Provincie Noord-Holland,{Connexxion},,2017-09-03 00:00:00,2028-07-15 00:00:00
+HaltetaxiRRReis Gelderland,Provincie Gelderland,{Qarin},,2022-04-03 00:00:00,2026-04-06 00:00:00
+Hoeksche Waard - Goeree-Overflakkee,Provincie Zuid-Holland,{Connexxion},,2015-12-13 00:00:00,2025-12-13 00:00:00
+Hoofdrailnet,Ministerie van I&W,{NS},,2025-01-01 00:00:00,2033-12-24 00:00:00
+IJssel-Vecht,"Provincies Flevoland, Gelderland en Overijssel",{EBS},RRReis,2022-12-11 00:00:00,2035-12-08 00:00:00
+Limburg,Provincie Limburg,{Arriva},,2016-12-11 00:00:00,2031-12-13 00:00:00
+Noord-Holland Noord,Provincie Noord-Holland,{Connexxion},,2018-07-22 00:00:00,2028-07-15 00:00:00
+Oost-Brabant,Provincie Noord-Brabant,{Arriva},Bravo,2014-12-14 00:00:00,2026-12-12 00:00:00
+Parkshuttle Rivium,MRDH,{Transdev},,2021-01-01 00:00:00,2033-12-10 00:00:00
+Personenvervoer over water in Rotterdam en Schiedam,"MRDH, Gemeente Rotterdam, Havenbedrijf Rotterdam",{Watertaxi Rotterdam},,2022-01-01 00:00:00,2036-12-31 00:00:00
+Personenvervoer over water Rotterdam - Drechtsteden,Provincie Zuid-Holland,{Aqualiner},,2022-01-01 00:00:00,2029-12-31 00:00:00
+Provincie Utrecht,Provincie Utrecht,{Syntus},,2016-12-11 00:00:00,2025-12-13 00:00:00
+Publiek Vervoer Groningen-Drenthe,OV-bureau Groningen-Drenthe (OVBGD),"{CTS,DVG,De Grooth,Nuis,UVO}",,2018-04-08 00:00:00,2026-08-31 00:00:00
+Rail Haaglanden,MRDH,{HTM},,2016-12-11 00:00:00,2031-12-13 00:00:00
+Rail Rotterdam,MRDH,{RET},,2016-12-11 00:00:00,2030-12-14 00:00:00
+Regio Utrecht,Provincie Utrecht,{Qbuzz},U-OV,2013-12-08 00:00:00,2025-12-13 00:00:00
+Regionaal spoorvervoer Fryslân en Groningen,"Provincies Groningen, Fryslân en LNVG Niedersachsen",{Arriva},,2020-12-13 00:00:00,2035-12-08 00:00:00
+Schiphol Landside/Airside,Schiphol,{Arriva Touring},,2024-04-01 00:00:00,2028-12-31 00:00:00
+Stadsvervoer Amsterdam,Vervoerregio Amsterdam,{GVB},,2025-07-01 00:00:00,2036-12-31 00:00:00
+Treindienst Amersfoort - Ede-Wageningen,Provincie Gelderland,{Keolis Nederland},RRReis,2023-12-10 00:00:00,2036-12-13 00:00:00
+Treindienst Gouda-Alphen aan den Rijn,Provincie Zuid-Holland,{NS},,2016-12-11 00:00:00,2031-12-14 00:00:00
+Twente,Provincie Overijssel,{Arriva},RRReis,2023-12-10 00:00:00,2028-12-09 00:00:00
+Vechtdallijnen,Provincies Overijssel en Drenthe,{Arriva},Blauwnet,2012-12-09 00:00:00,2028-12-09 00:00:00
+Veluwe-Zuid,Provincie Gelderland,{Hermes},RRReis,2022-12-11 00:00:00,2026-06-27 00:00:00
+Voorne-Putten en Rozenburg,MRDH,{EBS},,2018-12-09 00:00:00,2028-12-09 00:00:00
+West-Brabant,Provincie Noord-Brabant,{Arriva},,2025-07-06 00:00:00,2035-07-14 00:00:00
+Zaanstreek-Waterland,Vervoerregio Amsterdam,{EBS},,2023-12-10 00:00:00,2033-12-10 00:00:00
+Zeeland,Provincie Zeeland,{Connexxion},,2014-12-14 00:00:00,2026-12-12 00:00:00
+Zuid-Holland Noord,Provincie Zuid-Holland,{Qbuzz},,2024-12-15 00:00:00,2032-12-12 00:00:00
+Zuidoost-Brabant,Provincie Noord-Brabant,{Hermes},Bravo,2016-12-11 00:00:00,2029-07-14 00:00:00
+Zwolle - Kampen en Zwolle - Enschede,Provincie Overijssel,{Keolis Nederland},Blauwnet,2017-12-10 00:00:00,2032-12-11 00:00:00
