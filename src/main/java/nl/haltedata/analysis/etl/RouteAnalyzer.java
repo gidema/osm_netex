@@ -83,8 +83,6 @@ public class RouteAnalyzer {
             this.routeMatch = match;
             osmRoute = osmRouteRepository.findById(routeMatch.getOsmRouteId()).get();
             netexRouteVariant = netexRouteVariantRepository.findById(routeMatch.getNetexVariantId()).get();
-            // TODO Auto-generated method stub
-        
             osmQuays = osmRouteQuayRepository.findByOsmRouteId(osmRoute.getOsmRouteId());
             netexQuays = netexRouteVariantQuayRepository.
                 findByVariantId(netexRouteVariant.getId());

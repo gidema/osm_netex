@@ -20,7 +20,7 @@ public class NetworkRouteAnalyzer {
         routeIssueDataRepository.deleteByNetwork(network);
         var routeMatches = routeMatchRepository.findByNetwork(network);
         for (var routeMatch : routeMatches) {
-            if (routeMatch.getMatchRate() > 0 && routeMatch.getMatchRate() < 100) {
+            if (routeMatch.getNetexVariantId() != null && routeMatch.getMatchRate() > 0 && routeMatch.getMatchRate() < 100) {
                 routeAnalizer.analize(routeMatch);
              }
         }
