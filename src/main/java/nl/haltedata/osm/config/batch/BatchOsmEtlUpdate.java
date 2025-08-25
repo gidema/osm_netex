@@ -26,6 +26,21 @@ import lombok.RequiredArgsConstructor;
 @EnableBatchProcessing
 public class BatchOsmEtlUpdate {
 
+    private static String update_network_table_sql = """
+TRUNCATE TABLE osm_pt.st_osm_network;
+INSERT INTO osm_pt.st_osm_network (id, name, short_name, operator, start_date, end_date, wikidate, note)
+SELECT id,
+  tags->'name' AS name,
+  tags->'short_name' AS short_name,
+  tags->'operator' AS operator,
+  tags->'start_date' AS start_date, 
+  tags->'end_date' AS end_date,
+  tags->'wikidata' AS wikidata,
+   tags->'note' AS note
+FROM relations
+WHERE tags->'type' = 'network' AND tags->'network' = 'public_transport'
+""";
+    
     private static String update_route_master_table_sql = """
 TRUNCATE TABLE osm_pt.osm_route_master;
 INSERT INTO osm_pt.osm_route_master
@@ -304,7 +319,8 @@ LEFT JOIN osm_pt.osm_missing_ifopt_area_code mac2 ON mac2.osm_id = rf2.osm_platf
     @Bean
     Job updateOsmEtlJob(JobRepository jobRepository) { 
         return new JobBuilder("osmEtlUpdate", jobRepository)
-            .start(sqlUpdateStep("Update routemasters",update_route_master_table_sql))
+            .start(sqlUpdateStep("Update pt networks",update_network_table_sql))
+            .next(sqlUpdateStep("Update routemasters",update_route_master_table_sql))
             .next(sqlUpdateStep("Update routes", update_route_table_sql))
             .next(sqlUpdateStep("Update routemaster routes", update_route_master_route_table_sql))
             .next(sqlUpdateStep("Update quays", update_quays_table_sql))

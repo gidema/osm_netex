@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.inject.Inject;
 import nl.haltedata.osm.dto.OsmRoute;
+import nl.haltedata.osm.dto.OsmRouteNetworkIssue;
 import nl.haltedata.osm.dto.OsmRouteRepository;
 
 @RestController
@@ -39,5 +40,12 @@ public class OsmRouteController {
                 .map(route -> new ResponseEntity<>(route, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
     }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/osm/route/networkIssues")
+    public List<OsmRouteNetworkIssue> getRouteNetworkIssue() throws Exception {
+        return routeRepository.getNetworkIssues();
+    }
+    
 
 }
