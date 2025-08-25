@@ -1,0 +1,47 @@
+netex_network,network,responsibility_set_ref,network_id
+Fryslân,Fryslân,QBUZZ:ResponsibilitySet:FY,NL:DOVA:Network:FY
+Waterland,Zaanstreek-Waterland,NL:EBS:ResponsibilitySet:ZW,NL:DOVA:Network:ZW
+Zuid-Holland Noord,Zuid-Holland Noord,QBUZZ:ResponsibilitySet:ZHN,NL:DOVA:Network:ZHN
+RAIL-VD,RAIL-VD,ARR:ResponsibilitySet:RAIL-VD#VD:P856,NL:DOVA:Network:RAIL-VD
+AML,AML,CXX:ResponsibilitySet:C-AML_2018,NL:DOVA:Network:AML
+GOOI,GOOI,CXX:ResponsibilitySet:C-GOOI_2011,NL:DOVA:Network:GOOI
+SAN,SAN,CXX:ResponsibilitySet:C-SAN-2012TR,NL:DOVA:Network:SAN
+HGL-R,HGL-R,HTM:ResponsibilitySet:HGL-R,NL:DOVA:Network:HGL-R
+AE,AE,KEOLIS:ResponsibilitySet:AE,NL:DOVA:Network:AE
+RL,RL,KEOLIS:ResponsibilitySet:RL,NL:DOVA:Network:RL
+Doeksen,Doeksen,NL:DOEKSEN:ResponsibilitySet:Financier,
+MOJO,MOJO,NL:MOJO:ResponsibilitySet:Financier,
+TESO,TESO,NL:TESO:ResponsibilitySet:Financier,
+WPD,WPD,NL:WPD:ResponsibilitySet:Financier,NL:DOVA:Network:WPD
+WSF,WSF,NL:WSF:ResponsibilitySet:Concessie,NL:DOVA:Network:WSF
+WATERBUS,WATERBUS,QBUZZ:ResponsibilitySet:Waterbus,NL:DOVA:Network:WATERBUS
+RTD-R,RTD-R,RET:ResponsibilitySet:Concession_RTD-R,NL:DOVA:Network:RTD-R
+NC,NC,ZTM:ResponsibilitySet:Concession_NC,NL:DOVA:Network:NC
+Schiphol Landside/Airside,Schiphol Landside/Airside,,NL:DOVA:Network:SLA
+Concession_VPR,Voorne-Putten en Rozenburg,NL:EBS:ResponsibilitySet:VPR,NL:DOVA:Network:VPR
+Oost-Brabant,Oost-Brabant,ARR:ResponsibilitySet:BO#BO:P1142,NL:DOVA:Network:BO
+KEOLIS-ResponsibilitySet-PU,Provincie Utrecht,KEOLIS:ResponsibilitySet:PU,NL:DOVA:Network:PUT
+Twente-ZHO,Twente,ARR:ResponsibilitySet:TW#TW:P1129,NL:DOVA:Network:TW
+Veluwe Zuid,Veluwe-Zuid,CXX:ResponsibilitySet:C-VZ,NL:DOVA:Network:VZ
+Parkshuttle Rivium,Parkshuttle Rivium,CXX:ResponsibilitySet:C-PARKSHUT,NL:DOVA:Network:PARKSHUT
+Achterhoek Rivierenland,Achterhoek-Rivierenland,ARR:ResponsibilitySet:ACH-RIV#AH:P1139,NL:DOVA:Network:ACH-RIV
+West-Brabant,West-Brabant,ARR:ResponsibilitySet:BW#BW:P1134,NL:DOVA:Network:BW
+CTS Cityliner in Assen,Publiek Vervoer Groningen-Drenthe,CXX:ResponsibilitySet:C-CTS-GD,NL:DOVA:Network:GD
+Zuid Oost Brabant,Zuidoost-Brabant,CXX:ResponsibilitySet:C-ZOB,NL:DOVA:Network:SRE
+Haaglanden Streek,Haaglanden Streek,NL:EBS:ResponsibilitySet:HGL-STR,NL:DOVA:Network:HGL-STR
+U-OV,Regio Utrecht,QBUZZ:ResponsibilitySet:U-OV,NL:DOVA:Network:U-OV
+DMG,"Drechtsteden, Molenlanden en Gorinchem",QBUZZ:ResponsibilitySet:DMG,NL:DOVA:Network:DMG
+Stadsvervoer Amsterdam (concessie),Stadsvervoer Amsterdam,GVB:ResponsibilitySet:GVB,NL:DOVA:Network:GVB
+Regionaal spoorvervoer Fryslân en Groningen,Regionaal spoorvervoer Fryslân en Groningen,ARR:ResponsibilitySet:RAIL-NN#NN:P982,NL:DOVA:Network:RAIL-NN
+Stadsregio Arnhem Nijmegen,Arnhem-Nijmegen,CXX:ResponsibilitySet:C-SAN-2012,NL:DOVA:Network:SAN
+Provincie Zeeland 2015 - 2024,Zeeland,CXX:ResponsibilitySet:C-ZLD-2014,NL:DOVA:Network:ZLD
+Haarlem IJmond 2017,Haarlem-IJmond,CXX:ResponsibilitySet:C-HLM-IJM_17,NL:DOVA:Network:HLM-IJM
+Hoeksche Waard Goeree-Overflakkee,Hoeksche Waard - Goeree-Overflakkee,CXX:ResponsibilitySet:C-HWGO_2016,NL:DOVA:Network:HWGO
+Concession_RTD-B,Bus Rotterdam,RET:ResponsibilitySet:Concession_RTD-B,NL:DOVA:Network:RTD-B
+KEOLIS-ResponsibilitySet-AL,Busvervoer Almere,KEOLIS:ResponsibilitySet:AL,NL:DOVA:Network:ALM
+IJssel-Vecht,IJssel-Vecht,NL:EBS:ResponsibilitySet:IJV,NL:DOVA:Network:IJV
+Bus Haaglanden Stad,Haaglanden Stad,HTM:ResponsibilitySet:HGL-STD,NL:DOVA:Network:HGL-STD
+Limburg,Limburg,ARR:ResponsibilitySet:LMB#LZ:P1092,NL:DOVA:Network:LMB
+Noord-Holland Noord 2018,Noord-Holland Noord,CXX:ResponsibilitySet:C-NHN_2018,NL:DOVA:Network:NHN
+GD,Groningen-Drenthe,QBUZZ:ResponsibilitySet:GD,NL:DOVA:Network:GD
+Gooi en Vechtstreek 2021,Gooi- en Vechtstreek,CXX:ResponsibilitySet:C-GOOI_21,NL:DOVA:Network:GOOI
