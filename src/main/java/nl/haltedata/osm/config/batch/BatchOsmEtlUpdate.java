@@ -26,19 +26,44 @@ import lombok.RequiredArgsConstructor;
 @EnableBatchProcessing
 public class BatchOsmEtlUpdate {
 
+    private static String update_st_network_table_sql = """
+TRUNCATE TABLE osm_pt.st_osm_network;
+INSERT INTO osm_pt.st_osm_network ("id", "name", short_name, "operator", start_date, end_date,
+    wikidata, note)
+SELECT network.id AS "id",
+  network.tags->'name' AS "name",
+  network.tags->'short_name' AS short_name,
+  network.tags->'operator' AS "operator",
+  network.tags->'start_date' AS start_date,
+  network.tags->'end_date' AS end_date,
+  network.tags->'wikidata' AS wikidata,
+  network.tags->'note' AS note
+FROM relations network
+WHERE network.tags->'type' = 'network' AND network.tags->'network' = 'public_transport';
+""";
+
+    private static String update_network_line_table_sql = """
+TRUNCATE TABLE osm_pt.st_osm_network_line;
+INSERT INTO osm_pt.st_osm_network_line (network_id, route_master_id)
+    SELECT network.id AS network_id, mb.member_id AS route_master_id
+    FROM relation_members mb
+        JOIN osm_pt.st_osm_network network ON network.id = mb.relation_id
+""";
+    
     private static String update_route_master_table_sql = """
 TRUNCATE TABLE osm_pt.osm_route_master;
 INSERT INTO osm_pt.osm_route_master
 SELECT rtm.id AS osm_route_master_id,
-  CAST((rtm.tags->'route_master') AS CHARACTER VARYING) AS transport_mode,
-  CAST((rtm.tags->'name') AS CHARACTER VARYING) AS "name",
-  CAST((rtm.tags->'operator') AS CHARACTER VARYING) AS operator,
-  CAST((rtm.tags->'ref') AS CHARACTER VARYING) AS route_ref,
-  CAST((rtm.tags->'network') AS CHARACTER VARYING) AS network,
-  CAST((rtm.tags->'colour') AS CHARACTER VARYING) AS colour,
-  CAST(NULLIF(regexp_replace((rtm.tags->'ref'), '\\D','','g'), '') AS INTEGER) AS line_number
+  COALESCE((rtm.tags->'route_master'), (rtm.tags->'disused:route_master')) AS transport_mode,
+  rtm.tags->'name' AS "name",
+  rtm.tags->'operator' AS operator,
+  rtm.tags->'ref' AS route_ref,
+  rtm.tags->'network' AS network,
+  rtm.tags->'colour' AS colour,
+  CAST(NULLIF(regexp_replace((rtm.tags->'ref'), '\\D','','g'), '') AS INTEGER) AS line_number,
+  rtm.tags?'disused:route_master' AS is_disused 
 FROM relations rtm
-WHERE rtm.tags->'type' = 'route_master' AND rtm.tags->'route_master'  IN ('bus', 'trolleybus', 'tram', 'train', 'ferry');
+WHERE rtm.tags->'type' = 'route_master';
 """;
 
     private static String update_route_master_route_table_sql = """
@@ -53,16 +78,17 @@ private static String update_route_table_sql = """
 TRUNCATE TABLE osm_pt.osm_route;
 INSERT INTO osm_pt.osm_route
 SELECT rt.id AS osm_route_id,
-  CAST((rt.tags->'route') AS CHARACTER VARYING) AS transport_mode,
-  CAST((rt.tags->'name') AS CHARACTER VARYING) AS "name",
-  CAST((rt.tags->'operator') AS CHARACTER VARYING) AS operator,
-  CAST((rt.tags->'ref') AS CHARACTER VARYING) AS route_ref,
-  CAST((rt.tags->'network') AS CHARACTER VARYING) AS network,
-  CAST((rt.tags->'from') AS CHARACTER VARYING) AS from,
-  CAST((rt.tags->'to') AS CHARACTER VARYING) AS to,
-  CAST((rt.tags->'colour') AS CHARACTER VARYING) AS colour,
+  COALESCE(rt.tags->'route', rt.tags->'disused:route') AS transport_mode,
+  rt.tags->'name' AS "name",
+  rt.tags->'operator' AS operator,
+  rt.tags->'ref' AS route_ref,
+  rt.tags->'network' AS network,
+  rt.tags->'from' AS from,
+  rt.tags->'to' AS to,
+  rt.tags->'colour' AS colour,
   rmr.osm_route_master_id AS osm_line_id,
-  CAST(NULLIF(regexp_replace(rt.tags->'ref', '\\D','','g'), '') AS INTEGER) AS line_number
+  CAST(NULLIF(regexp_replace(rt.tags->'ref', '\\D','','g'), '') AS INTEGER) AS line_number,
+  rt.tags?'disused:route' AS is_disused 
 FROM relations rt
 LEFT JOIN osm_pt.osm_route_master_route rmr ON rmr.osm_route_id = rt.id
 WHERE rt.tags->'type' = 'route' AND rt.tags->'route'  IN ('bus', 'trolleybus', 'tram', 'train');
@@ -91,12 +117,12 @@ UNION
 INSERT INTO osm_pt.osm_quay
 SELECT osm_id,
   osm_primitive_type,
-  CAST((tags->'public_transport') AS character varying) AS platform_type,
-  CAST((tags->'name') AS character varying) AS "name",
-  CAST((tags->'bus') AS character varying) AS is_bus,
-  CAST((tags->'ref') AS character varying) AS stop_side_code,
-  CAST((tags->'ref:IFOPT') AS character varying) AS ref_ifopt,
-  CAST((tags->'note') AS character varying) AS note,
+  tags->'public_transport' AS platform_type,
+  tags->'name' AS "name",
+  tags->'bus' AS is_bus,
+  tags->'ref' AS stop_side_code,
+  tags->'ref:IFOPT' AS ref_ifopt,
+  tags->'note' AS note,
   wgs_location,
   ST_TRANSFORM(wgs_location, 28992) AS rd_location
 FROM quay_data;
@@ -303,8 +329,10 @@ LEFT JOIN osm_pt.osm_missing_ifopt_area_code mac2 ON mac2.osm_id = rf2.osm_platf
      */
     @Bean
     Job updateOsmEtlJob(JobRepository jobRepository) { 
-        return new JobBuilder("osmEtlUpdate", jobRepository)
-            .start(sqlUpdateStep("Update routemasters",update_route_master_table_sql))
+        return new JobBuilder("osmEtlUpdate", jobRepository) 
+            .start(sqlUpdateStep("Update networks",update_st_network_table_sql))
+            .next(sqlUpdateStep("Update network lines",update_network_line_table_sql))
+            .next(sqlUpdateStep("Update routemasters",update_route_master_table_sql))
             .next(sqlUpdateStep("Update routes", update_route_table_sql))
             .next(sqlUpdateStep("Update routemaster routes", update_route_master_route_table_sql))
             .next(sqlUpdateStep("Update quays", update_quays_table_sql))
