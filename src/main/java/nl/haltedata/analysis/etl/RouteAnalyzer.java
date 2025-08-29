@@ -1,14 +1,13 @@
 package nl.haltedata.analysis.etl;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import jakarta.inject.Inject;
-import nl.haltedata.analysis.QuayMatch;
 import nl.haltedata.analysis.RouteAnalysis;
 import nl.haltedata.analysis.dto.RouteIssueData;
 import nl.haltedata.analysis.dto.RouteIssueDataRepository;
@@ -64,7 +63,7 @@ public class RouteAnalyzer {
         return analize(rm);
     }
 
-    public RouteAnalysis analize(RouteMatch match) {
+    public RouteAnalysis analize(@SuppressWarnings("exports") RouteMatch match) {
         var analizer = new Analizer();
         return analizer.analize(match);
     }
@@ -73,8 +72,9 @@ public class RouteAnalyzer {
         private RouteMatch routeMatch;
         private OsmRoute osmRoute;
         private NetexRouteVariant netexRouteVariant;
-        private List<OsmRouteQuay> osmQuays = Collections.emptyList();
-        private List<NetexRouteVariantQuay> netexQuays = Collections.emptyList();
+        private List<OsmRouteQuay> osmQuays;
+        private List<NetexRouteVariantQuay> netexQuays;
+        private List<QuayMatch> quayMatches = new LinkedList<>();
         private final List<RouteIssueData> issues = new LinkedList<>();
         int osmIndex = 0;
         int netexIndex = 0;
@@ -83,10 +83,10 @@ public class RouteAnalyzer {
             this.routeMatch = match;
             osmRoute = osmRouteRepository.findById(routeMatch.getOsmRouteId()).get();
             netexRouteVariant = netexRouteVariantRepository.findById(routeMatch.getNetexVariantId()).get();
-            osmQuays = osmRouteQuayRepository.findByOsmRouteId(osmRoute.getOsmRouteId());
-            netexQuays = netexRouteVariantQuayRepository.
-                findByVariantId(netexRouteVariant.getId());
             checkRouteHeader();
+            osmQuays = new ArrayList<>(osmRouteQuayRepository.findByOsmRouteId(osmRoute.getOsmRouteId()));
+            netexQuays = new ArrayList<>(netexRouteVariantQuayRepository.
+                findByVariantId(netexRouteVariant.getId()));
             checkRouteQuays();
             int quayCountDifference = Math.abs(netexQuays.size() - osmQuays.size());
             routeIssueDataRepository.saveAll(issues);
@@ -110,122 +110,156 @@ public class RouteAnalyzer {
             else if (!ColourMap.normalizeColour(osmColour).equals("#" + netexColour)) {
                 addIssue("UnexpectedRouteColour2", "#" + netexColour, osmColour);
             }
-     
         }
         
         private void checkRouteQuays() {
-    //        Set<String> uniqueQuayCodes = osmRoute.getQuays().stream().map(quay -> quay.getQuayCode())
-    //                .filter(code -> Objects.nonNull(code)).collect(Collectors.toSet());
-    //        chbQuayService.fetchMissingCodes(uniqueQuayCodes);
             while (osmIndex < osmQuays.size() && netexIndex < netexQuays.size()) {
-                nextMatch();
+                var osmQuay = osmQuays.get(osmIndex);
+                var netexQuay = netexQuays.get(netexIndex);
+                if (quaysMatch(osmQuay, netexQuay)) {
+                    var quayMatch = new QuayMatch(osmQuay, netexQuay);
+                    analizeQuayMatch(quayMatch);
+                    quayMatches.add(quayMatch);
+                    osmIndex++;
+                    netexIndex++;
+                    continue;
+                }
+                var netexOffset = findNetexOffset(osmQuay);
+                var osmOffset = findOsmOffset(netexQuay);
+                if (netexOffset == 1 && osmOffset == 1) {
+                    addIssue("DifferentQuay", Integer.toString(osmIndex + 1), netexQuay.getName(), osmQuay.getName());
+                    osmIndex++;
+                    netexIndex++;
+                }
+                // Extra quays in the OSM route
+                else if (netexOffset == -1 && osmOffset > 0) {
+                    var sb = new StringBuilder();
+                    var location = osmIndex + 1;
+                    for (int i =0 ; i < osmOffset; i++) {
+                        osmQuay = osmQuays.get(osmIndex++);
+                        quayMatches.add(new QuayMatch(osmQuay, null));
+                        sb.append("\n").append(osmQuay.getName());
+                    }
+                    addIssue("UnexpectedQuays", Integer.toString(osmOffset), Integer.toString(location), sb.toString());
+                    continue;
+                }
+                // Missing quays in the OSM route
+                else if (osmOffset == -1 && netexOffset > 0) {
+                    String quayBefore = (osmIndex > 0 && (osmIndex - 1) < osmQuays.size()) ? osmQuays.get(osmIndex - 1).getName() : "start of route";
+                    String quayAfter = (osmIndex < osmQuays.size()) ? osmQuays.get(osmIndex).getName() : "end of route.";
+                    var sb = new StringBuilder();
+                    var location = osmIndex + 1;
+                    for (int i =0 ; i < netexOffset; i++) {
+                        netexQuay = netexQuays.get(netexIndex++);
+                        quayMatches.add(new QuayMatch(null, netexQuay));
+                        sb.append("\n").append(netexQuay.getName());
+                    }
+                    addIssue("MissingQuays",
+                            Integer.toString(netexOffset), Integer.toString(location), quayBefore, quayAfter, sb.toString());
+                    continue;
+                }
+                else if (netexOffset == -1 && osmOffset == -1) {
+                    quayMatches.add(new QuayMatch(osmQuay, netexQuay));
+                    addIssue("DifferentQuay", Integer.toString(osmIndex + 1), netexQuay.getName(), osmQuay.getName());
+                    osmIndex++;
+                    netexIndex++;
+                    continue;
+                }
+                else if (osmOffset <= netexOffset) {
+                    var sb = new StringBuilder();
+                    var location = osmIndex + 1;
+                    for (int i =0 ; i < osmOffset; i++) {
+                        osmQuay = osmQuays.get(osmIndex++);
+                        quayMatches.add(new QuayMatch(osmQuay, null));
+                        sb.append("\n").append(osmQuay.getName());
+                    }
+                    addIssue("UnexpectedQuays", Integer.toString(osmOffset), Integer.toString(location), sb.toString());
+                    continue;
+                }
+                else if (osmOffset > netexOffset) {
+                    String quayBefore = (osmIndex > 0 && (osmIndex - 1) < osmQuays.size()) ? osmQuays.get(osmIndex - 1).getName() : "start of route";
+                    String quayAfter = (osmIndex < osmQuays.size()) ? osmQuays.get(osmIndex).getName() : "end of route.";
+                    var sb = new StringBuilder();
+                    var location = osmIndex + 1;
+                    for (int i =0 ; i < netexOffset; i++) {
+                        netexQuay = netexQuays.get(netexIndex++);
+                        quayMatches.add(new QuayMatch(null, netexQuay));
+                        sb.append("\n").append(netexQuay.getName());
+                    }
+                    addIssue("MissingQuays",
+                            Integer.toString(netexOffset), Integer.toString(location), quayBefore, quayAfter, sb.toString());
+                }
+                else {
+                    osmIndex++;
+                    netexIndex++;
+                    continue;
+               }
             }
             // Check for trailing Netex quays
             if (netexIndex < netexQuays.size()) {
-                createMissingQuaysIssue(netexQuays.size() - netexIndex);
+                createMissingQuaysAtEndOfRouteIssue(netexQuays.size() - netexIndex);
             }
             // Check for trailing OSM quays
             if (osmIndex < osmQuays.size()) {
-                createExtraQuaysIssue(osmQuays.size() - osmIndex);
+                createUnexpectedQuaysAtEndOfRouteIssue(osmQuays.size() - osmIndex);
             }
         }
     
-        private QuayMatch nextMatch() {
-            var osmQuay = osmQuays.get(osmIndex);
-            var netexQuay = netexQuays.get(netexIndex);
-            var match = new QuayMatch(osmQuay, netexQuay);
-            if (match.isMatch()) {
-                checkMatchIssues(match);
-                osmIndex++;
-                netexIndex++;
-                return match;
+        private int findOsmOffset(NetexRouteVariantQuay netexQuay) {
+            var index = osmIndex + 1;
+            while (index < osmQuays.size()) {
+                var osmQuay = osmQuays.get(index);
+                if (quaysMatch(osmQuay, netexQuay)) return index - osmIndex;
+                index++;
             }
-            for (int offset = 1 ; offset <= 5 ; offset++) {
-                var osmOffsetMatch = getOsmOffsetMatch(netexQuay, offset);
-                var netexOffsetMatch = getNetexOsmOffsetMatch(osmQuay, offset);
-                // TODO Special case both osmOffsetMatch and netexOffsetMatch means swapped quays
-                if (osmOffsetMatch != null && osmOffsetMatch.isMatch()) {
-                    createExtraQuaysIssue(offset);
-                    checkMatchIssues(osmOffsetMatch);
-                    osmIndex = osmIndex + offset + 1;
-                    netexIndex++;
-                    return osmOffsetMatch;
-                }
-                if (netexOffsetMatch != null && netexOffsetMatch.isMatch()) {
-                    createMissingQuaysIssue(offset);
-                    checkMatchIssues(netexOffsetMatch);
-                    netexIndex = netexIndex + offset + 1;
-                    osmIndex++;
-                    return netexOffsetMatch;
-                }
+            return -1;
+        }
+
+        private Integer findNetexOffset(OsmRouteQuay osmQuay) {
+            var index = netexIndex + 1;
+            while (index < netexQuays.size()) {
+                var netexQuay = netexQuays.get(index);
+                if (quaysMatch(osmQuay, netexQuay)) return index - netexIndex;
+                index++;
             }
-            // No match found, not even with offsetting. Report a mismatch issue and return the
-            // mismatch;
-            addIssue("DifferentQuay",
-                    Integer.toString(osmIndex + 1), netexQuay.getName(), osmQuay.getName());
-            osmIndex++;
-            netexIndex++;
-            return match;
+            return -1;
+        }
+
+        private boolean quaysMatch(OsmRouteQuay osmQuay, NetexRouteVariantQuay netexQuay) {
+            return Objects.equals(osmQuay.getQuayCode(), netexQuay.getQuayCode()) ||
+                    Objects.equals(osmQuay.getAreaCode(), netexQuay.getStopPlaceCode());
         }
         
-        private void createExtraQuaysIssue(int offset) {
-            if (offset == 1) {
-                var extraQuay = osmQuays.get(osmIndex);
-                addIssue("UnexpectedQuay",
-                    extraQuay.getName(), Integer.toString(osmIndex + 1));
-                return;
-            }
-            for (int i = 0 ; i<offset; i++) {
-                var extraQuay = osmQuays.get(osmIndex + i);
-                addIssue("UnexpectedQuay",
-                        extraQuay.getName(), Integer.toString(osmIndex + 1));
-            }
-        }
-    
-        private void createMissingQuaysIssue(int offset) {
-            if (offset == 1) {
-                var extraQuay = netexQuays.get(netexIndex);
-                String quayBefore = (osmIndex > 0 && (osmIndex - 1) < osmQuays.size()) ? osmQuays.get(osmIndex - 1).getName() : "start of route";
-                String quayAfter = (osmIndex < osmQuays.size()) ? osmQuays.get(osmIndex).getName() : "end of route.";
-                addIssue("MissingQuay",
-                    extraQuay.getName(), Integer.toString(osmIndex + 1), quayBefore, quayAfter);
-            }
-            else {
-                String quayBefore = (osmIndex > 0 && (osmIndex - 1) < osmQuays.size()) ? osmQuays.get(osmIndex - 1).getName() : "start of route";
-                int endIndex = osmIndex + offset;
-                String quayAfter = (endIndex < osmQuays.size()) ? osmQuays.get(endIndex).getName() : "end of route.";
-    //            sb.append(i18n.tr("Missing quays found in OSM route between {0} and {1}.:\n", quayBefore, quayAfter));
-                for (int i = 0 ; i<offset; i++) {
-                    var extraQuay = netexQuays.get(netexIndex + i);
-                    var position = osmIndex + i + 1;
-                    addIssue("MissingMultipleQuay",
-                            extraQuay.getName(), quayBefore, Integer.toString(position++));
-                }
-            }
-        }
-    
-        private QuayMatch getOsmOffsetMatch(NetexRouteVariantQuay netexQuay, int offset) {
-            if (osmIndex + offset >= osmQuays.size()) return null;
-            var osmOffsetQuay = osmQuays.get(osmIndex + offset);
-            
-            return new QuayMatch(osmOffsetQuay, netexQuay);
-        }
-        
-        private QuayMatch getNetexOsmOffsetMatch(OsmRouteQuay osmQuay, int offset) {
-            if (netexIndex + offset >= netexQuays.size()) return null;
-            var netexOffsetQuay = netexQuays.get(netexIndex + offset);
-            return new QuayMatch(osmQuay, netexOffsetQuay);
-        }
-    
-        private void checkMatchIssues(QuayMatch match) {
+        private void analizeQuayMatch(QuayMatch match) {
             if (match.isAreaCodeMatch() && ! match.isQuayCodeMatch()) {
                 String expected = match.getNetexQuay().getName();
                 String found = match.getOsmQuay().getQuayCode();
                 addIssue("UnexpectedQuayCode",
-                    match.getOsmQuay().getName(), Integer.toString(osmIndex + 1), expected, found);
+                        match.getOsmQuay().getName(), Integer.toString(osmIndex + 1), expected, found);
             }
         }
-        
+
+        private void createMissingQuaysAtEndOfRouteIssue(int count) {
+            var sb = new StringBuilder();
+            for (int i =0 ; i < count; i++) {
+                var netexQuay = netexQuays.get(netexIndex++);
+                quayMatches.add(new QuayMatch(null, netexQuay));
+                sb.append("\n").append(netexQuay.getName());
+            }
+            addIssue("MissingQuaysAtEndOfRoute",
+                  Integer.toString(count), sb.toString());
+        }
+
+        private void createUnexpectedQuaysAtEndOfRouteIssue(int count) {
+            var sb = new StringBuilder();
+            for (int i =0 ; i < count; i++) {
+                var osmQuay = osmQuays.get(osmIndex++);
+                quayMatches.add(new QuayMatch(osmQuay, null));
+                sb.append("\n").append(osmQuay.getName());
+            }
+            addIssue("UnexpectedQuaysAtEndOfRoute", Integer.toString(count), sb.toString());
+        }
+
         private RouteIssueData addIssue(String message, String... parameters) {
             var issue = new RouteIssueData(routeMatch.getId(), issues.size(),
                     message, parameters);

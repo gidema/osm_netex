@@ -22,7 +22,7 @@ public class NetworkRouteAnalyzer {
         for (var routeMatch : routeMatches) {
             if (routeMatch.getNetexVariantId() != null && routeMatch.getMatchRate() > 0 && routeMatch.getMatchRate() < 100) {
                 routeAnalizer.analize(routeMatch);
-             }
+            }
         }
     }
  }

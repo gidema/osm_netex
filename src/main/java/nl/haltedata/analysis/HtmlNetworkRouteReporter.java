@@ -41,13 +41,15 @@ public class HtmlNetworkRouteReporter implements NetworkRouteReporter {
             routeMatch.getOsmRouteId().toString(),
             routeMatch.getOsmName()))
             .append("</h2>\n");
-//            osmRoute.getRef()));
         if (matchIssues.size() == 0) {
             sb.append(i18n.tr("No issues were found for this route"));
         }
         else {
             sb.append("<p>");
-            matchIssues.forEach(issue -> sb.append(i18n.tr(issue.getMessage(), issue.getParameters())).append("\n</br>"));
+            matchIssues.forEach(issue -> {
+                var msg = i18n.tr(issue.getMessage(), issue.getParameters());
+                sb.append(msg.replace("\n", "</br>")).append("\n</br>");
+            });
             sb.append("<p>\n");
         }
         return sb;

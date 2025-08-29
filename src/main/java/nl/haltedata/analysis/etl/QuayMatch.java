@@ -1,4 +1,4 @@
-package nl.haltedata.analysis;
+package nl.haltedata.analysis.etl;
 
 import java.util.Objects;
 
@@ -17,22 +17,21 @@ public class QuayMatch {
         super();
         this.osmQuay = osmQuay;
         this.netexQuay = netexQuay;
+        if (osmQuay == null || netexQuay == null) return;
         quayCodeMatch = Objects.equals(osmQuay.getQuayCode(), netexQuay.getQuayCode());
         if (isQuayCodeMatch()) {
             areaCodeMatch = true;
-//                nameMatch = Objects.equals(osmQuay.getName(), netexQuay.getName());
         } else {
-            checkAreaMatch();
+            areaCodeMatch = checkAreaCodeMatch();
         }
-    }
+        nameMatch = Objects.equals(osmQuay.getName(), netexQuay.getName());
+   }
 
-    private void checkAreaMatch() {
+    private boolean checkAreaCodeMatch() {
         if (osmQuay == null || osmQuay.getAreaCode() == null) {
-            areaCodeMatch = false;
+            return false;
         }
-        else {
-            areaCodeMatch = Objects.equals(osmQuay.getAreaCode(), netexQuay.getStopPlaceCode());
-        }
+        return Objects.equals(osmQuay.getAreaCode(), netexQuay.getStopPlaceCode());
     }
 
     public OsmRouteQuay getOsmQuay() {
