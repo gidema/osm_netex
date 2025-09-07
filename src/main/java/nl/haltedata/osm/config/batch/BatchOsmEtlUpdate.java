@@ -61,7 +61,7 @@ SELECT rtm.id AS osm_route_master_id,
   rtm.tags->'network' AS network,
   rtm.tags->'colour' AS colour,
   CAST(NULLIF(regexp_replace((rtm.tags->'ref'), '\\D','','g'), '') AS INTEGER) AS line_number,
-  rtm.tags?'disused:route_master' AS is_disused 
+  exist(rtm.tags, 'disused:route_master') AS is_disused 
 FROM relations rtm
 WHERE rtm.tags->'type' = 'route_master';
 """;
@@ -74,7 +74,21 @@ SELECT master.osm_route_master_id, mb.member_id AS osm_route_id
       JOIN osm_pt.osm_route_master master ON master.osm_route_master_id = mb.relation_id;
 """;
 
-private static String update_route_table_sql = """
+    private static String update_network_table_sql = """
+TRUNCATE TABLE osm_pt.osm_network;
+WITH concessie AS ( 
+    SELECT nwln.route_master_id AS id
+    FROM osm_pt.st_osm_network_line nwln
+    JOIN osm_pt.st_osm_network concessie ON nwln.network_id = concessie.id
+        WHERE concessie.name = 'OV-concessies Nederland')
+INSERT INTO osm_pt.osm_network
+SELECT nw.*, concessie.id IS NOT NULL AS is_concessie
+FROM osm_pt.st_osm_network nw
+  LEFT JOIN concessie ON nw.id = concessie.id
+  WHERE nw.name != 'OV-concessies Nederland'
+""";
+            
+    private static String update_route_table_sql = """
 TRUNCATE TABLE osm_pt.osm_route;
 INSERT INTO osm_pt.osm_route
 SELECT rt.id AS osm_route_id,
@@ -88,7 +102,7 @@ SELECT rt.id AS osm_route_id,
   rt.tags->'colour' AS colour,
   rmr.osm_route_master_id AS osm_line_id,
   CAST(NULLIF(regexp_replace(rt.tags->'ref', '\\D','','g'), '') AS INTEGER) AS line_number,
-  rt.tags?'disused:route' AS is_disused 
+  exist(rt.tags, 'disused:route') AS is_disused 
 FROM relations rt
 LEFT JOIN osm_pt.osm_route_master_route rmr ON rmr.osm_route_id = rt.id
 WHERE rt.tags->'type' = 'route' AND rt.tags->'route'  IN ('bus', 'trolleybus', 'tram', 'train');
@@ -246,23 +260,14 @@ FROM data;
 """;
 
 
-    private static String update_osm_route_master_endpoint_table_sql = """
-TRUNCATE TABLE osm_pt.osm_route_master_endpoint;
-INSERT INTO osm_pt.osm_route_master_endpoint
-SELECT DISTINCT *
-    FROM (
-      SELECT master.osm_route_master_id, rd.line_number, rd.start_stop_place_code
-      FROM osm_pt.osm_route_master_route rmr
-        JOIN osm_pt.osm_route_master master ON master.osm_route_master_id = rmr.osm_route_master_id
-        JOIN osm_pt.osm_route_data rd ON rd.osm_route_id = rmr.osm_route_id
-      WHERE rd.start_stop_place_code IS NOT NULL
-      UNION
-      SELECT master.osm_route_master_id, rd.line_number, rd.end_stop_place_code
-      FROM osm_pt.osm_route_master_route rmr
-        JOIN osm_pt.osm_route_master master ON master.osm_route_master_id = rmr.osm_route_master_id
-        JOIN osm_pt.osm_route_data rd ON rd.osm_route_id = rmr.osm_route_id
-      WHERE rd.end_stop_place_code IS NOT NULL
-    ) AS SUB;
+    private static String update_osm_route_master_stop_place_table_sql = """
+TRUNCATE TABLE osm_pt.osm_route_master_stop_place;
+INSERT INTO osm_pt.osm_route_master_stop_place
+SELECT DISTINCT rm.osm_route_master_id, rm.line_number, rq.area_code AS stop_place_code
+FROM osm_pt.osm_route_quay rq
+  JOIN osm_pt.osm_route_master_route rmr ON rq.osm_route_id = rmr.osm_route_id
+  JOIN osm_pt.osm_route_master rm ON rm.osm_route_master_id = rmr.osm_route_master_id
+WHERE rq.area_code IS NOT NULL
 """;
 
     private static String update_osm_duplicate_bus_route_table_sql = """
@@ -330,16 +335,17 @@ LEFT JOIN osm_pt.osm_missing_ifopt_area_code mac2 ON mac2.osm_id = rf2.osm_platf
     @Bean
     Job updateOsmEtlJob(JobRepository jobRepository) { 
         return new JobBuilder("osmEtlUpdate", jobRepository) 
-            .start(sqlUpdateStep("Update networks",update_st_network_table_sql))
+            .start(sqlUpdateStep("Extract networks",update_st_network_table_sql))
             .next(sqlUpdateStep("Update network lines",update_network_line_table_sql))
             .next(sqlUpdateStep("Update routemasters",update_route_master_table_sql))
+            .next(sqlUpdateStep("Update networks",update_network_table_sql))
             .next(sqlUpdateStep("Update routes", update_route_table_sql))
             .next(sqlUpdateStep("Update routemaster routes", update_route_master_route_table_sql))
             .next(sqlUpdateStep("Update quays", update_quays_table_sql))
             .next(sqlUpdateStep("Update route platforms", update_route_platform_table_sql))
             .next(sqlUpdateStep("Update route quays", update_route_quay_table_sql))
             .next(sqlUpdateStep("Update route data", update_osm_route_data_table_sql))
-            .next(sqlUpdateStep("Update routemaster endpoints", update_osm_route_master_endpoint_table_sql))
+            .next(sqlUpdateStep("Update routemaster stop places", update_osm_route_master_stop_place_table_sql))
             .next(sqlUpdateStep("Update duplicate routes", update_osm_duplicate_bus_route_table_sql))
             .next(sqlUpdateStep("Update missing ifopt areacodes", update_missing_ifopt_area_code_table_sql))
             .next(sqlUpdateStep("update osm links", update_osm_link_table_sql))

@@ -4,17 +4,18 @@
       <thead class="thead-dark">
         <tr>
           <th scope="col">Network name</th>
-          <th scope="col">Country code</th>
-          <th scope="col">Links</th>
+          <th scope="col">Dova name</th>
+          <th scope="col">Osm name</th>
+          <th scope="col">Netex name</th>
          </tr>
       </thead>
       <tbody>
-        @for (network of networks; track network.networkName) {
+        @for (network of networks; track network.id) {
           <tr>
-            <td><a [routerLink] = "['/network', network.networkName]">{{ network.networkName }}</a>
-            </td>
-            <td>{{ network.countryCode }}</td>
-            <td><a [routerLink] = "['/osm/route/validate', network.networkName]">Validation</a>
+            <td>{{ network.name }}</td>
+            <td>{{ network.dovaName }}</td>
+            <td>{{ network.osmName }}</td>
+            <td>{{ network.netexName }}</td>
           </tr>
         }
       </tbody>

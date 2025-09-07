@@ -1,6 +1,6 @@
 import { Component, Input, inject} from '@angular/core';
-import { OsmPtNetwork } from '../network';
-import { OsmPtNetworkService } from '../network.service';
+import { OsmPtNetwork } from '../osm_network';
+import { OsmPtNetworkService } from '../osm_network.service';
 
 @Component({
   selector: 'app-network',

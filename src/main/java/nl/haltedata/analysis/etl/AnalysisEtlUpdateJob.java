@@ -26,40 +26,68 @@ import lombok.RequiredArgsConstructor;
 @EnableBatchProcessing
 public class AnalysisEtlUpdateJob {
 
+    private static String update_network_match_table_sql = """
+-- Clear the table
+TRUNCATE TABLE network_match;
+WITH dova AS (
+  SELECT "id", "name", "short_name"
+  FROM netex.netex_network
+  WHERE to_date IS NULL OR short_name IN ('FFVB', 'RAIL-HRN')),
+osm AS (
+  SELECT "id", "name", short_name
+  FROM osm_pt.osm_network
+  WHERE is_concessie
+),
+netex AS (
+  SELECT DISTINCT responsibility_set AS "id", network AS "name", network_id
+  FROM netex.netex_line
+  WHERE network_id IS NOT NULL AND network IS NOT NULL
+)
+INSERT INTO network_match (dova_id, dova_name, short_name, osm_id, osm_name,
+    netex_id, netex_name, name)
+SELECT dova."id" AS dova_id, dova.name AS dova_name, dova.short_name, 
+  osm.id AS osm_id, osm.name AS osm_name,
+  netex.id AS netex_id, netex.name AS netex_name,
+  COALESCE(dova."name", netex."name", osm."name") AS name
+FROM dova
+FULL OUTER JOIN osm ON osm.short_name = dova.short_name
+FULL OUTER JOIN netex ON netex.network_id = dova.id
+""";
+    
     private static String update_line_match_table_sql = """
-    -- Clear the table
-    TRUNCATE TABLE line_match;
-    -- Add lines with a match between Netex and OSM
-    WITH match AS (
-      SELECT DISTINCT orme.line_number, orme.osm_route_master_id, nle.netex_line_id
-      FROM osm_pt.osm_route_master_endpoint orme
-      JOIN netex.netex_line_endpoint nle ON nle.line_number = orme.line_number AND nle.stop_place_code = orme.stop_place_code)
-    INSERT INTO line_match(netex_line_id, osm_line_id, network, transport_mode, country_code, line_ref, product_category, line_sort)
-    SELECT match.netex_line_id, match.osm_route_master_id, ol.network, ol.transport_mode, osmn.country_code, match.line_number, nl.product_category,
-    CASE WHEN match.line_number ~ '^[0-9]{1,5}$' THEN LPAD(match.line_number, 5, '0') ELSE match.line_number END AS line_sort
-    FROM match 
-      LEFT JOIN osm_pt.osm_route_master ol ON ol.osm_route_master_id = match.osm_route_master_id
-      LEFT JOIN netex.netex_line nl ON nl.id = match.netex_line_id
-      LEFT JOIN osm_pt.osm_pt_network osmn ON ol.network = osmn.network_name;
-    -- Add Netex lines that have no match
-    INSERT INTO line_match(netex_line_id, osm_line_id, network, transport_mode, country_code, line_ref, product_category, line_sort)
-    SELECT line.id, NULL, line.network, line.transport_mode, 'NL', line.public_code, line.product_category,
-    CASE WHEN line.public_code ~ '^[0-9]{1,5}$' THEN LPAD(line.public_code, 5, '0') ELSE line.public_code END AS line_sort
-    FROM netex.netex_line line
-    WHERE true
-        AND line.transport_mode IN ('bus', 'trolleybus')
-        AND line.id NOT IN (SELECT netex_line_id FROM line_match)
-        AND (line.product_category NOT IN ('Opstapper', 'OV op Maat') OR line.product_category IS NULL);
-    -- Add OSM lines that have no match
-    INSERT INTO line_match(netex_line_id, osm_line_id, network, transport_mode, country_code, line_ref, product_category, line_sort)
-    SELECT NULL, line.osm_route_master_id, line.network, line.transport_mode, network.country_code, line.route_ref, NULL,
-    CASE WHEN line_ref ~ '^[0-9]{1,5}$' THEN LPAD(line_ref, 5, '0') ELSE line_ref END AS line_sort
-    FROM osm_pt.osm_route_master line
-    LEFT JOIN osm_pt.osm_pt_network network ON network.network_name = line.network 
-    LEFT JOIN line_match ON line.osm_route_master_id = line_match.osm_line_id
-    WHERE line_match.osm_line_id IS NULL
-        AND line.transport_mode IN ('bus', 'trolleybus')
-        AND (network.country_code = 'NL' OR network.country_code IS NULL);
+-- Clear the table
+TRUNCATE TABLE line_match;
+-- Add lines with a match between Netex and OSM
+WITH match AS (
+  SELECT DISTINCT ormsp.line_number, ormsp.osm_route_master_id, nlsp.netex_line_id
+  FROM osm_pt.osm_route_master_stop_place ormsp
+  JOIN netex.netex_line_stop_place nlsp ON nlsp.line_number = ormsp.line_number AND nlsp.stop_place_code = ormsp.stop_place_code)
+INSERT INTO line_match(netex_line_id, osm_line_id, network, transport_mode, country_code, line_ref, product_category, line_sort)
+SELECT match.netex_line_id, match.osm_route_master_id, ol.network, ol.transport_mode, osmn.country_code, match.line_number, nl.product_category,
+CASE WHEN match.line_number ~ '^[0-9]{1,5}$' THEN LPAD(match.line_number, 5, '0') ELSE match.line_number END AS line_sort
+FROM match 
+  LEFT JOIN osm_pt.osm_route_master ol ON ol.osm_route_master_id = match.osm_route_master_id
+  LEFT JOIN netex.netex_line nl ON nl.id = match.netex_line_id
+  LEFT JOIN osm_pt.osm_pt_network osmn ON ol.network = osmn.network_name;
+-- Add Netex lines that have no match
+INSERT INTO line_match(netex_line_id, osm_line_id, network, transport_mode, country_code, line_ref, product_category, line_sort)
+SELECT line.id, NULL, line.network, line.transport_mode, 'NL', line.public_code, line.product_category,
+CASE WHEN line.public_code ~ '^[0-9]{1,5}$' THEN LPAD(line.public_code, 5, '0') ELSE line.public_code END AS line_sort
+FROM netex.netex_line line
+WHERE true
+    AND line.transport_mode IN ('bus', 'trolleybus')
+    AND line.id NOT IN (SELECT netex_line_id FROM line_match)
+    AND (line.product_category NOT IN ('Opstapper', 'OV op Maat') OR line.product_category IS NULL);
+-- Add OSM lines that have no match
+INSERT INTO line_match(netex_line_id, osm_line_id, network, transport_mode, country_code, line_ref, product_category, line_sort)
+SELECT NULL, line.osm_route_master_id, line.network, line.transport_mode, network.country_code, line.route_ref, NULL,
+CASE WHEN line_ref ~ '^[0-9]{1,5}$' THEN LPAD(line_ref, 5, '0') ELSE line_ref END AS line_sort
+FROM osm_pt.osm_route_master line
+LEFT JOIN osm_pt.osm_pt_network network ON network.network_name = line.network 
+LEFT JOIN line_match ON line.osm_route_master_id = line_match.osm_line_id
+WHERE line_match.osm_line_id IS NULL
+    AND line.transport_mode IN ('bus', 'trolleybus')
+    AND (network.country_code = 'NL' OR network.country_code IS NULL);
 """;
 
     private static String update_route_match_candidate_table_sql = """
@@ -271,7 +299,8 @@ ORDER BY quay_code;
     @Bean
     Job updateComparisonEtlJob(JobRepository jobRepository) { 
         return new JobBuilder("comparisonEtlUpdate", jobRepository)
-            .start(sqlUpdateStep("Update line match", update_line_match_table_sql))
+            .start(sqlUpdateStep("Update network match", update_network_match_table_sql))
+            .next(sqlUpdateStep("Update line match", update_line_match_table_sql))
             .next(sqlUpdateStep("Update line matches", update_route_match_candidate_table_sql))
             .next(sqlUpdateStep("Update route_matches", update_route_match_table_sql))
             .next(sqlUpdateStep("Update osm_missing_quay", update_table_osm_missing_quay_code))

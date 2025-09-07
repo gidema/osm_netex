@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.inject.Inject;
 import nl.haltedata.analysis.dto.LineMatch;
-import nl.haltedata.analysis.dto.LineRepository;
+import nl.haltedata.analysis.dto.LineMatchRepository;
 import nl.haltedata.netex.dto.DimNetexRoute;
 
 @RestController
 public class LineMatchController {
     
     @Inject
-    private LineRepository repository;
+    private LineMatchRepository repository;
 
     /**
      * Endpoint to list the data.
