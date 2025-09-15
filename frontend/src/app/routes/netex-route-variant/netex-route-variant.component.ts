@@ -6,11 +6,10 @@ import { NetexRouteVariantQuay } from '../netex-route-variant-quay';
 import { NetexRouteVariantQuayService } from '../netex-route-variant-quay.service';
 
 @Component({
-  selector: 'app-netex-quay-sequence',
-  standalone: true,
-  imports: [],
-  templateUrl: './netex-route-variant.component.html',
-  styleUrl: './netex-route-variant.component.css'
+    selector: 'app-netex-quay-sequence',
+    imports: [],
+    templateUrl: './netex-route-variant.component.html',
+    styleUrl: './netex-route-variant.component.css'
 })
 export class NetexRouteVariantComponent implements OnInit {
     private activatedRoute = inject(ActivatedRoute);

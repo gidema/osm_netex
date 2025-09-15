@@ -4,11 +4,10 @@ import { RouteValidationStatusService } from '../route-validation-status.service
 import { RouteValidationStatus } from '../route-validation-status';
 
 @Component({
-  selector: 'app-osm-route-validator',
-  standalone: true,
-  imports: [],
-  templateUrl: './osm-route-validator.component.html',
-  styleUrl: './osm-route-validator.component.css'
+    selector: 'app-osm-route-validator',
+    imports: [],
+    templateUrl: './osm-route-validator.component.html',
+    styleUrl: './osm-route-validator.component.css'
 })
 export class OsmRouteValidatorComponent implements OnInit {
     private activatedRoute = inject(ActivatedRoute);

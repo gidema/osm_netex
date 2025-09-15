@@ -3,11 +3,10 @@ import { OsmPtNetwork } from '../osm_network';
 import { OsmPtNetworkService } from '../osm_network.service';
 
 @Component({
-  selector: 'app-network',
-  standalone: true,
-  imports: [],
-  templateUrl: './network.component.html',
-  styleUrl: './network.component.css'
+    selector: 'app-network',
+    imports: [],
+    templateUrl: './network.component.html',
+    styleUrl: './network.component.css'
 })
 export class NetworkComponent {
   private networkService = inject(OsmPtNetworkService);

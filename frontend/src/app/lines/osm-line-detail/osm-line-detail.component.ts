@@ -5,11 +5,10 @@ import { OsmRouteService } from '../../routes/osm-route.service';
 import { RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'app-osm-line-detail',
-  standalone: true,
-  imports: [RouterModule],
-  templateUrl: './osm-line-detail.component.html',
-  styleUrl: './osm-line-detail.component.css'
+    selector: 'app-osm-line-detail',
+    imports: [RouterModule],
+    templateUrl: './osm-line-detail.component.html',
+    styleUrl: './osm-line-detail.component.css'
 })
 export class OsmLineDetailComponent   implements OnInit {
     private activatedRoute = inject(ActivatedRoute);

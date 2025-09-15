@@ -6,11 +6,10 @@ import { OsmRouteQuay } from '../osm-route-quay';
 import { OsmRouteQuayService } from '../osm-route-quay.service';
 
 @Component({
-  selector: 'app-osm-route',
-  standalone: true,
-  imports: [],
-  templateUrl: './osm-route.component.html',
-  styleUrl: './osm-route.component.css'
+    selector: 'app-osm-route',
+    imports: [],
+    templateUrl: './osm-route.component.html',
+    styleUrl: './osm-route.component.css'
 })
 export class OsmRouteComponent implements OnInit {
     private activatedRoute = inject(ActivatedRoute);

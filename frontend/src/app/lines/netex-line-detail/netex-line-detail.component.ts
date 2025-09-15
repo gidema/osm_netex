@@ -9,11 +9,10 @@ import { NetexRouteVariant } from '../../routes/netex-route-variant';
 import { NetexLine } from '../netex-line';
 
 @Component({
-  selector: 'app-netex-line-detail',
-  standalone: true,
-  imports: [RouterModule],
-  templateUrl: './netex-line-detail.component.html',
-  styleUrl: './netex-line-detail.component.css'
+    selector: 'app-netex-line-detail',
+    imports: [RouterModule],
+    templateUrl: './netex-line-detail.component.html',
+    styleUrl: './netex-line-detail.component.css'
 })
 export class NetexLineDetailComponent  implements OnInit {
     private activatedRoute = inject(ActivatedRoute);

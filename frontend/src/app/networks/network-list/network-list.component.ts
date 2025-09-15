@@ -4,10 +4,9 @@ import { Network } from '../network';
 import { NetworkService } from '../network.service';
 
 @Component({
-  selector: 'app-network-list',
-  standalone: true,
-  imports: [RouterModule],
-  templateUrl: './network-list.component.html'
+    selector: 'app-network-list',
+    imports: [RouterModule],
+    templateUrl: './network-list.component.html'
 })
 export class NetworkListComponent implements OnInit {
   private networkService = inject(NetworkService);

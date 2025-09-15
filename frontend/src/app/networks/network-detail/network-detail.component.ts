@@ -10,7 +10,6 @@ import { AsyncPipe } from '@angular/common';
 
 @Component({
     selector: 'app-network-detail',
-    standalone: true,
     imports: [RouterModule, AsyncPipe],
     templateUrl: './network-detail.component.html',
     styleUrl: './network-detail.component.css'

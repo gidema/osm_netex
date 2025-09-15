@@ -7,11 +7,10 @@ import { TransportRouteService } from '../../routes/transport_route.service';
 import { TransportRoute } from '../../routes/transport_route';
 
 @Component({
-  selector: 'app-line-detail',
-  standalone: true,
-  imports: [RouterModule],
-  templateUrl: './line-detail.component.html',
-  styleUrl: './line-detail.component.css'
+    selector: 'app-line-detail',
+    imports: [RouterModule],
+    templateUrl: './line-detail.component.html',
+    styleUrl: './line-detail.component.css'
 })
 export class LineDetailComponent implements OnInit {
     private activatedRoute = inject(ActivatedRoute);

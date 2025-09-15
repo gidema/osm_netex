@@ -8,7 +8,6 @@ import { NetexLine } from '../../lines/netex-line';
 
 @Component({
     selector: 'netex-network-detail',
-    standalone: true,
     imports: [RouterModule],
     templateUrl: './netex-network-detail.component.html'
 })

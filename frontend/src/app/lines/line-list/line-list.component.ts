@@ -5,7 +5,6 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 
 @Component({
     selector: 'app-line-list',
-    standalone: true,
     imports: [],
     templateUrl: './line-list.component.html',
     styleUrl: './line-list.component.css'

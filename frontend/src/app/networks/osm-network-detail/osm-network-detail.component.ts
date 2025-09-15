@@ -8,7 +8,6 @@ import { OsmLine } from '../../lines/osm-line';
 
 @Component({
     selector: 'osm-network-detail',
-    standalone: true,
     imports: [RouterModule],
     templateUrl: './osm-network-detail.component.html'
 })
