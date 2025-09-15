@@ -10,7 +10,7 @@ public class QuayMatch {
     private final OsmRouteQuay osmQuay;
     private final NetexRouteVariantQuay netexQuay;
     private boolean quayCodeMatch = false;
-    private boolean areaCodeMatch = false;
+    private boolean stopPlaceMatch = false;
     private boolean nameMatch = false;
 
     public QuayMatch(OsmRouteQuay osmQuay, NetexRouteVariantQuay netexQuay) {
@@ -20,18 +20,18 @@ public class QuayMatch {
         if (osmQuay == null || netexQuay == null) return;
         quayCodeMatch = Objects.equals(osmQuay.getQuayCode(), netexQuay.getQuayCode());
         if (isQuayCodeMatch()) {
-            areaCodeMatch = true;
+            stopPlaceMatch = true;
         } else {
-            areaCodeMatch = checkAreaCodeMatch();
+            stopPlaceMatch = checkStopPlaceMatch();
         }
         nameMatch = Objects.equals(osmQuay.getName(), netexQuay.getName());
    }
 
-    private boolean checkAreaCodeMatch() {
-        if (osmQuay == null || osmQuay.getAreaCode() == null) {
+    private boolean checkStopPlaceMatch() {
+        if (osmQuay == null || osmQuay.getStopPlace() == null) {
             return false;
         }
-        return Objects.equals(osmQuay.getAreaCode(), netexQuay.getStopPlaceCode());
+        return Objects.equals(osmQuay.getStopPlace(), netexQuay.getStopPlaceCode());
     }
 
     public OsmRouteQuay getOsmQuay() {
@@ -50,12 +50,12 @@ public class QuayMatch {
         this.quayCodeMatch = quayCodeMatch;
     }
 
-    public boolean isAreaCodeMatch() {
-        return areaCodeMatch;
+    public boolean isStopPlaceMatch() {
+        return stopPlaceMatch;
     }
 
-    public void setAreaCodeMatch(boolean areaCodeMatch) {
-        this.areaCodeMatch = areaCodeMatch;
+    public void setStopPlaceMatch(boolean stopPlaceMatch) {
+        this.stopPlaceMatch = stopPlaceMatch;
     }
 
     public boolean isNameMatch() {
@@ -67,6 +67,6 @@ public class QuayMatch {
     }
 
     public boolean isMatch() {
-        return isQuayCodeMatch() || isAreaCodeMatch() || isNameMatch();
+        return isQuayCodeMatch() || isStopPlaceMatch() || isNameMatch();
     }
 }

@@ -20,8 +20,4 @@ public class OsmRouteData {
     private List<String> quayList;
     private List<String> stopPlaceList;
     private Integer quayCount;
-    private String startQuayCode;
-    private String endQuayCode;
-    private String startStopPlaceCode;
-    private String endStopPlaceCode;
 }

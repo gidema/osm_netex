@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { OsmPtNetwork } from '../osm_network';
-import { OsmPtNetworkService } from '../osm_network.service';
+import { OsmNetwork } from '../osm-network';
+import { OsmNetworkService } from '../osm-network.service';
 
 @Component({
   selector: 'app-network-list',
@@ -10,11 +10,11 @@ import { OsmPtNetworkService } from '../osm_network.service';
   templateUrl: './osm_network-list.component.html'
 })
 export class NetworkListComponent implements OnInit {
-  private networkService = inject(OsmPtNetworkService);
-  networks!: OsmPtNetwork[];
+  private networkService = inject(OsmNetworkService);
+  networks!: OsmNetwork[];
 
   ngOnInit() {
-    this.networkService.findAll().subscribe((data: OsmPtNetwork[]) => {
+    this.networkService.findAll().subscribe((data: OsmNetwork[]) => {
       this.networks = data;
     });
   }

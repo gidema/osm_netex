@@ -20,10 +20,6 @@ public class NetexRouteVariant {
     private List<String> quayList;
     private List<String> stopPlaceList;
     private Long quayCount;
-    private String startQuayCode;
-    private String endQuayCode;
-    private String startStopPlaceCode;
-    private String endStopPlaceCode;
     private String lineRef;
     private List<String> route_refs;
     private String directionType;

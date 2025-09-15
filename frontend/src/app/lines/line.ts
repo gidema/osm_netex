@@ -1,9 +1,11 @@
 export class Line {
     id!: number;
+    administrativeZone!: string;
     countryCode!: string;
     network!: string;
     transportMode!: string;
-    lineRef!: string;
+    lineNumber!: string;
+    lineSort!: string;
     netexLineId!: string;
     osmLineId!: number;
     netexName!: string;

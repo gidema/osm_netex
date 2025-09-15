@@ -19,9 +19,4 @@ public class NetexRouteData {
     private List<String> quayList;
     private List<String> stopPlaceList;
     private Long quayCount;
-    private String startQuayCode;
-    private String endQuayCode;
-    private String startStopPlaceCode;
-    private String endStopPlaceCode;
-
 }

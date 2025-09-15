@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class OsmPtQuay {
     private String quayCode;
-    private String areaCode;
+    private String stopPlace;
     private OsmPtPlatform platformNode;
     private OsmPtPlatform platformWay;
 

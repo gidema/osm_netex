@@ -23,7 +23,6 @@ public class NetexRouteVariantQuay {
     private String town;
     private String stopSideCode;
     private String stopPlaceCode;
-    private String quayLocationType;
 
     public String getName() {
         var sb = new StringBuilder();

@@ -1,40 +1,39 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ActivatedRoute, ParamMap } from '@angular/router';
+import { Network } from '../network';
+import { NetworkService } from '../network.service';
 import { LineService } from '../../lines/line.service';
 import { Line } from '../../lines/line';
+import { Observable } from 'rxjs';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
     selector: 'app-network-detail',
     standalone: true,
-    imports: [RouterModule],
+    imports: [RouterModule, AsyncPipe],
     templateUrl: './network-detail.component.html',
     styleUrl: './network-detail.component.css'
 })
 export class NetworkDetailComponent implements OnInit {
     private activatedRoute = inject(ActivatedRoute);
+    private networkService = inject(NetworkService);
     private lineService = inject(LineService);
-    networkName: string | null = null;
-    countryCode: string | null = null;
+    network$!: Observable<Network>;
     lines: Line[] = [];
+    linesByLineNumber: Line[] = [];
 
     ngOnInit() {
         this.activatedRoute.paramMap.subscribe((route: ParamMap) => {
-            this.networkName = route.get('networkName');
+            const networkId = route.get('networkId') ?? "";
+            this.network$ = this.networkService.getNetwork(networkId);
+            this.network$.subscribe(network => {
+                this.lineService.findByAdministrativeZone(network.administrativeZone).subscribe((data: Line[]) => {
+                    this.lines = data;
+                    this.linesByLineNumber = data;
+                    this.linesByLineNumber.sort((a, b) => a.lineSort.localeCompare(b.lineSort));
+                });
+            });
         });
-        this.lineService.findByNetwork(this.networkName || "").subscribe((data: Line[]) => {
-            this.lines = data;
-            this.lines.sort((a, b) => this.compareLineNum(a.lineRef, b.lineRef));
-        });
-    }
-    
-    /**
-     * Comparator for public transport line nummers. Compare numeric values first
-     */
-    private compareLineNum(a: string, b:string) : number {
-        if (!isNaN(parseInt(a)) && !isNaN(parseInt(b)) ) {
-            return parseInt(a) - parseInt(b);
-        }
-        return a.localeCompare(b)
     }
 }

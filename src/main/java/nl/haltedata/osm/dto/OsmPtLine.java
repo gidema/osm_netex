@@ -7,17 +7,21 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(schema="osm_pt", name="osm_route_master")
+@Table(schema="osm_pt", name="osm_line")
 @Getter
 @Setter
 public class OsmPtLine {
     @Id
-    private Long osmRouteMasterId;
+    private Long id;
+    private String osmTransportMode;
+    private String netexTransportMode;
     private String name;
-    private String network;
-    private String transportMode;
     private String operator;
-    private String routeRef;
+    private String lineNumber;
+    private String network;
     private String colour;
+    private Boolean is_disused;
+    private String administrative_zone;
+    private String line_sort;
 
 }

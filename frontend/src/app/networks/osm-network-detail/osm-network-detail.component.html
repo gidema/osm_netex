@@ -1,0 +1,26 @@
+<div class="container">
+  <h1>OSM network {{ this.osmNetwork?.name }} ({{this.osmNetwork?.id}})</h1>
+  <p>ShortName: {{ this.osmNetwork?.shortName }}<br/>
+  Operator: {{ this.osmNetwork?.operator }}<br/>
+  Valid between: {{ this.osmNetwork?.startDate }} and {{ this.osmNetwork?.endDate }}<br/>
+  Wikidata: <a href = "https://wikidata.org/wiki/{{ this.osmNetwork?.wikidata }}">{{ this.osmNetwork?.wikidata }}</a><br/>
+  @if (this.osmNetwork?.note)  {Note: {{this.osmNetwork?.note}} }</p>
+   <table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Line number</th>
+        <th scope="col">Name</th>
+        <th scope="col">Transport mode</th>
+       </tr>
+    </thead>
+    <tbody>
+      @for (line of lines; track line.id) {
+        <tr>
+          <td><a [routerLink] = "['/osm/line', line.id]">{{ line.lineNumber }} </a> </td>
+          <td><a [routerLink] = "['/osm/line', line.id]">{{ line.name }} </a> </td>
+          <td>{{ line.osmTransportMode }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

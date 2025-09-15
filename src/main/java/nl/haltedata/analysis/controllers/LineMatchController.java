@@ -1,7 +1,6 @@
 package nl.haltedata.analysis.controllers;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.inject.Inject;
 import nl.haltedata.analysis.dto.LineMatch;
 import nl.haltedata.analysis.dto.LineMatchRepository;
-import nl.haltedata.netex.dto.DimNetexRoute;
 
 @RestController
 public class LineMatchController {
@@ -30,7 +28,11 @@ public class LineMatchController {
      */
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/line")
-    public List<LineMatch> getByNetwork(@RequestParam("network") String network) throws Exception {
+    public List<LineMatch> getByQuery(@RequestParam(name ="network", required = false) String network,
+        @RequestParam(name = "administrativeZone", required = false) String administrativeZone) throws Exception {
+        if (administrativeZone != null) {
+            return repository.findByAdministrativeZone(administrativeZone);
+        }
         return repository.findByNetwork(network);
     }
     

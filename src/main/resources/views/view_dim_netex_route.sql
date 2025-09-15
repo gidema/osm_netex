@@ -10,7 +10,7 @@ SELECT r.id,
   l.colour,
   l.text_colour,
   l.mobility_impaired_access,
-  l.network
+  l.administrative_zone
 FROM netex.netex_route r
   LEFT JOIN netex.netex_line l ON l.id = r.line_ref;
   

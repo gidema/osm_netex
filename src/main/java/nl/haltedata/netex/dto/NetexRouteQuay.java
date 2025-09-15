@@ -21,5 +21,4 @@ public class NetexRouteQuay {
     String quayCode;
     String stopSideCode;
     String stopPlaceCode;
-    String quayLocationType;
 }

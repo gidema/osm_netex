@@ -1,5 +1,9 @@
 <div class="container">
-  <h1>{{ this.networkName }} ({{this.countryCode}})</h1>
+  @if (network$ | async; as network) {  
+  <h1>{{ network.name }} ({{ network.shortName }})</h1>
+  <p>OSM name: <a [routerLink] =  "['/osm/network/', network.osmNetwork?.id ]">{{ network.osmNetwork?.name }}</a><br/>
+     NeTex name: <a [routerLink] =  "['/netex/network/', network.netexNetwork?.id ]">{{ network.netexNetwork?.name }}</a></p>
+  
   <table class="table table-bordered table-striped">
     <thead class="thead-dark">
       <tr>
@@ -10,9 +14,10 @@
        </tr>
     </thead>
     <tbody>
-      @for (line of lines; track line.id) {
+<!--       @let busLines = linesByLineNumber.filter((line) => line.transportMode = 'bus');-->
+      @for (line of linesByLineNumber; track line.id) {
         <tr>
-          <td><a [routerLink] = "['/line', line.id]">{{ line.lineRef }} </a> </td>
+          <td><a [routerLink] = "['/line', line.id]">{{ line.lineNumber }} </a> </td>
           <td><a [routerLink] = "['/osm/line', line.osmLineId]">{{ line.osmName }} </a> </td>
           <td><a [routerLink] = "['/netex/line', line.netexLineId]">{{ line.netexName }} </a> </td>
           <td>{{ line.transportMode }}</td>
@@ -20,4 +25,5 @@
       }
     </tbody>
   </table>
+  }
 </div>

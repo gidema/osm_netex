@@ -8,16 +8,16 @@ import { NetexLine } from './netex-line';
   providedIn: 'root'
 })
 export class NetexLineService {
-        private http = inject(HttpClient);
-        private lineUrl: string = 'http://localhost:8080/netex/line';
+    private http = inject(HttpClient);
+    private lineUrl: string = 'http://localhost:8080/netex/line';
 
-        public getById(id: string): Observable<NetexLine> {
-            var url = `${this.lineUrl}/${encodeURIComponent(id)}`;
-            return this.http.get<NetexLine>(url);
-        }
-
-        public findByNetwork(networkName: string): Observable<NetexLine[]> {
-            const options = { params: new HttpParams().set('network', networkName) };
-            return this.http.get<NetexLine[]>(this.lineUrl, options);
-      }
+    public getById(id: string): Observable<NetexLine> {
+        const url = `${this.lineUrl}/${encodeURIComponent(id)}`;
+        return this.http.get<NetexLine>(url);
     }
+
+    public findByAdministrativeZone(administrativeZone: string): Observable<NetexLine[]> {
+        const options = { params: new HttpParams().set('administrativeZone', administrativeZone) };
+        return this.http.get<NetexLine[]>(this.lineUrl, options);
+    }
+}

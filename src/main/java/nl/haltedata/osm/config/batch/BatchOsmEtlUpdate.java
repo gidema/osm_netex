@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 @EnableBatchProcessing
 public class BatchOsmEtlUpdate {
 
-    private static String update_st_network_table_sql = """
+    private static String stage_networks_sql = """
 TRUNCATE TABLE osm_pt.st_osm_network;
 INSERT INTO osm_pt.st_osm_network ("id", "name", short_name, "operator", start_date, end_date,
     wikidata, note)
@@ -42,7 +42,7 @@ FROM relations network
 WHERE network.tags->'type' = 'network' AND network.tags->'network' = 'public_transport';
 """;
 
-    private static String update_network_line_table_sql = """
+    private static String stage_network_route_masters_sql = """
 TRUNCATE TABLE osm_pt.st_osm_network_line;
 INSERT INTO osm_pt.st_osm_network_line (network_id, route_master_id)
     SELECT network.id AS network_id, mb.member_id AS route_master_id
@@ -50,28 +50,48 @@ INSERT INTO osm_pt.st_osm_network_line (network_id, route_master_id)
         JOIN osm_pt.st_osm_network network ON network.id = mb.relation_id
 """;
     
-    private static String update_route_master_table_sql = """
-TRUNCATE TABLE osm_pt.osm_route_master;
-INSERT INTO osm_pt.osm_route_master
+    private static String stage_route_masters_sql = """
+TRUNCATE TABLE osm_pt.st_osm_route_master;
+INSERT INTO osm_pt.st_osm_route_master
 SELECT rtm.id AS osm_route_master_id,
-  COALESCE((rtm.tags->'route_master'), (rtm.tags->'disused:route_master')) AS transport_mode,
+  COALESCE((rtm.tags->'route_master'), (rtm.tags->'disused:route_master'), (rtm.tags->'abandoned:route_master')) AS transport_mode,
   rtm.tags->'name' AS "name",
   rtm.tags->'operator' AS operator,
-  rtm.tags->'ref' AS route_ref,
+  rtm.tags->'ref' AS ref,
   rtm.tags->'network' AS network,
   rtm.tags->'colour' AS colour,
-  CAST(NULLIF(regexp_replace((rtm.tags->'ref'), '\\D','','g'), '') AS INTEGER) AS line_number,
-  exist(rtm.tags, 'disused:route_master') AS is_disused 
+  exist(rtm.tags, 'disused:route_master') OR exist(rtm.tags, 'abandoned:route_master') AS is_disused 
 FROM relations rtm
-WHERE rtm.tags->'type' = 'route_master';
+WHERE rtm.tags->'type' IN ('route_master', 'disused:route_master', 'abandoned:route_master');
 """;
 
-    private static String update_route_master_route_table_sql = """
-TRUNCATE TABLE osm_pt.osm_route_master_route;
-INSERT INTO osm_pt.osm_route_master_route
-SELECT master.osm_route_master_id, mb.member_id AS osm_route_id
+    private static String stage_route_master_routes_sql = """
+TRUNCATE TABLE osm_pt.st_osm_route_master_route;
+INSERT INTO osm_pt.st_osm_route_master_route (route_master_id, route_id)
+SELECT rm.osm_route_master_id, mb.member_id
     FROM relation_members mb
-      JOIN osm_pt.osm_route_master master ON master.osm_route_master_id = mb.relation_id;
+      JOIN osm_pt.st_osm_route_master rm ON rm.osm_route_master_id = mb.relation_id;
+""";
+
+    private static String update_line_table_sql = """
+TRUNCATE TABLE osm_pt.osm_line;
+INSERT INTO osm_pt.osm_line (id, osm_transport_mode, netex_transport_mode, name, operator, line_number, network, colour, is_disused, administrative_zone, line_sort)
+SELECT rm.osm_route_master_id AS id,
+  rm.transport_mode AS osm_transport_mode,
+  otm.netex_transport_mode,
+  rm."name",
+  rm.operator,
+  rm.ref AS line_number,
+  rm.network,
+  rm.colour,
+  rm.is_disused,
+  nw.administrative_zone,
+  CASE WHEN rm.ref ~ '^[0-9]{1,5}$' THEN LPAD(rm.ref, 5, '0') ELSE rm.ref END AS line_sort
+FROM osm_pt.st_osm_route_master rm
+LEFT JOIN osm_pt.st_osm_network_line nl ON nl.route_master_id = rm.osm_route_master_id
+LEFT JOIN osm_pt.osm_network nw ON nw.id = nl.network_id 
+LEFT JOIN osm_pt.ref_osm_transport_mode otm ON otm.osm_transport_mode = rm.transport_mode
+WHERE rm.transport_mode IN ('bus', 'trolleybus', 'tram', 'subway', 'train', 'ferry')
 """;
 
     private static String update_network_table_sql = """
@@ -82,7 +102,9 @@ WITH concessie AS (
     JOIN osm_pt.st_osm_network concessie ON nwln.network_id = concessie.id
         WHERE concessie.name = 'OV-concessies Nederland')
 INSERT INTO osm_pt.osm_network
-SELECT nw.*, concessie.id IS NOT NULL AS is_concessie
+SELECT nw.*, concessie.id IS NOT NULL AS is_concessie,
+    CASE WHEN nw.short_name IS NULL THEN NULL 
+    ELSE 'NL:DOVA:TransportAdministrativeZone:' || nw.short_name END AS administrative_zone
 FROM osm_pt.st_osm_network nw
   LEFT JOIN concessie ON nw.id = concessie.id
   WHERE nw.name != 'OV-concessies Nederland'
@@ -90,7 +112,8 @@ FROM osm_pt.st_osm_network nw
             
     private static String update_route_table_sql = """
 TRUNCATE TABLE osm_pt.osm_route;
-INSERT INTO osm_pt.osm_route
+INSERT INTO osm_pt.osm_route (osm_route_id, transport_mode, name, operator, route_ref, network,
+  "from", "to", colour, osm_line_id, is_disused)
 SELECT rt.id AS osm_route_id,
   COALESCE(rt.tags->'route', rt.tags->'disused:route') AS transport_mode,
   rt.tags->'name' AS "name",
@@ -101,11 +124,10 @@ SELECT rt.id AS osm_route_id,
   rt.tags->'to' AS to,
   rt.tags->'colour' AS colour,
   rmr.osm_route_master_id AS osm_line_id,
-  CAST(NULLIF(regexp_replace(rt.tags->'ref', '\\D','','g'), '') AS INTEGER) AS line_number,
   exist(rt.tags, 'disused:route') AS is_disused 
 FROM relations rt
 LEFT JOIN osm_pt.osm_route_master_route rmr ON rmr.osm_route_id = rt.id
-WHERE rt.tags->'type' = 'route' AND rt.tags->'route'  IN ('bus', 'trolleybus', 'tram', 'train');
+WHERE rt.tags->'type' IN ('route', 'disused:route');
 """;
 
     private static String update_quays_table_sql = """
@@ -201,7 +223,7 @@ SELECT osm_route_id,
     quay_name,
     quay_code,
     stop_side_code,
-    area_code
+    stop_place
 FROM (
 SELECT COALESCE(rpn.osm_route_id, rpw.osm_route_id) AS osm_route_id,
   rpn.osm_platform_id AS platform_point_id, 
@@ -210,7 +232,7 @@ SELECT COALESCE(rpn.osm_route_id, rpw.osm_route_id) AS osm_route_id,
   COALESCE(rpn.quay_name, rpw.quay_name) AS quay_name,
   COALESCE(rpn.quay_code, rpw.quay_code) AS quay_code,
   COALESCE(rpn.stop_side_code, rpw.stop_side_code) AS stop_side_code,
-  COALESCE(rpn.stop_place_code, rpw.stop_place_code) AS area_code
+  COALESCE(rpn.stop_place_code, rpw.stop_place_code) AS stop_place
 FROM osm_pt.osm_route_platform rpn
 FULL OUTER JOIN osm_pt.osm_route_platform rpw 
   ON rpn.osm_route_id = rpw.osm_route_id 
@@ -222,52 +244,35 @@ WHERE TRUE
   AND (rpw.osm_primitive_type = 'W' OR rpw.osm_primitive_type IS NULL)
 ) AS sub)
 INSERT INTO osm_pt.osm_route_quay (osm_route_id, quay_index, platform_point_id, platform_area_id,
- quay_name, quay_code, stop_side_code, area_code, quay_location_type)
+ quay_name, quay_code, stop_side_code, stop_place)
 SELECT osm_route_id, quay_index, platform_point_id, platform_area_id, quay_name, quay_code,
-    stop_side_code, area_code,
-    CASE WHEN quay_index=1 THEN 'start' WHEN quay_index = quay_count THEN 'end' ELSE 'middle' END AS quay_location_type
+    stop_side_code, stop_place
 FROM data;
 """;
 
     private static String update_osm_route_data_table_sql = """
-    TRUNCATE TABLE osm_pt.osm_route_data;
-    WITH data AS (
-        SELECT route.route_ref AS line_number,
-          route.osm_route_id,
-          route.network AS network,
-          ARRAY_AGG(route_quay.quay_code ORDER BY route_quay.quay_index) quay_list,
-          ARRAY_AGG(route_quay.area_code ORDER BY route_quay.quay_index) stop_place_list,
-          CAST(COUNT(route_quay.quay_code) AS INTEGER) AS quay_count,
-          route.osm_line_id
-        FROM osm_pt.osm_route AS route
-        JOIN osm_pt.osm_route_quay AS route_quay ON route_quay.osm_route_id = route.osm_route_id
-        GROUP BY route.route_ref, route.osm_route_id, route.osm_line_id, route.network)
-    INSERT INTO osm_pt.osm_route_data
-          SELECT data.line_number,
-              data.osm_route_id,
-              data.network AS network,
-              data.quay_list,
-              data.stop_place_list,
-              data.quay_count,
-              start_quay.quay_code AS start_quay_code,
-              end_quay.quay_code AS end_quay_code,
-              start_quay.area_code AS start_stop_place_code,
-              end_quay.area_code AS end_stop_place_code,
-              data.osm_line_id
-          FROM data
-          JOIN osm_pt.osm_route_quay start_quay ON start_quay.osm_route_id = data.osm_route_id AND start_quay.quay_location_type = 'start'
-          JOIN osm_pt.osm_route_quay end_quay ON end_quay.osm_route_id = data.osm_route_id AND end_quay.quay_location_type = 'end';
+TRUNCATE TABLE osm_pt.osm_route_data;
+INSERT INTO osm_pt.osm_route_data
+    SELECT route.line_number,
+      route.osm_route_id,
+      route.network AS network,
+      ARRAY_AGG(route_quay.quay_code ORDER BY route_quay.quay_index) quay_list,
+      ARRAY_AGG(route_quay.stop_place ORDER BY route_quay.quay_index) stop_place_list,
+      CAST(COUNT(route_quay.quay_code) AS INTEGER) AS quay_count,
+      route.osm_line_id
+    FROM osm_pt.osm_route AS route
+    JOIN osm_pt.osm_route_quay AS route_quay ON route_quay.osm_route_id = route.osm_route_id
+    GROUP BY route.line_number, route.osm_route_id, route.osm_line_id, route.network;
 """;
 
-
-    private static String update_osm_route_master_stop_place_table_sql = """
-TRUNCATE TABLE osm_pt.osm_route_master_stop_place;
-INSERT INTO osm_pt.osm_route_master_stop_place
-SELECT DISTINCT rm.osm_route_master_id, rm.line_number, rq.area_code AS stop_place_code
+    private static String update_osm_line_stop_place_sql = """
+TRUNCATE TABLE osm_pt.osm_line_stop_place;
+INSERT INTO osm_pt.osm_line_stop_place (administrative_zone, line_id, line_number, stop_place_code)
+SELECT DISTINCT ln.administrative_zone, ln.id AS line_id, ln.line_number, rq.stop_place
 FROM osm_pt.osm_route_quay rq
-  JOIN osm_pt.osm_route_master_route rmr ON rq.osm_route_id = rmr.osm_route_id
-  JOIN osm_pt.osm_route_master rm ON rm.osm_route_master_id = rmr.osm_route_master_id
-WHERE rq.area_code IS NOT NULL
+  JOIN osm_pt.st_osm_route_master_route rmr ON rq.osm_route_id = rmr.route_id
+  JOIN osm_pt.osm_line ln ON ln.id = rmr.route_master_id
+WHERE rq.stop_place IS NOT NULL
 """;
 
     private static String update_osm_duplicate_bus_route_table_sql = """
@@ -335,17 +340,19 @@ LEFT JOIN osm_pt.osm_missing_ifopt_area_code mac2 ON mac2.osm_id = rf2.osm_platf
     @Bean
     Job updateOsmEtlJob(JobRepository jobRepository) { 
         return new JobBuilder("osmEtlUpdate", jobRepository) 
-            .start(sqlUpdateStep("Extract networks",update_st_network_table_sql))
-            .next(sqlUpdateStep("Update network lines",update_network_line_table_sql))
-            .next(sqlUpdateStep("Update routemasters",update_route_master_table_sql))
+            .start(sqlUpdateStep("Stage networks",stage_networks_sql))
+            .next(sqlUpdateStep("Stage network route masters",stage_network_route_masters_sql))
+            .next(sqlUpdateStep("Stage route masters",stage_route_masters_sql))
+            
             .next(sqlUpdateStep("Update networks",update_network_table_sql))
+            .next(sqlUpdateStep("Update lines",update_line_table_sql))
             .next(sqlUpdateStep("Update routes", update_route_table_sql))
-            .next(sqlUpdateStep("Update routemaster routes", update_route_master_route_table_sql))
+            .next(sqlUpdateStep("Update routemaster routes", stage_route_master_routes_sql))
             .next(sqlUpdateStep("Update quays", update_quays_table_sql))
             .next(sqlUpdateStep("Update route platforms", update_route_platform_table_sql))
             .next(sqlUpdateStep("Update route quays", update_route_quay_table_sql))
             .next(sqlUpdateStep("Update route data", update_osm_route_data_table_sql))
-            .next(sqlUpdateStep("Update routemaster stop places", update_osm_route_master_stop_place_table_sql))
+            .next(sqlUpdateStep("Update line stop places", update_osm_line_stop_place_sql))
             .next(sqlUpdateStep("Update duplicate routes", update_osm_duplicate_bus_route_table_sql))
             .next(sqlUpdateStep("Update missing ifopt areacodes", update_missing_ifopt_area_code_table_sql))
             .next(sqlUpdateStep("update osm links", update_osm_link_table_sql))

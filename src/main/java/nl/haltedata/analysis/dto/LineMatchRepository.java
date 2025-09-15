@@ -6,4 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface LineMatchRepository extends CrudRepository<LineMatch, Integer> {
     List<LineMatch> findByNetwork(String network);
+    List<LineMatch> findByAdministrativeZone(String administrativeZone);
 }

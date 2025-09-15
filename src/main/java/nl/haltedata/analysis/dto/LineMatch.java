@@ -13,15 +13,17 @@ import lombok.Setter;
 public class LineMatch {
     @Id
     Integer id;
-    String countryCode;
+    String administrativeZone;
     String network;
-    String transportMode;
-    String lineRef;
+    String lineNumber;
+    String lineSort;
     String netexLineId;
     Long osmLineId;
-    String netexName;
     String osmName;
+    String netexName;
+    String transportMode;
     String netexColour;
     String osmColour;
     String productCategory;
+
 }

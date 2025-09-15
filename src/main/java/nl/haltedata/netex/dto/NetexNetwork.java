@@ -1,5 +1,7 @@
 package nl.haltedata.netex.dto;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -10,18 +12,16 @@ import lombok.Setter;
 @Table(schema = "netex")
 @Getter
 @Setter
-public class DimNetexRoute {
+public class NetexNetwork {
     @Id
     private String id;
-    private String lineId;
     private String name;
+    private String shortName;
+    private String description;
+    private LocalDateTime fromDate;
+    private LocalDateTime toDate;
+    private String groupOfLinesType;
+    private String authorityRef;
+    private String fileSetId;
     private String administrativeZone;
-    private String brandingRef;
-    private String directionType;
-    private String transportMode;
-    private String publicCode;
-//    private String privateCode;
-    private String colour;
-    private String textColour;
-    private boolean mobilityImpairedAccess;
 }

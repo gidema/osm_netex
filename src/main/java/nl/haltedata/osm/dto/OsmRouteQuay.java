@@ -21,9 +21,8 @@ public class OsmRouteQuay {
     private Long platformAreaId;
     private String quayCode;
     private String quayName;
-    private String areaCode;
+    private String stopPlace;
     private String stopSideCode;
-    private String quayLocationType;
     
     public String getName() {
         var sb = new StringBuilder();

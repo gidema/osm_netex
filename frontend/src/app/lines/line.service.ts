@@ -15,9 +15,13 @@ export class LineService {
         return this.http.get<Line>(this.lineUrl + "/" + id);
     }
 
+    public findByAdministrativeZone(administrativeZone: string): Observable<Line[]> {
+        const options = { params: new HttpParams().set('administrativeZone', administrativeZone) };
+        return this.http.get<Line[]>(this.lineUrl, options);
+    }
+
     public findByNetwork(networkName: string): Observable<Line[]> {
         const options = { params: new HttpParams().set('network', networkName) };
-
         return this.http.get<Line[]>(this.lineUrl, options);
   }
 }

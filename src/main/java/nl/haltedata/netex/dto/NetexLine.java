@@ -14,7 +14,6 @@ public class NetexLine {
     @Id
     private String id;
     private String name;
-    private String network;
     private String brandingRef;
     private String directionType;
     private String transportMode;
@@ -25,4 +24,5 @@ public class NetexLine {
     private boolean mobilityImpairedAccess;
     private String responsibilitySet;
     private String productCategory;
+    private String administrativeZone;
 }

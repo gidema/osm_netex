@@ -1,11 +1,11 @@
+import { OsmNetwork } from './osm-network';
+import { NetexNetwork } from './netex-network';
+
 export class Network {
-    id!: number;
+    id!: string;
+    administrativeZone!: string;
     name!: string;
-    dovaId!: string;
-    dovaName!: string;
     shortName!: string;
-    osmId!: number;
-    osmName!: string;
-    netexId!: string;
-    netexName!: string;
+    osmNetwork?: OsmNetwork;
+    netexNetwork?: NetexNetwork;
 }

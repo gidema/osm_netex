@@ -26,7 +26,7 @@ import nl.haltedata.osm.dto.OsmRouteRepository;
  * The RouteAnalyzer iterates over a list of NeTeX quays and a list of OSM quay and tries to find
  * the next QuayMatch.
  * If the first quays on both sides match, a QuayMatch is returned containing the matching quays.
- *  The match is tried on quayCode, areaCode and name in that order. If there is a match on areaCode,
+ *  The match is tried on quayCode, stopPlace and name in that order. If there is a match on stopPlace,
  *   but not on quayCode an minor QuayMatchIssue is created. If there is a match on name, but not on 
  *   quayCode a major QuayIssue is created. If there is an mismatch in the name, a minor QuayIssue is created.
  *
@@ -227,11 +227,11 @@ public class RouteAnalyzer {
 
         private boolean quaysMatch(OsmRouteQuay osmQuay, NetexRouteVariantQuay netexQuay) {
             return Objects.equals(osmQuay.getQuayCode(), netexQuay.getQuayCode()) ||
-                    Objects.equals(osmQuay.getAreaCode(), netexQuay.getStopPlaceCode());
+                    Objects.equals(osmQuay.getStopPlace(), netexQuay.getStopPlaceCode());
         }
         
         private void analizeQuayMatch(QuayMatch match) {
-            if (match.isAreaCodeMatch() && ! match.isQuayCodeMatch()) {
+            if (match.isStopPlaceMatch() && ! match.isQuayCodeMatch()) {
                 String expected = match.getNetexQuay().getName();
                 String found = match.getOsmQuay().getQuayCode();
                 addIssue("UnexpectedQuayCode",

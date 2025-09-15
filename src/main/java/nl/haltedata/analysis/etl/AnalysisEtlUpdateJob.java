@@ -29,79 +29,64 @@ public class AnalysisEtlUpdateJob {
     private static String update_network_match_table_sql = """
 -- Clear the table
 TRUNCATE TABLE network_match;
-WITH dova AS (
-  SELECT "id", "name", "short_name"
+WITH netex AS (
+  SELECT "id", administrative_zone, "name", short_name
   FROM netex.netex_network
   WHERE to_date IS NULL OR short_name IN ('FFVB', 'RAIL-HRN')),
 osm AS (
-  SELECT "id", "name", short_name
+  SELECT "id", "name", short_name, administrative_zone
   FROM osm_pt.osm_network
   WHERE is_concessie
-),
-netex AS (
-  SELECT DISTINCT responsibility_set AS "id", network AS "name", network_id
-  FROM netex.netex_line
-  WHERE network_id IS NOT NULL AND network IS NOT NULL
 )
-INSERT INTO network_match (dova_id, dova_name, short_name, osm_id, osm_name,
-    netex_id, netex_name, name)
-SELECT dova."id" AS dova_id, dova.name AS dova_name, dova.short_name, 
-  osm.id AS osm_id, osm.name AS osm_name,
-  netex.id AS netex_id, netex.name AS netex_name,
-  COALESCE(dova."name", netex."name", osm."name") AS name
-FROM dova
-FULL OUTER JOIN osm ON osm.short_name = dova.short_name
-FULL OUTER JOIN netex ON netex.network_id = dova.id
+INSERT INTO network_match (id, administrative_zone, name, short_name, osm_id, netex_id)
+SELECT COALESCE(netex."id", osm.id::TEXT) AS netex_id, netex.administrative_zone, COALESCE(netex."name", osm."name") AS "name",
+  COALESCE(netex.short_name, osm.short_name) AS short_name, 
+  osm.id AS osm_id,
+  netex."id"
+FROM netex
+FULL OUTER JOIN osm ON osm.administrative_zone = netex.administrative_zone
 """;
     
     private static String update_line_match_table_sql = """
 -- Clear the table
 TRUNCATE TABLE line_match;
--- Add lines with a match between Netex and OSM
 WITH match AS (
-  SELECT DISTINCT ormsp.line_number, ormsp.osm_route_master_id, nlsp.netex_line_id
-  FROM osm_pt.osm_route_master_stop_place ormsp
-  JOIN netex.netex_line_stop_place nlsp ON nlsp.line_number = ormsp.line_number AND nlsp.stop_place_code = ormsp.stop_place_code)
-INSERT INTO line_match(netex_line_id, osm_line_id, network, transport_mode, country_code, line_ref, product_category, line_sort)
-SELECT match.netex_line_id, match.osm_route_master_id, ol.network, ol.transport_mode, osmn.country_code, match.line_number, nl.product_category,
-CASE WHEN match.line_number ~ '^[0-9]{1,5}$' THEN LPAD(match.line_number, 5, '0') ELSE match.line_number END AS line_sort
+  SELECT DISTINCT olsp.administrative_zone, olsp.line_number, olsp.line_id AS osm_line_id, nlsp.netex_line_id
+  FROM osm_pt.osm_line_stop_place olsp
+  JOIN netex.netex_line_stop_place nlsp ON nlsp.line_number = olsp.line_number 
+    AND nlsp.stop_place_code = olsp.stop_place_code AND nlsp.administrative_zone = olsp.administrative_zone)
+INSERT INTO line_match(netex_line_id, osm_line_id, transport_mode, line_number, product_category, line_sort, administrative_zone)
+SELECT match.netex_line_id, match.osm_line_id, nl.transport_mode, match.line_number, nl.product_category,
+ol.line_sort, match.administrative_zone
 FROM match 
-  LEFT JOIN osm_pt.osm_route_master ol ON ol.osm_route_master_id = match.osm_route_master_id
-  LEFT JOIN netex.netex_line nl ON nl.id = match.netex_line_id
-  LEFT JOIN osm_pt.osm_pt_network osmn ON ol.network = osmn.network_name;
+  LEFT JOIN osm_pt.osm_line ol ON ol.id = match.osm_line_id
+  LEFT JOIN netex.netex_line nl ON nl.id = match.netex_line_id;
 -- Add Netex lines that have no match
-INSERT INTO line_match(netex_line_id, osm_line_id, network, transport_mode, country_code, line_ref, product_category, line_sort)
-SELECT line.id, NULL, line.network, line.transport_mode, 'NL', line.public_code, line.product_category,
-CASE WHEN line.public_code ~ '^[0-9]{1,5}$' THEN LPAD(line.public_code, 5, '0') ELSE line.public_code END AS line_sort
+INSERT INTO line_match(netex_line_id, transport_mode, line_number, product_category, line_sort, administrative_zone)
+SELECT line.id, line.transport_mode, line.public_code, line.product_category, line.line_sort, line.administrative_zone
 FROM netex.netex_line line
-WHERE true
-    AND line.transport_mode IN ('bus', 'trolleybus')
-    AND line.id NOT IN (SELECT netex_line_id FROM line_match)
+WHERE line.id NOT IN (SELECT netex_line_id FROM line_match)
     AND (line.product_category NOT IN ('Opstapper', 'OV op Maat') OR line.product_category IS NULL);
 -- Add OSM lines that have no match
-INSERT INTO line_match(netex_line_id, osm_line_id, network, transport_mode, country_code, line_ref, product_category, line_sort)
-SELECT NULL, line.osm_route_master_id, line.network, line.transport_mode, network.country_code, line.route_ref, NULL,
-CASE WHEN line_ref ~ '^[0-9]{1,5}$' THEN LPAD(line_ref, 5, '0') ELSE line_ref END AS line_sort
-FROM osm_pt.osm_route_master line
-LEFT JOIN osm_pt.osm_pt_network network ON network.network_name = line.network 
-LEFT JOIN line_match ON line.osm_route_master_id = line_match.osm_line_id
-WHERE line_match.osm_line_id IS NULL
-    AND line.transport_mode IN ('bus', 'trolleybus')
-    AND (network.country_code = 'NL' OR network.country_code IS NULL);
+INSERT INTO line_match(osm_line_id, transport_mode, line_number, administrative_zone, line_sort)
+SELECT line.id, line.netex_transport_mode, line.line_number, line.administrative_zone, line.line_sort
+FROM osm_pt.osm_line line
+LEFT JOIN line_match ON line.id = line_match.osm_line_id
+WHERE line_match.osm_line_id IS NULL;
 """;
 
     private static String update_route_match_candidate_table_sql = """
     -- Clear the table
     TRUNCATE TABLE route_match_candidate;
     WITH osm_links AS (
-      SELECT DISTINCT lm.id AS line_id, rt.route_ref AS line_number, rq1.osm_route_id, rq1.area_code AS area_code1, rq2.area_code AS area_code2
+      SELECT DISTINCT lm.id AS line_id, rt.route_ref AS line_number, rq1.osm_route_id, rq1.stop_place AS stop_place1, rq2.stop_place AS stop_place2
       FROM osm_pt.osm_route_quay rq1
       JOIN osm_pt.osm_route_quay rq2 ON rq1.osm_route_id = rq2.osm_route_id AND rq2.quay_index = rq1.quay_index + 1
       JOIN osm_pt.osm_route rt ON rt.osm_route_id = rq1.osm_route_id
       LEFT JOIN line_match lm ON lm.osm_line_id = rt.osm_line_id
-      WHERE rq1.area_code IS NOT NULL AND rq2.area_code IS NOT NULL),
+      WHERE rq1.stop_place IS NOT NULL AND rq2.stop_place IS NOT NULL),
     netex_links AS (
-    SELECT DISTINCT lm.id AS line_id, rq1.line_number, rq1.variant_id, rq1.stop_place_code AS area_code1, rq2.stop_place_code AS area_code2
+    SELECT DISTINCT lm.id AS line_id, rq1.line_number, rq1.variant_id, rq1.stop_place_code AS stop_place1, rq2.stop_place_code AS stop_place2
       FROM netex.netex_route_variant_quay rq1
       JOIN netex.netex_route_variant_quay rq2 ON rq1.variant_id = rq2.variant_id AND rq2.quay_index = rq1.quay_index + 1
       JOIN netex.netex_route_variant rv ON rv.id = rq1.variant_id
@@ -110,7 +95,7 @@ WHERE line_match.osm_line_id IS NULL
     matches AS (
       SELECT COALESCE(osm.line_id, ntx.line_id) AS line_id, osm.osm_route_id, ntx.variant_id, count(*) AS link_count
       FROM osm_links osm
-      JOIN netex_links ntx ON osm.line_number = ntx.line_number AND osm.area_code1 = ntx.area_code1 AND osm.area_code2 = ntx.area_code2
+      JOIN netex_links ntx ON osm.line_number = ntx.line_number AND osm.stop_place1 = ntx.stop_place1 AND osm.stop_place2 = ntx.stop_place2
       GROUP BY COALESCE(osm.line_id, ntx.line_id), osm.osm_route_id, ntx.variant_id)
     INSERT INTO route_match_candidate(line_id, osm_route_id, variant_id, link_count, match_rate, matching)
     SELECT matches.line_id, matches.osm_route_id, matches.variant_id, matches.link_count, 
@@ -123,7 +108,7 @@ WHERE line_match.osm_line_id IS NULL
     FROM matches
     JOIN netex.netex_route_variant nrv ON nrv.id = matches.variant_id
     JOIN osm_pt.osm_route_data ord ON ord.osm_route_id = matches.osm_route_id 
-    ORDER BY osm_route_id, match_rate DESC
+    ORDER BY osm_route_id, match_rate DESC;
 """;
     
   private static String update_route_match_table_sql = """

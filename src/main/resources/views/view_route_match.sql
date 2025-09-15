@@ -6,13 +6,13 @@ CREATE OR REPLACE VIEW public.v_route_match
  AS
  SELECT match.id,
     match.line_id,
-    lm.line_ref AS line_number,
+    lm.line_number,
     lm.line_sort,
     match.osm_route_id,
     match.variant_id AS netex_variant_id,
     match.match_rate,
     match.matching,
-    COALESCE(lm.network, osr.network) AS network,
+    nm.name AS network,
     nrv.line_number AS netex_line_number,
     NULL::character varying AS netex_name,
     nrv.direction_type,
@@ -24,6 +24,9 @@ CREATE OR REPLACE VIEW public.v_route_match
    FROM route_match match
      LEFT JOIN netex.netex_route_variant nrv ON nrv.id = match.variant_id
      LEFT JOIN osm_pt.osm_route osr ON osr.osm_route_id = match.osm_route_id
-     LEFT JOIN line_match lm ON lm.id = match.line_id;
+     LEFT JOIN line_match lm ON lm.id = match.line_id
+     LEFT JOIN network_match nm ON nm.administrative_zone = lm.administrative_zone;
 
 ALTER TABLE public.v_route_match
+    OWNER TO nlgis;
+

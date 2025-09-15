@@ -4,7 +4,6 @@
       <thead class="thead-dark">
         <tr>
           <th scope="col">Network name</th>
-          <th scope="col">Dova name</th>
           <th scope="col">Osm name</th>
           <th scope="col">Netex name</th>
          </tr>
@@ -12,10 +11,9 @@
       <tbody>
         @for (network of networks; track network.id) {
           <tr>
-            <td>{{ network.name }}</td>
-            <td>{{ network.dovaName }}</td>
-            <td>{{ network.osmName }}</td>
-            <td>{{ network.netexName }}</td>
+            <td><a [routerLink] =  "['/network/', network.id ]">{{ network.name }}</a></td>
+            <td><a [routerLink] =  "['/osm/network/', network.osmNetwork?.id ]">{{ network.osmNetwork?.name }}</a></td>
+            <td><a [routerLink] =  "['/netex/network/', network.netexNetwork?.id ]">{{ network.netexNetwork?.name }}</a></td>
           </tr>
         }
       </tbody>

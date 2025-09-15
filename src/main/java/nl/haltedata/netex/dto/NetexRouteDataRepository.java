@@ -18,12 +18,12 @@ public interface NetexRouteDataRepository extends CrudRepository<NetexRouteData,
      * @param maxQuayCount
      * @return A list of 
      */
-    @Query("""
-from NetexRouteData as n 
-where n.lineNumber = ?1 AND n.startStopPlaceCode = ?2 AND n.endStopPlaceCode = ?3
-    AND n.quayCount BETWEEN ?4 AND ?5""")
-    List<NetexRouteData> findByEndpoints(String lineNumber, String startStopPlaceCode, String endStopPlaceCode,
-            Integer minQuayCount, Integer maxQuayCount);
+//    @Query("""
+//from NetexRouteData as n 
+//where n.lineNumber = ?1 AND n.startStopPlaceCode = ?2 AND n.endStopPlaceCode = ?3
+//    AND n.quayCount BETWEEN ?4 AND ?5""")
+//    List<NetexRouteData> findByEndpoints(String lineNumber, String startStopPlaceCode, String endStopPlaceCode,
+//            Integer minQuayCount, Integer maxQuayCount);
     //
     
 }
