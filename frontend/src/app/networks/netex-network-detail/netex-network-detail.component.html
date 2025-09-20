@@ -1,25 +1,27 @@
 <div class="container">
-  <h1>NeTex network {{ this.netexNetwork?.name }} ({{this.netexNetwork?.id}})</h1>
-  <p>ShortName: {{ this.netexNetwork?.shortName }}<br/>
-  Valid between: {{ this.netexNetwork?.fromDate }} and {{ this.netexNetwork?.toDate }}<br/>
-  @if (this.netexNetwork?.description)  {Description: {{this.netexNetwork?.description}} }</p>
-   <table class="table table-bordered table-striped">
-    <thead class="thead-dark">
-      <tr>
-        <th scope="col">Line number</th>
-        <th scope="col">Name</th>
-        <th scope="col">Transport mode</th>
-       </tr>
-    </thead>
-    <tbody>
-<!--       @let busLines = lines.filter(line => line.transportMode == "bus");-->
-      @for (line of lines; track line.id) {
+  @if (netexNetwork$ | async; as network) {  
+    <h1 i18n>NeTex network {{ network.name }} ({{network.id}})</h1>
+    <p>ShortName: {{ network.shortName }}<br/>
+    Valid between: {{ network.fromDate }} and {{ network.toDate }}<br/>
+    @if (network.description)  {Description: {{network.description}} }</p>
+     <table class="table table-bordered table-striped">
+      <thead class="thead-dark">
         <tr>
-          <td><a [routerLink] = "['/netex/line', line.id]">{{ line.publicCode }} </a> </td>
-          <td><a [routerLink] = "['/netex/line', line.id]">{{ line.name }} </a> </td>
-          <td>{{ line.transportMode }}</td>
-        </tr>
-      }
-    </tbody>
-  </table>
+          <th scope="col">Line number</th>
+          <th scope="col">Name</th>
+          <th scope="col">Transport mode</th>
+         </tr>
+      </thead>
+      <tbody>
+<!--       @let busLines = lines.filter(line => line.transportMode == "bus");-->
+        @for (line of lines$ | async; track line.id) {
+          <tr>
+            <td><a [routerLink] = "['/netex/line', line.id]">{{ line.publicCode }} </a> </td>
+            <td><a [routerLink] = "['/netex/line', line.id]">{{ line.name }} </a> </td>
+            <td>{{ line.transportMode }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
 </div>

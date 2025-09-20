@@ -7,10 +7,11 @@ import { LineService } from '../../lines/line.service';
 import { Line } from '../../lines/line';
 import { Observable } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
+import { NgPipesModule } from 'ngx-pipes';
 
 @Component({
     selector: 'app-network-detail',
-    imports: [RouterModule, AsyncPipe],
+    imports: [RouterModule, AsyncPipe, NgPipesModule],
     templateUrl: './network-detail.component.html',
     styleUrl: './network-detail.component.css'
 })
@@ -19,19 +20,14 @@ export class NetworkDetailComponent implements OnInit {
     private networkService = inject(NetworkService);
     private lineService = inject(LineService);
     network$!: Observable<Network>;
-    lines: Line[] = [];
-    linesByLineNumber: Line[] = [];
+    lines$!: Observable<Line[]>;
 
     ngOnInit() {
         this.activatedRoute.paramMap.subscribe((route: ParamMap) => {
             const networkId = route.get('networkId') ?? "";
             this.network$ = this.networkService.getNetwork(networkId);
             this.network$.subscribe(network => {
-                this.lineService.findByAdministrativeZone(network.administrativeZone).subscribe((data: Line[]) => {
-                    this.lines = data;
-                    this.linesByLineNumber = data;
-                    this.linesByLineNumber.sort((a, b) => a.lineSort.localeCompare(b.lineSort));
-                });
+                this.lines$ = this.lineService.findByAdministrativeZone(network.administrativeZone)
             });
         });
     }

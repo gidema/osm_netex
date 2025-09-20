@@ -1,16 +1,17 @@
 <div class="container">
-  <!--<h1>{{ this.networkName }} ({{this.countryCode}})</h1>-->
+  @if (osmLine$ | async; as line) {
+  <h1>OSM {{ line.name }}</h1>
   <table class="table table-bordered table-striped">
     <thead class="thead-dark">
       <tr>
-        <th scope="col">Route id</th>
-        <th scope="col">Route name</th>
-        <th scope="col">From</th>
-        <th scope="col">To</th>
+        <th scope="col" i18n="@@routeId">Route id</th>
+        <th scope="col" i18n>Route name</th>
+        <th scope="col" i18n="@@routeFrom">From</th>
+        <th scope="col" i18n>To</th>
        </tr>
     </thead>
     <tbody>
-      @for (route of routes; track route.osmRouteId) {
+      @for (route of routes$ | async; track route.osmRouteId) {
         <tr>
           <td><a [routerLink] = "['/osm/route', route.osmRouteId]">{{ route.osmRouteId }} </a> </td>
           <td>{{ route.name }} </td>
@@ -20,4 +21,5 @@
       }
     </tbody>
   </table>
+  }
 </div>

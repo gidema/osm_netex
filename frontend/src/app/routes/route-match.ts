@@ -1,3 +1,5 @@
+import { RouteIssueData } from './route-issue-data';
+
 export class RouteMatch {
     id!: number;
     lineId!: number;
@@ -16,4 +18,5 @@ export class RouteMatch {
     osmLineNumber!: string;
     from!: string;
     to!: string;
+    issues?: RouteIssueData[];
 }

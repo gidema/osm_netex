@@ -9,11 +9,11 @@
          </tr>
       </thead>
       <tbody>
-        @for (network of networks; track network.id) {
+        @for (network of networks$ | async; track network.id) {
           <tr>
             <td><a [routerLink] =  "['/network/', network.id ]">{{ network.name }}</a></td>
             <td><a [routerLink] =  "['/osm/network/', network.osmNetwork?.id ]">{{ network.osmNetwork?.name }}</a></td>
-            <td><a [routerLink] =  "['/netex/network/', network.netexNetwork?.id ]">{{ network.netexNetwork?.name }}</a></td>
+            <td><a [routerLink] =  "['/netex/network/', network.netexNetwork?.administrativeZone ]">{{ network.netexNetwork?.name }}</a></td>
           </tr>
         }
       </tbody>

@@ -3,8 +3,8 @@ import { ActivatedRoute, ParamMap, Route } from '@angular/router';
 import { Line } from '../line';
 import { LineService } from '../line.service';
 import { RouterModule } from '@angular/router';
-import { TransportRouteService } from '../../routes/transport_route.service';
-import { TransportRoute } from '../../routes/transport_route';
+//import { TransportRouteService } from '../../routes/transport_route.service';
+//import { TransportRoute } from '../../routes/transport_route';
 
 @Component({
     selector: 'app-line-detail',
@@ -15,12 +15,12 @@ import { TransportRoute } from '../../routes/transport_route';
 export class LineDetailComponent implements OnInit {
     private activatedRoute = inject(ActivatedRoute);
     private lineService = inject(LineService);
-    private routeService = inject(TransportRouteService);
+//    private routeService = inject(TransportRouteService);
     lineId!: number;
     line!: Line;
     osmLineId: number = 0;
     netexLineId: string | null = null;
-    routes: TransportRoute[] = [];
+//    routes: TransportRoute[] = [];
 
     ngOnInit() {
         this.activatedRoute.paramMap.subscribe((route: ParamMap) => {
@@ -28,9 +28,9 @@ export class LineDetailComponent implements OnInit {
         })
         this.lineService.getById(this.lineId || 0).subscribe((data: Line) => {
             this.line = data;
-            this.routeService.findByLineId(this.line.id).subscribe((data: TransportRoute[]) => {
-               this.routes = data;
-            });
+//            this.routeService.findByLineId(this.line.id).subscribe((data: TransportRoute[]) => {
+//               this.routes = data;
+//            });
         });
     }
 

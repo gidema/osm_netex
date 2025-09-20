@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en-US" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="2155240986061455262" datatype="html">
+        <source>These OSM bus lines are not in the NeTex data. They may be discontinued.</source>
+        <target>De onderstaande OSM buslijnen komen niet (meer) voor in de NeTex data. Ze zijn mogelijk opgeheven.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/networks/network-detail/network-detail.component.html</context>
+          <context context-type="linenumber">10,11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5500959812310479663" datatype="html">
+        <source>These Netex bus lines are not found in OSM. They may be missing.</source>
+        <target>De onderstaande Netex buslijnen zijn niet gevonden in OSM.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/networks/network-detail/network-detail.component.html</context>
+          <context context-type="linenumber">17,18</context>
+        </context-group>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

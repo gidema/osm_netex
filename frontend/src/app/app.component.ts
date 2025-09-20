@@ -6,7 +6,8 @@ import { MainMenuComponent } from './main-menu/main-menu.component';
 
 @Component({
     selector: 'app-root',
-    imports: [RouterOutlet, MainMenuComponent, RouterLink, RouterLinkActive],
+//    imports: [RouterOutlet, MainMenuComponent, RouterLink, RouterLinkActive],
+    imports: [RouterOutlet, MainMenuComponent],
     templateUrl: './app.component.html',
     styleUrl: './app.component.css'
 })

@@ -12,12 +12,11 @@ import { OsmLineDetailComponent } from './lines/osm-line-detail/osm-line-detail.
 import { NetexLineDetailComponent } from './lines/netex-line-detail/netex-line-detail.component';
 import { OsmRouteComponent } from './routes/osm-route/osm-route.component';
 import { NetexRouteVariantComponent } from './routes/netex-route-variant/netex-route-variant.component';
-// import { OsmRouteValidatorComponent } from './validation/osm-route-validator/osm-route-validator.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'list-networks', pathMatch: 'full' },
   { path: 'list-networks', component: NetworkListComponent },
-  { path: 'routematches/:osmRouteId', component: RouteMatchComponent },
+  { path: 'routematch/:id', component: RouteMatchComponent },
   { path: 'network/:networkName/route-match', component: RouteMatchComponent},
   { path: 'network/:networkId', component: NetworkDetailComponent},
 //  { path: 'netex/route', component: NetexRouteComponent},

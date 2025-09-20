@@ -20,4 +20,9 @@ export class NetexLineService {
         const options = { params: new HttpParams().set('administrativeZone', administrativeZone) };
         return this.http.get<NetexLine[]>(this.lineUrl, options);
     }
+
+    public findByNetworkId(networkId: string): Observable<NetexLine[]> {
+        const options = { params: new HttpParams().set('networkId', networkId) };
+        return this.http.get<NetexLine[]>(this.lineUrl, options);
+    }
 }
