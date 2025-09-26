@@ -6,6 +6,7 @@ import java.util.Locale;
 import org.springframework.stereotype.Component;
 
 import jakarta.inject.Inject;
+import nl.haltedata.analysis.dto.NetworkMatch;
 import nl.haltedata.analysis.dto.RouteIssueDataRepository;
 import nl.haltedata.analysis.dto.RouteMatch;
 import nl.haltedata.analysis.dto.RouteMatchRepository;
@@ -19,10 +20,10 @@ public class HtmlNetworkRouteReporter implements NetworkRouteReporter {
     private Comparator<RouteMatch> lineSortcomparator = new RouteMatch.LineSortComparator();
 
     @Override
-    public CharSequence getReport(String network, Locale locale) {
+    public CharSequence getReport(NetworkMatch networkMatch, Locale locale) {
         var sb = new StringBuilder(10000);
         sb.append("<html>\n<body>\n");
-        var routeMatches = routeMatchRepository.findByNetwork(network);
+        var routeMatches = routeMatchRepository.findByAdministrativeZone(networkMatch.getAdministrativeZone());
         routeMatches.sort(lineSortcomparator);
         for (var routeMatch : routeMatches) {
             if (routeMatch.getMatchRate() > 0 && routeMatch.getMatchRate() < 100) {

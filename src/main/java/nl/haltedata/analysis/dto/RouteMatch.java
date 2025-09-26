@@ -1,10 +1,16 @@
 package nl.haltedata.analysis.dto;
 
 import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +28,7 @@ public class RouteMatch {
     private Long osmRouteId;
     private Long netexVariantId;
     private String network;
+    private String administrativeZone;
     private Double matchRate;
     private String matching;
     private String netexLineNumber;
@@ -32,6 +39,10 @@ public class RouteMatch {
     private String osmLineNumber;
     private String from;
     private String to;
+    
+    @OneToMany(mappedBy = "routeMatch")
+    @JsonManagedReference
+    private List<RouteIssueData> issues = new LinkedList<>();
     
     public static class LineSortComparator implements Comparator<RouteMatch> {
         @Override

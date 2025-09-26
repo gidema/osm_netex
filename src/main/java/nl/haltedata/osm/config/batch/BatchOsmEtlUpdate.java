@@ -167,7 +167,7 @@ FROM quay_data;
     private static String update_route_platform_table_sql = """
 TRUNCATE TABLE osm_pt.osm_route_platform;
 INSERT INTO osm_pt.osm_route_platform (osm_route_id, osm_platform_id, osm_primitive_type,
-  quay_name, platform_index, quay_code, stop_side_code, stop_place_code, quay_location_type,
+  quay_name, platform_index, quay_code, stop_side_code, stop_place_code,
   entry_only, exit_only)
 SELECT sub.osm_route_id, 
   sub.osm_platform_id,
@@ -177,7 +177,6 @@ SELECT sub.osm_route_id,
   sub.quay_code,
   sub.stop_side_code,
   sub.stop_place_code,
-  CASE WHEN sub.platform_index=1 THEN 'start' WHEN sub.platform_index = sub.count THEN 'end' ELSE 'middle' END AS quay_location_type,
   sub.entry_only,
   sub.exit_only
 FROM (
@@ -199,11 +198,9 @@ FROM (
     mb.member_role = 'platform_exit_only' AS exit_only
   FROM relation_members mb
   JOIN osm_pt.osm_route route ON route.osm_route_id = mb.relation_id AND mb.member_role LIKE 'platform%'
-  JOIN osm_pt.osm_pt_network nw ON route.network = nw.network_name
   LEFT JOIN osm_pt.osm_quay ON osm_quay.osm_id = mb.member_id AND osm_quay.osm_primitive_type = mb.member_type
   LEFT JOIN chb.chb_quay chb_quay ON chb_quay.quay_code = osm_quay.ref_ifopt
   LEFT JOIN chb.chb_stop_place csp ON csp.id = chb_quay.stop_place_id
-  WHERE nw.country_code = 'NL' AND route.transport_mode LIKE '%bus'
 ) AS sub;
 """;
 

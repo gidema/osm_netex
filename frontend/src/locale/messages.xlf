@@ -2,47 +2,74 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="en-UK" datatype="plaintext" original="ng2.template">
     <body>
+      <trans-unit id="CheckingOSMRoute" datatype="html">
+        <source>Checking OSM route <x id="INTERPOLATION" equiv-text="{{ match.osmName }}"/></source>
+      </trans-unit>
+      <trans-unit id="DifferentQuay" datatype="html">
+        <source>Different quay (<x id="INTERPOLATION" equiv-text="{{issue.parameters[2]}}"/>) at position <x id="INTERPOLATION_1" equiv-text="{{issue.parameters[0]}}"/>. Netex quay = <x id="INTERPOLATION_2" equiv-text="{{issue.parameters[1]}}"/>.</source>
+      </trans-unit>
+      <trans-unit id="MissingMultipleQuay" datatype="html">
+        <source>Missing quay (<x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/>) after <x id="INTERPOLATION_1" equiv-text="{{issue.parameters[1]}}"/> at position <x id="INTERPOLATION_2" equiv-text="{{issue.parameters[2]}}"/>.</source>
+      </trans-unit>
+      <trans-unit id="MissingQuay" datatype="html">
+        <source>Missing quay (<x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/>) at position <x id="INTERPOLATION_1" equiv-text="{{issue.parameters[1]}}"/> in OSM route between <x id="INTERPOLATION_2" equiv-text="{{issue.parameters[2]}}"/> and <x id="INTERPOLATION_3" equiv-text="{{issue.parameters[3]}}"/>.</source>
+      </trans-unit>
+      <trans-unit id="MissingQuays" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/> missing quays starting at position <x id="INTERPOLATION_1" equiv-text="{{issue.parameters[1]}}"/> in OSM route between <x id="INTERPOLATION_2" equiv-text="{{issue.parameters[2]}}"/> and <x id="INTERPOLATION_3" equiv-text="{{issue.parameters[3]}}"/>: <x id="INTERPOLATION_4" equiv-text="{{issue.parameters[4]}}"/></source>
+      </trans-unit>
+      <trans-unit id="MissingQuaysAtEndOfRoute" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/> Missing quays at end of OSM route:<x id="INTERPOLATION_1" equiv-text="{{issue.parameters[1]}}"/></source>
+      </trans-unit>
+      <trans-unit id="MissingRouteColour" datatype="html">
+        <source>Missing route colour. Expected #<x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/></source>
+      </trans-unit>
+      <trans-unit id="NetexName" datatype="html">
+        <source>Netex name</source>
+      </trans-unit>
+      <trans-unit id="NetworkName" datatype="html">
+        <source>Network name</source>
+      </trans-unit>
+      <trans-unit id="osmName" datatype="html">
+        <source>Osm name</source>
+      </trans-unit>
+      <trans-unit id="routeFrom" datatype="html">
+        <source>From</source>
+      </trans-unit>
       <trans-unit id="routeId" datatype="html">
         <source>Route id</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/lines/osm-line-detail/osm-line-detail.component.html</context>
-          <context context-type="linenumber">7,8</context>
-        </context-group>
+      </trans-unit>
+      <trans-unit id="UnexpectedQuay" datatype="html">
+        <source>Unexpected quay (<x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/>) at position <x id="INTERPOLATION_1" equiv-text="{{issue.parameters[1]}}"/> in OSM route.</source>
+      </trans-unit>
+      <trans-unit id="UnexpectedQuayCode" datatype="html">
+        <source>Unexpected quay code for quay <x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/> at position <x id="INTERPOLATION_1" equiv-text="{{issue.parameters[1]}}"/>. Expected <x id="INTERPOLATION_2" equiv-text="{{issue.parameters[2]}}"/>, but found <x id="INTERPOLATION_3" equiv-text="{{issue.parameters[3]}}"/>.</source>
+      </trans-unit>
+      <trans-unit id="UnexpectedQuays" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/> Unexpected quays starting at position <x id="INTERPOLATION_1" equiv-text="{{issue.parameters[1]}}"/> in OSM route:<x id="INTERPOLATION_2" equiv-text="{{issue.parameters[2]}}"/></source>
+      </trans-unit>
+      <trans-unit id="UnexpectedQuaysAtEndOfRoute" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/> Unexpected quays at end of OSM route:<x id="INTERPOLATION_1" equiv-text="{{issue.parameters[1]}}"/></source>
+      </trans-unit>
+      <trans-unit id="UnexpectedRouteColour1" datatype="html">
+        <source>Unexpected route colour (<x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/>). There is no colour in the Netex data.</source>
+      </trans-unit>
+      <trans-unit id="UnexpectedRouteColour2" datatype="html">
+        <source>Differing route colour #<x id="INTERPOLATION" equiv-text="{{issue.parameters[1]}}"/>. Netex colour = #<x id="INTERPOLATION_1" equiv-text="{{issue.parameters[0]}}"/>.</source>
       </trans-unit>
       <trans-unit id="5867469663045133204" datatype="html">
         <source>Route name</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/lines/osm-line-detail/osm-line-detail.component.html</context>
-          <context context-type="linenumber">8,9</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="1640609344969975994" datatype="html">
         <source>To</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/lines/osm-line-detail/osm-line-detail.component.html</context>
-          <context context-type="linenumber">11</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="4309056618204845755" datatype="html">
         <source>NeTex network <x id="INTERPOLATION" equiv-text="{{ network.name }}"/> (<x id="INTERPOLATION_1" equiv-text="{{network.id}}"/>)</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/networks/netex-network-detail/netex-network-detail.component.html</context>
-          <context context-type="linenumber">3,4</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="2155240986061455262" datatype="html">
         <source>These OSM bus lines are not in the NeTex data. They may be discontinued.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/networks/network-detail/network-detail.component.html</context>
-          <context context-type="linenumber">11,12</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="5500959812310479663" datatype="html">
         <source>These Netex bus lines are not found in OSM. They may be missing.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/networks/network-detail/network-detail.component.html</context>
-          <context context-type="linenumber">19,20</context>
-        </context-group>
       </trans-unit>
     </body>
   </file>

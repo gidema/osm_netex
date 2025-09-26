@@ -1,6 +1,5 @@
 package nl.haltedata.cli;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -16,13 +15,14 @@ import org.springframework.stereotype.Component;
 
 import jakarta.inject.Inject;
 import nl.haltedata.analysis.NetworkRouteReporter;
+import nl.haltedata.analysis.dto.NetworkMatch;
+import nl.haltedata.analysis.dto.NetworkMatchRepository;
 import nl.haltedata.analysis.etl.NetworkRouteAnalyzerFactory;
-import nl.haltedata.osm.dto.OsmPtNetworkRepository;
 
 @Component
 public class AllRoutesAnalyzer implements ApplicationRunner, InitializingBean {
 
-    @Inject OsmPtNetworkRepository networkRepository;
+    @Inject NetworkMatchRepository networkRepository;
     @Inject NetworkRouteAnalyzerFactory analizerFactory;
     @Inject NetworkRouteReporter reporter;
     
@@ -43,24 +43,26 @@ public class AllRoutesAnalyzer implements ApplicationRunner, InitializingBean {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         LOG.info("EXECUTING : All routes analyzer");
-        networkRepository.findAllByCountryCode("NL").forEach(network -> {
-            analizeNetwork(network.getNetworkName());
+        networkRepository.findAll().forEach(networkMatch -> {
+            if (networkMatch.getAdministrativeZone() != null) {
+                analizeNetworkMatch(networkMatch);
+            }
         });
     }
     
-    private void analizeNetwork(String network) {
-        LOG.info("Analizing {}", network);
+    private void analizeNetworkMatch(NetworkMatch networkMatch) {
+        LOG.info("Analizing {}", networkMatch.getAdministrativeZone());
         var analizer = analizerFactory.getAnalyzer();
-        analizer.analize(network);
-        reportNetwork(network, new Locale("nl"));
+        analizer.analize(networkMatch);
+        reportAdministrativeZone(networkMatch, new Locale("nl"));
     }
     
-    private void reportNetwork(String network, Locale locale) {
-        var filePath = reportPath.resolve(network.replace('/', '_').concat(".html"));
+    private void reportAdministrativeZone(NetworkMatch networkMatch, Locale locale) {
+        var filePath = reportPath.resolve(networkMatch.getName().replace('/', '_').concat(".html"));
         try (
                 var writer = new FileWriter(filePath.toString());
         ) {
-            writer.write(reporter.getReport(network, locale).toString());
+            writer.write(reporter.getReport(networkMatch, locale).toString());
             writer.close();
         } catch (IOException e) {
             // TODO Auto-generated catch block

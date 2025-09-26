@@ -13,8 +13,9 @@ FROM osm_pt.osm_line
 WHERE id IN (
     SELECT route_master_id
     FROM osm_pt.st_osm_network_line
-    WHERE network_id = ?1);
+    WHERE network_id = ?1)
+ORDER BY line_sort;
 """)
-    List<OsmPtLine> findByOsmNetworkId(Long networkId);
+    List<OsmPtLine> findByOsmNetworkIdOrderByLineSort(Long networkId);
 }
 

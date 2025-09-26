@@ -1,5 +1,4 @@
 <div class="card my-5">
-  @let m = routeMatch$ | async;
   @if (routeMatch$ | async; as match) {
   <div class="card-body">
     <h2 i18n="@@CheckingOSMRoute">Checking OSM route {{ match.osmName }}</h2>

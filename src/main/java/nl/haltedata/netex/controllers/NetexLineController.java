@@ -39,6 +39,6 @@ public class NetexLineController {
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/netex/line")
     public List<NetexLine> findByAdministrativeZone(@RequestParam("administrativeZone") String administrativeZone) throws Exception {
-        return repository.findByAdministrativeZone(administrativeZone);
+        return repository.findByAdministrativeZoneOrderByLineSort(administrativeZone);
     }
 }

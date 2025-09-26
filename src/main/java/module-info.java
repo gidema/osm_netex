@@ -39,6 +39,7 @@ module HalteData {
     requires java.desktop;
     requires java.net.http;
     requires org.hibernate.orm.core;
+    requires com.fasterxml.jackson.annotation;
 //    requires hibernate.spatial;
     
     exports nl.haltedata.cli;

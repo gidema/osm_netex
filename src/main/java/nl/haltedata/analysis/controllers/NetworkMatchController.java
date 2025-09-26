@@ -30,7 +30,7 @@ public class NetworkMatchController {
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping()
     public Iterable<NetworkMatch> findAll() throws Exception {
-        return repository.findAll();
+        return repository.findAllByOrderByName();
     }
 
     @SuppressWarnings("exports")

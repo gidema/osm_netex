@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { NetworkListComponent } from './networks/network-list/network-list.component';
 import { NetworkDetailComponent } from './networks/network-detail/network-detail.component';
+import { NetworkIssuesComponent } from './networks/network-issues/network-issues.component';
 import { OsmNetworkDetailComponent } from './networks/osm-network-detail/osm-network-detail.component';
 import { NetexNetworkDetailComponent } from './networks/netex-network-detail/netex-network-detail.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
@@ -19,6 +20,7 @@ export const routes: Routes = [
   { path: 'routematch/:id', component: RouteMatchComponent },
   { path: 'network/:networkName/route-match', component: RouteMatchComponent},
   { path: 'network/:networkId', component: NetworkDetailComponent},
+  { path: 'network/:networkId/issues', component: NetworkIssuesComponent},
 //  { path: 'netex/route', component: NetexRouteComponent},
   { path: 'netex/network/:netexNetworkId', component: NetexNetworkDetailComponent},
   { path: 'netex/route/:routeId', component: NetexRouteComponent},

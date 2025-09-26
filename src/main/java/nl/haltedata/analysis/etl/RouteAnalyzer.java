@@ -261,7 +261,7 @@ public class RouteAnalyzer {
         }
 
         private RouteIssueData addIssue(String message, String... parameters) {
-            var issue = new RouteIssueData(routeMatch.getId(), issues.size(),
+            var issue = new RouteIssueData(routeMatch, issues.size(),
                     message, parameters);
             issues.add(issue);
             return issue;

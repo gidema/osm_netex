@@ -31,7 +31,7 @@ public class LineMatchController {
     public List<LineMatch> getByQuery(@RequestParam(name ="network", required = false) String network,
         @RequestParam(name = "administrativeZone", required = false) String administrativeZone) throws Exception {
         if (administrativeZone != null) {
-            return repository.findByAdministrativeZone(administrativeZone);
+            return repository.findByAdministrativeZoneOrderByLineSort(administrativeZone);
         }
         return repository.findByNetwork(network);
     }

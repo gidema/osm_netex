@@ -18,9 +18,9 @@ public interface RouteIssueDataRepository extends CrudRepository<RouteIssueData,
       SELECT rm.id
       FROM route_match rm
       JOIN line_match lm ON lm.id = rm.line_id
-      WHERE lm.network = :network)
+      WHERE lm.administrative_zone = :administrativeZone)
 """, nativeQuery = true)
-    void deleteByNetwork(@Param("network") String network);
+    void deleteByAdministrativeZone(@Param("administrativeZone") String administrativeZone);
     
     /**
      * Delete obsolete issue from the table.

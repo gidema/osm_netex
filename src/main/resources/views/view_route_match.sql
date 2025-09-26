@@ -20,12 +20,13 @@ CREATE OR REPLACE VIEW public.v_route_match
     osr.transport_mode AS osm_transport_mode,
     osr.route_ref AS osm_line_number,
     osr."from",
-    osr."to"
+    osr."to",
+    lm.administrative_zone
    FROM route_match match
      LEFT JOIN netex.netex_route_variant nrv ON nrv.id = match.variant_id
      LEFT JOIN osm_pt.osm_route osr ON osr.osm_route_id = match.osm_route_id
      LEFT JOIN line_match lm ON lm.id = match.line_id
-     LEFT JOIN network_match nm ON nm.administrative_zone = lm.administrative_zone;
+     LEFT JOIN network_match nm ON nm.administrative_zone::text = lm.administrative_zone::text;
 
 ALTER TABLE public.v_route_match
     OWNER TO nlgis;

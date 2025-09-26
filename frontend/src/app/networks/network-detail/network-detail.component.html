@@ -6,22 +6,7 @@
   <p>OSM: <a [routerLink] =  "['/osm/network/', network.osmNetwork?.id ]">{{ network.osmNetwork?.name }}</a><br/>
      NeTex: <a [routerLink] =  "['/netex/network/', network.netexNetwork?.id ]">{{ network.netexNetwork?.name }}</a></p>
   
-  @for (line of lines$ | async | filterBy: ['transportMode']: 'bus' | filterBy: ['netexName']: 'null'; track line.id) {
-    @if ($first) {
-      <h3 i18n>These OSM bus lines are not in the NeTex data. They may be discontinued.</h3>
-    }
-    <p><a [routerLink] = "['/osm/line', line.osmLineId]">{{ line.osmName }} </a>
-        (<a href = "http://localhost:8111/load_object?objects=r {{ line.id }}&relation_members=true" target="new">Open in Josm </a>)</p>
-  }
-
-  @for (line of lines$ | async | filterBy: ['transportMode']: 'bus' | filterBy: ['osmName']: 'null'; track line.id;) {
-    @if ($first) {
-      <h3 i18n>These Netex bus lines are not found in OSM. They may be missing.</h3>
-    }
-    <p><a [routerLink] = "['/netex/line', line.netexLineId]">Line {{ line.lineNumber }}: {{ line.netexName }} </a></p>
-  }
-  <p></p>
-<!--   <table class="table table-bordered table-striped">
+  <table class="table table-bordered table-striped">
     <thead class="thead-dark">
       <tr>
         <th scope="col">Line number</th>
@@ -31,15 +16,17 @@
        </tr>
     </thead>
     <tbody>
-      @for (line of lines$ | async | filterBy: ['transportMode']: 'bus' | filterBy: ['netexName']: 'null'; track line.id) {
-        <tr>
-          <td><a [routerLink] = "['/line', line.id]">{{ line.lineNumber }} </a> </td>
-          <td><a [routerLink] = "['/osm/line', line.osmLineId]">{{ line.osmName }} </a> </td>
-          <td><a [routerLink] = "['/netex/line', line.netexLineId]">{{ line.netexName }} </a> </td>
-          <td>{{ line.transportMode }}</td>
-        </tr>
+      @for (line of lines$ | async | filterBy: ['transportMode']: 'bus'; track line.id) {
+        @if ( line.netexName && line.osmName ) {
+          <tr>
+            <td><a [routerLink] = "['/line', line.id]">{{ line.lineNumber }} </a> </td>
+            <td><a [routerLink] = "['/osm/line', line.osmLineId]">{{ line.osmName }} </a> </td>
+            <td><a [routerLink] = "['/netex/line', line.netexLineId]">{{ line.netexName }} </a> </td>
+            <td>{{ line.transportMode }}</td>
+          </tr>
+        }
       }
     </tbody>
-  </table>-->
+  </table>
   }
 </div>

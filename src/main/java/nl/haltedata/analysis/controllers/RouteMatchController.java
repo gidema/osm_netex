@@ -1,7 +1,12 @@
 package nl.haltedata.analysis.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +23,13 @@ public class RouteMatchController {
     @Inject
     private RouteMatchRepository repository;
 
+    @SuppressWarnings("exports")
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/route_match/{id}")
+    public Optional<RouteMatch> findById(@PathVariable("id") Long id) throws Exception {
+        return repository.findById(id);
+    }
+
     /**
      * End point to list the data.
      *
@@ -26,14 +38,9 @@ public class RouteMatchController {
      */
     @SuppressWarnings("exports")
     @CrossOrigin(origins = "http://localhost:4200")
-    @GetMapping("/network/{network}/route_match")
-//    public List<RouteMatch> getByNetwork(@PathVariable("network") String network) throws Exception {
-//            return repository.findByNetwork(network);
-//    }
-    public List<RouteMatch> getByNetwork(@PathVariable("network") String network) throws Exception {
-        return repository.findByNetwork(network);
-//                .map(<RouteMatch>route -> new ResponseEntity<>(route, HttpStatus.OK))
-//                .orElse(new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
+    @GetMapping("/network/{administrativeZone}/route_match")
+    public List<RouteMatch> getByAdministrativeZone(@PathVariable("administrativeZone") String administrativeZone) throws Exception {
+        return repository.findByAdministrativeZone(administrativeZone);
     }
     /**
      * End point to list the data.

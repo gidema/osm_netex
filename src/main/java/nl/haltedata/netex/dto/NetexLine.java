@@ -25,4 +25,5 @@ public class NetexLine {
     private String responsibilitySet;
     private String productCategory;
     private String administrativeZone;
+    private String lineSort;
 }
