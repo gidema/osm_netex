@@ -5,11 +5,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -22,7 +24,10 @@ import lombok.Setter;
 public class RouteMatch {
     @Id
     private Long id;
-    private Long lineId;
+    @ManyToOne
+    @JoinColumn(name = "line_id")
+    @JsonBackReference
+    private LineMatch lineMatch;
     private String lineNumber;
     private String lineSort;
     private Long osmRouteId;
@@ -41,7 +46,8 @@ public class RouteMatch {
     private String to;
     
     @OneToMany(mappedBy = "routeMatch")
-    @JsonManagedReference
+//    @JsonManagedReference
+    @JsonBackReference
     private List<RouteIssueData> issues = new LinkedList<>();
     
     public static class LineSortComparator implements Comparator<RouteMatch> {

@@ -3,14 +3,9 @@ package nl.haltedata.analysis.controllers;
 import java.util.List;
 import java.util.Optional;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.inject.Inject;
@@ -27,7 +22,8 @@ public class RouteMatchController {
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/route_match/{id}")
     public Optional<RouteMatch> findById(@PathVariable("id") Long id) throws Exception {
-        return repository.findById(id);
+        var result = repository.findById(id);
+        return result;
     }
 
     /**
@@ -61,11 +57,11 @@ public class RouteMatchController {
      * @return
      * @throws Exception if any error occurs during job launch.
      */
-    @SuppressWarnings("exports")
-    @CrossOrigin(origins = "http://localhost:4200")
-    @GetMapping("/route_match")
-    public List<RouteMatch> getByLineId(@RequestParam("lineId") Long lineId) throws Exception {
-            return repository.findByLineId(lineId);
-    }
+//    @SuppressWarnings("exports")
+//    @CrossOrigin(origins = "http://localhost:4200")
+//    @GetMapping("/route_match")
+//    public List<RouteMatch> getByLineId(@RequestParam("lineId") Long lineId) throws Exception {
+//            return repository.findByLineId(lineId);
+//    }
 
 }

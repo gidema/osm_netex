@@ -16,7 +16,7 @@ public interface RouteMatchRepository extends CrudRepository<RouteMatch, Long> {
 """)
     Optional<RouteMatch> findById(Long id);
 
-    List<RouteMatch> findByLineId(Long lineId);
+//    List<RouteMatch> findByLineId(Long lineId);
 
     List<RouteMatch> findByOsmRouteId(Long osmRouteId);
 
