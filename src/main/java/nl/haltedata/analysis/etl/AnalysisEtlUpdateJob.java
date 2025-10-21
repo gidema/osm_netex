@@ -26,6 +26,13 @@ import lombok.RequiredArgsConstructor;
 @EnableBatchProcessing
 public class AnalysisEtlUpdateJob {
 
+    private static String check_route_in_multiple_lines = """
+DELETE FROM route_issues WHERE "message" = 'RouteInMultipleLines';
+INSERT INTO route_issues (entity_id, "sequence", "message", parameters)
+SELECT route_id, 1 AS "sequence", 'RouteInMultipleLines', ARRAY["count"] AS parameters
+FROM osm_pt.issue_route_in_multiple_lines;
+""";
+    
     private static String update_network_match_table_sql = """
 -- Clear the table
 TRUNCATE TABLE network_match;
@@ -62,17 +69,19 @@ FROM match
   LEFT JOIN osm_pt.osm_line ol ON ol.id = match.osm_line_id
   LEFT JOIN netex.netex_line nl ON nl.id = match.netex_line_id;
 -- Add Netex lines that have no match
-INSERT INTO line_match(netex_line_id, transport_mode, line_number, product_category, line_sort, administrative_zone)
+/*INSERT INTO line_match(netex_line_id, transport_mode, line_number, product_category, line_sort, administrative_zone)
 SELECT line.id, line.transport_mode, line.public_code, line.product_category, line.line_sort, line.administrative_zone
 FROM netex.netex_line line
 WHERE line.id NOT IN (SELECT netex_line_id FROM line_match)
     AND (line.product_category NOT IN ('Opstapper', 'OV op Maat') OR line.product_category IS NULL);
 -- Add OSM lines that have no match
 INSERT INTO line_match(osm_line_id, transport_mode, line_number, administrative_zone, line_sort)
-SELECT line.id, line.netex_transport_mode, line.line_number, line.administrative_zone, line.line_sort
+SELECT line.id, line.netex_transport_mode, line.line_number, nw.administrative_zone, line.line_sort
 FROM osm_pt.osm_line line
 LEFT JOIN line_match ON line.id = line_match.osm_line_id
-WHERE line_match.osm_line_id IS NULL;
+JOIN osm_pt.osm_line_in_network olin ON olin.line_id = line.id
+JOIN osm_pt.osm_network nw ON nw.id = olin.network_id
+WHERE line_match.osm_line_id IS NULL*/;
 """;
 
     private static String update_route_match_candidate_table_sql = """
@@ -97,26 +106,28 @@ WHERE line_match.osm_line_id IS NULL;
       FROM osm_links osm
       JOIN netex_links ntx ON osm.line_number = ntx.line_number AND osm.stop_place1 = ntx.stop_place1 AND osm.stop_place2 = ntx.stop_place2
       GROUP BY COALESCE(osm.line_id, ntx.line_id), osm.osm_route_id, ntx.variant_id)
-    INSERT INTO route_match_candidate(line_id, osm_route_id, variant_id, link_count, match_rate, matching)
+    INSERT INTO route_match_candidate(line_id, osm_route_id, variant_id, link_count, match_rate, matching, administrative_zone)
     SELECT matches.line_id, matches.osm_route_id, matches.variant_id, matches.link_count, 
       LEAST(matches.link_count / (nrv.quay_count - 1.0), matches.link_count / (ord.quay_count - 1.0)) * 100 AS match_rate,
       CASE WHEN nrv.quay_list = ord.quay_list THEN 'Exact Quay match'
         WHEN nrv.stop_place_list = ord.stop_place_list THEN 'Exact Stopplace match'
         WHEN matches.osm_route_id IS NOT NULL AND matches.variant_id IS NOT NULL THEN 'Best Candidate match'
         ELSE 'No match'
-      END AS matching
+      END AS matching,
+      nrv.administrative_zone
     FROM matches
     JOIN netex.netex_route_variant nrv ON nrv.id = matches.variant_id
-    JOIN osm_pt.osm_route_data ord ON ord.osm_route_id = matches.osm_route_id 
-    ORDER BY osm_route_id, match_rate DESC;
+    JOIN osm_pt.osm_route_data ord ON ord.osm_route_id = matches.osm_route_id
+    LEFT JOIN osm_pt.osm_line ol ON ol.id = ord.osm_line_id
+    ORDER BY osm_route_id, match_rate DESC
 """;
     
   private static String update_route_match_table_sql = """
 -- Clear the table
 TRUNCATE TABLE route_match;
 -- Get the best matches from the route match candidates
-INSERT INTO route_match (line_id, osm_route_id, matching, variant_id, link_count, match_rate)
-SELECT sub.line_id, sub.osm_route_id, sub.matching, sub.variant_id, sub.link_count, sub.match_rate
+INSERT INTO route_match (line_id, osm_route_id, matching, variant_id, link_count, match_rate, administrative_zone)
+SELECT sub.line_id, sub.osm_route_id, sub.matching, sub.variant_id, sub.link_count, sub.match_rate, sub.administrative_zone
 FROM (
   SELECT osm_route_id, variant_id, link_count, match_rate, line_id, matching,
           ROW_NUMBER() OVER (
@@ -129,15 +140,16 @@ FROM (
         ) AS "rank2",
         COUNT(*) OVER (
           PARTITION BY osm_route_id
-        ) AS candidate_count
+        ) AS candidate_count,
+        administrative_zone
   FROM route_match_candidate) AS sub
 JOIN osm_pt.osm_route ort ON ort.osm_route_id = sub.osm_route_id
 WHERE sub.rank1 = 1 AND sub.rank2 = 1;
 -- Add the un-matched OSM routes
-INSERT INTO route_match (line_id, osm_route_id, matching, variant_id, link_count, match_rate)
+/*INSERT INTO route_match (line_id, osm_route_id, matching, variant_id, link_count, match_rate)
 SELECT NULL, osm_route_id, 'No Netex match for OSM route', null, 0, 0.0
 FROM osm_pt.osm_route
-WHERE osm_route_id NOT IN (SELECT osm_route_id FROM route_match);
+WHERE osm_route_id NOT IN (SELECT osm_route_id FROM route_match)*/;
 """;
   
   private static String update_route_validation_table_sql = """
@@ -261,8 +273,7 @@ FROM candidates
   SELECT quay_id
   FROM candidates
   GROUP BY quay_id
-  HAVING count(*) = 1)
-ORDER BY quay_code;        
+  HAVING count(*) = 1);
 """;
 
     private final EntityManagerFactory entityManagerFactory;
@@ -284,7 +295,8 @@ ORDER BY quay_code;
     @Bean
     Job updateComparisonEtlJob(JobRepository jobRepository) { 
         return new JobBuilder("comparisonEtlUpdate", jobRepository)
-            .start(sqlUpdateStep("Update network match", update_network_match_table_sql))
+            .start(sqlUpdateStep("Check route in multipe lines", check_route_in_multiple_lines))
+            .next(sqlUpdateStep("Update network match", update_network_match_table_sql))
             .next(sqlUpdateStep("Update line match", update_line_match_table_sql))
             .next(sqlUpdateStep("Update line matches", update_route_match_candidate_table_sql))
             .next(sqlUpdateStep("Update route_matches", update_route_match_table_sql))

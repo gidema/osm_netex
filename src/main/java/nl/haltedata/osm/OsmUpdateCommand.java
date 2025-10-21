@@ -1,6 +1,7 @@
 package nl.haltedata.osm;
 
 
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -9,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 
 @SpringBootApplication
@@ -37,5 +39,11 @@ public class OsmUpdateCommand implements CommandLineRunner {
     @Bean
     OsmUpdater updater() {
         return new OsmUpdater();
+    }
+    
+    @Bean
+    static ModelMapper getModelMapper() {
+        var modelMapper = new ModelMapper();
+        return modelMapper;
     }
 }

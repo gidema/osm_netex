@@ -22,9 +22,9 @@ public class NetexRouteVariantQuayController {
      * @return
      * @throws Exception if any error occurs during job launch.
      */
-    @CrossOrigin(origins = "http://localhost:4200")
-    @GetMapping("/netex/route-variant/{id}/quays")
-    public List<?> byVariantId(@PathVariable("id") Long id) throws Exception {
-        return repository.findByVariantId(id);
-    }
+//    @CrossOrigin(origins = "http://localhost:4200")
+//    @GetMapping("/netex/route-variant/{id}/quays")
+//    public List<?> byVariantId(@PathVariable("id") Long id) throws Exception {
+//        return repository.findByVariantId(id);
+//    }
 }

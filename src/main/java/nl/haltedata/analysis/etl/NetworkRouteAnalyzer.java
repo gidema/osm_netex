@@ -5,25 +5,26 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.inject.Inject;
-import nl.haltedata.analysis.dto.NetworkMatch;
+import nl.haltedata.analysis.dto.NetworkMatchDto;
 import nl.haltedata.analysis.dto.RouteIssueDataRepository;
-import nl.haltedata.analysis.dto.RouteMatchRepository;
+import nl.haltedata.analysis.services.RouteMatchService;
 
 @Component
 @Scope("prototype")
 public class NetworkRouteAnalyzer {
-    @Inject RouteMatchRepository routeMatchRepository;
+    @Inject RouteMatchService routeMatchService;
     @Inject RouteIssueDataRepository routeIssueDataRepository;
     @Inject RouteAnalyzer routeAnalizer;
     
+    @SuppressWarnings("exports")
     @Transactional
-    public void analize(NetworkMatch networkMatch) {
-        routeIssueDataRepository.deleteByAdministrativeZone(networkMatch.getAdministrativeZone());
-        var routeMatches = routeMatchRepository.findByAdministrativeZone(networkMatch.getAdministrativeZone());
-        for (var routeMatch : routeMatches) {
-            if (routeMatch.getNetexVariantId() != null && routeMatch.getMatchRate() > 0 && routeMatch.getMatchRate() < 100) {
-                routeAnalizer.analize(routeMatch);
-            }
-        }
+    public void analize(NetworkMatchDto networkMatch) {
+        networkMatch.getLineMatches().forEach(lineMatch -> {
+            lineMatch.getRouteMatches().forEach(routeMatch -> {
+                if (routeMatch.getNetexVariant() != null && routeMatch.getMatchRate() > 0 && routeMatch.getMatchRate() < 100) {
+                    routeAnalizer.analize(routeMatch);
+                }
+            });
+        });
     }
  }

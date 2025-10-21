@@ -2,18 +2,19 @@ package nl.haltedata.analysis.etl;
 
 import java.util.Objects;
 
-import nl.haltedata.netex.dto.NetexRouteVariantQuay;
-import nl.haltedata.osm.dto.OsmRouteQuay;
+import nl.haltedata.netex.dto.NetexRouteVariantQuayDto;
+import nl.haltedata.osm.dto.OsmRouteQuayDto;
 
 public class QuayMatch {
 
-    private final OsmRouteQuay osmQuay;
-    private final NetexRouteVariantQuay netexQuay;
+    private final OsmRouteQuayDto osmQuay;
+    private final NetexRouteVariantQuayDto netexQuay;
     private boolean quayCodeMatch = false;
     private boolean stopPlaceMatch = false;
     private boolean nameMatch = false;
 
-    public QuayMatch(OsmRouteQuay osmQuay, NetexRouteVariantQuay netexQuay) {
+    @SuppressWarnings("exports")
+    public QuayMatch(OsmRouteQuayDto osmQuay, NetexRouteVariantQuayDto netexQuay) {
         super();
         this.osmQuay = osmQuay;
         this.netexQuay = netexQuay;
@@ -34,11 +35,13 @@ public class QuayMatch {
         return Objects.equals(osmQuay.getStopPlace(), netexQuay.getStopPlaceCode());
     }
 
-    public OsmRouteQuay getOsmQuay() {
+    @SuppressWarnings("exports")
+    public OsmRouteQuayDto getOsmQuay() {
         return osmQuay;
     }
 
-    public NetexRouteVariantQuay getNetexQuay() {
+    @SuppressWarnings("exports")
+    public NetexRouteVariantQuayDto getNetexQuay() {
         return netexQuay;
     }
 

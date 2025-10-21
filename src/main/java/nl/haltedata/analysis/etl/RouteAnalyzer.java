@@ -1,6 +1,7 @@
 package nl.haltedata.analysis.etl;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -9,18 +10,15 @@ import org.springframework.stereotype.Component;
 
 import jakarta.inject.Inject;
 import nl.haltedata.analysis.RouteAnalysis;
-import nl.haltedata.analysis.dto.RouteIssueData;
-import nl.haltedata.analysis.dto.RouteIssueDataRepository;
-import nl.haltedata.analysis.dto.RouteMatch;
-import nl.haltedata.analysis.dto.RouteMatchRepository;
-import nl.haltedata.netex.dto.NetexRouteVariant;
-import nl.haltedata.netex.dto.NetexRouteVariantQuay;
-import nl.haltedata.netex.dto.NetexRouteVariantQuayRepository;
-import nl.haltedata.netex.dto.NetexRouteVariantRepository;
-import nl.haltedata.osm.dto.OsmRoute;
-import nl.haltedata.osm.dto.OsmRouteQuay;
+import nl.haltedata.analysis.dto.RouteIssueDataDto;
+import nl.haltedata.analysis.dto.RouteMatchDto;
+import nl.haltedata.analysis.services.RouteIssueDataService;
+import nl.haltedata.analysis.services.RouteMatchService;
+import nl.haltedata.netex.dto.NetexRouteVariantDto;
+import nl.haltedata.netex.dto.NetexRouteVariantQuayDto;
+import nl.haltedata.osm.dto.OsmRouteDto;
+import nl.haltedata.osm.dto.OsmRouteQuayDto;
 import nl.haltedata.osm.dto.OsmRouteQuayRepository;
-import nl.haltedata.osm.dto.OsmRouteRepository;
 
 /**
  * The RouteAnalyzer iterates over a list of NeTeX quays and a list of OSM quay and tries to find
@@ -40,56 +38,61 @@ import nl.haltedata.osm.dto.OsmRouteRepository;
  */
 @Component
 public class RouteAnalyzer {
+    private static Comparator<OsmRouteQuayDto> osmQuayComparator = new Comparator<>() {
+        @Override
+        public int compare(OsmRouteQuayDto o1, OsmRouteQuayDto o2) {
+            return Long.compare(o1.getQuayIndex(), o2.getQuayIndex());
+        }
+    };
+    
+    private static Comparator<NetexRouteVariantQuayDto> netexQuayComparator = new Comparator<>() {
+        @Override
+        public int compare(NetexRouteVariantQuayDto o1, NetexRouteVariantQuayDto o2) {
+            return Long.compare(o1.getQuayIndex(), o2.getQuayIndex());
+        }
+    };
     @Inject
     OsmRouteQuayRepository osmRouteQuayRepository;
     
     @Inject
-    private NetexRouteVariantQuayRepository netexRouteVariantQuayRepository;
+    private RouteMatchService routeMatchService;
     
     @Inject
-    private RouteMatchRepository routeMatchRepository;
-    
-    @Inject
-    private OsmRouteRepository osmRouteRepository;
-    
-    @Inject
-    private NetexRouteVariantRepository netexRouteVariantRepository;
-    
-    @Inject
-    private RouteIssueDataRepository routeIssueDataRepository;
+    private RouteIssueDataService routeIssueDataService;
     
     public RouteAnalysis analize(Long routeMatchId) {
-        var rm = routeMatchRepository.findById(routeMatchId).get();
+        var rm = routeMatchService.findById(routeMatchId).get();
         return analize(rm);
     }
 
-    public RouteAnalysis analize(@SuppressWarnings("exports") RouteMatch match) {
+    public RouteAnalysis analize(@SuppressWarnings("exports") RouteMatchDto match) {
         var analizer = new Analizer();
         return analizer.analize(match);
     }
     
     class Analizer {
-        private RouteMatch routeMatch;
-        private OsmRoute osmRoute;
-        private NetexRouteVariant netexRouteVariant;
-        private List<OsmRouteQuay> osmQuays;
-        private List<NetexRouteVariantQuay> netexQuays;
+        private RouteMatchDto routeMatch;
+        private OsmRouteDto osmRoute;
+        private NetexRouteVariantDto netexRouteVariant;
+        private List<OsmRouteQuayDto> osmQuays;
+        private List<NetexRouteVariantQuayDto> netexQuays;
         private List<QuayMatch> quayMatches = new LinkedList<>();
-        private final List<RouteIssueData> issues = new LinkedList<>();
+        private final List<RouteIssueDataDto> issues = new LinkedList<>();
         int osmIndex = 0;
         int netexIndex = 0;
 
-        public RouteAnalysis analize(RouteMatch match) {
+        public RouteAnalysis analize(RouteMatchDto match) {
             this.routeMatch = match;
-            osmRoute = osmRouteRepository.findById(routeMatch.getOsmRouteId()).get();
-            netexRouteVariant = netexRouteVariantRepository.findById(routeMatch.getNetexVariantId()).get();
+            osmRoute = match.getOsmRoute();
+            netexRouteVariant = match.getNetexVariant();
             checkRouteHeader();
-            osmQuays = new ArrayList<>(osmRouteQuayRepository.findByOsmRouteId(osmRoute.getOsmRouteId()));
-            netexQuays = new ArrayList<>(netexRouteVariantQuayRepository.
-                findByVariantId(netexRouteVariant.getId()));
+            osmQuays = new ArrayList<>(osmRoute.getQuays());
+            osmQuays.sort(osmQuayComparator);
+            netexQuays = new ArrayList<>(netexRouteVariant.getQuays());
+            netexQuays.sort(netexQuayComparator);
             checkRouteQuays();
             int quayCountDifference = Math.abs(netexQuays.size() - osmQuays.size());
-            routeIssueDataRepository.saveAll(issues);
+            routeIssueDataService.saveAll(issues);
             return new RouteAnalysis(routeMatch, osmRoute, issues, quayCountDifference);
         }
     
@@ -101,14 +104,14 @@ public class RouteAnalyzer {
                 // Ignore Netex colour with value "000000" (black).
                 // Some operators use this on every route
                 if (!netexColour.equals("000000")) {
-                    addIssue("MissingRouteColour", "#" + netexColour);
+                    addIssue("MissingRouteColour", new String[0], "#" + netexColour);
                 }
             }
             else if (osmColour != null && netexColour == null) {
-                addIssue("UnexpectedRouteColour1" , osmColour);
+                addIssue("UnexpectedRouteColour1", new String[0], osmColour);
             }
             else if (!ColourMap.normalizeColour(osmColour).equals("#" + netexColour)) {
-                addIssue("UnexpectedRouteColour2", "#" + netexColour, osmColour);
+                addIssue("UnexpectedRouteColour2", new String[0], "#" + netexColour, osmColour);
             }
         }
         
@@ -127,67 +130,67 @@ public class RouteAnalyzer {
                 var netexOffset = findNetexOffset(osmQuay);
                 var osmOffset = findOsmOffset(netexQuay);
                 if (netexOffset == 1 && osmOffset == 1) {
-                    addIssue("DifferentQuay", Integer.toString(osmIndex + 1), netexQuay.getName(), osmQuay.getName());
+                    addIssue("DifferentQuay", new String[0], Integer.toString(osmIndex + 1), netexQuay.getName(), osmQuay.getName());
                     osmIndex++;
                     netexIndex++;
                 }
                 // Extra quays in the OSM route
                 else if (netexOffset == -1 && osmOffset > 0) {
-                    var sb = new StringBuilder();
+                    var lines = new String[osmOffset];
                     var location = osmIndex + 1;
                     for (int i =0 ; i < osmOffset; i++) {
                         osmQuay = osmQuays.get(osmIndex++);
                         quayMatches.add(new QuayMatch(osmQuay, null));
-                        sb.append("\n").append(osmQuay.getName());
+                        lines[i] = osmQuay.getName();
                     }
-                    addIssue("UnexpectedQuays", Integer.toString(osmOffset), Integer.toString(location), sb.toString());
+                    addIssue("UnexpectedQuays", lines, Integer.toString(osmOffset), Integer.toString(location));
                     continue;
                 }
                 // Missing quays in the OSM route
                 else if (osmOffset == -1 && netexOffset > 0) {
                     String quayBefore = (osmIndex > 0 && (osmIndex - 1) < osmQuays.size()) ? osmQuays.get(osmIndex - 1).getName() : "start of route";
                     String quayAfter = (osmIndex < osmQuays.size()) ? osmQuays.get(osmIndex).getName() : "end of route.";
-                    var sb = new StringBuilder();
+                    var lines = new String[netexOffset];
                     var location = osmIndex + 1;
                     for (int i =0 ; i < netexOffset; i++) {
                         netexQuay = netexQuays.get(netexIndex++);
                         quayMatches.add(new QuayMatch(null, netexQuay));
-                        sb.append("\n").append(netexQuay.getName());
+                        lines[i] =netexQuay.getName();
                     }
-                    addIssue("MissingQuays",
-                            Integer.toString(netexOffset), Integer.toString(location), quayBefore, quayAfter, sb.toString());
+                    addIssue("MissingQuays", lines,
+                            Integer.toString(netexOffset), Integer.toString(location), quayBefore, quayAfter);
                     continue;
                 }
                 else if (netexOffset == -1 && osmOffset == -1) {
                     quayMatches.add(new QuayMatch(osmQuay, netexQuay));
-                    addIssue("DifferentQuay", Integer.toString(osmIndex + 1), netexQuay.getName(), osmQuay.getName());
+                    addIssue("DifferentQuay", new String[0], Integer.toString(osmIndex + 1), netexQuay.getName(), osmQuay.getName());
                     osmIndex++;
                     netexIndex++;
                     continue;
                 }
                 else if (osmOffset <= netexOffset) {
-                    var sb = new StringBuilder();
+                    var lines = new String[osmOffset];
                     var location = osmIndex + 1;
                     for (int i =0 ; i < osmOffset; i++) {
                         osmQuay = osmQuays.get(osmIndex++);
                         quayMatches.add(new QuayMatch(osmQuay, null));
-                        sb.append("\n").append(osmQuay.getName());
+                        lines[i] = osmQuay.getName();
                     }
-                    addIssue("UnexpectedQuays", Integer.toString(osmOffset), Integer.toString(location), sb.toString());
+                    addIssue("UnexpectedQuays", lines, Integer.toString(osmOffset), Integer.toString(location));
                     continue;
                 }
                 else if (osmOffset > netexOffset) {
                     String quayBefore = (osmIndex > 0 && (osmIndex - 1) < osmQuays.size()) ? osmQuays.get(osmIndex - 1).getName() : "start of route";
                     String quayAfter = (osmIndex < osmQuays.size()) ? osmQuays.get(osmIndex).getName() : "end of route.";
-                    var sb = new StringBuilder();
+                    var lines = new String[netexOffset];
                     var location = osmIndex + 1;
                     for (int i =0 ; i < netexOffset; i++) {
                         netexQuay = netexQuays.get(netexIndex++);
                         quayMatches.add(new QuayMatch(null, netexQuay));
-                        sb.append("\n").append(netexQuay.getName());
+                        lines[i] = netexQuay.getName();
                     }
-                    addIssue("MissingQuays",
-                            Integer.toString(netexOffset), Integer.toString(location), quayBefore, quayAfter, sb.toString());
+                    addIssue("MissingQuays", lines,
+                            Integer.toString(netexOffset), Integer.toString(location), quayBefore, quayAfter);
                 }
                 else {
                     osmIndex++;
@@ -205,7 +208,7 @@ public class RouteAnalyzer {
             }
         }
     
-        private int findOsmOffset(NetexRouteVariantQuay netexQuay) {
+        private int findOsmOffset(NetexRouteVariantQuayDto netexQuay) {
             var index = osmIndex + 1;
             while (index < osmQuays.size()) {
                 var osmQuay = osmQuays.get(index);
@@ -215,7 +218,7 @@ public class RouteAnalyzer {
             return -1;
         }
 
-        private Integer findNetexOffset(OsmRouteQuay osmQuay) {
+        private Integer findNetexOffset(OsmRouteQuayDto osmQuay) {
             var index = netexIndex + 1;
             while (index < netexQuays.size()) {
                 var netexQuay = netexQuays.get(index);
@@ -225,7 +228,7 @@ public class RouteAnalyzer {
             return -1;
         }
 
-        private boolean quaysMatch(OsmRouteQuay osmQuay, NetexRouteVariantQuay netexQuay) {
+        private boolean quaysMatch(OsmRouteQuayDto osmQuay, NetexRouteVariantQuayDto netexQuay) {
             return Objects.equals(osmQuay.getQuayCode(), netexQuay.getQuayCode()) ||
                     Objects.equals(osmQuay.getStopPlace(), netexQuay.getStopPlaceCode());
         }
@@ -234,35 +237,35 @@ public class RouteAnalyzer {
             if (match.isStopPlaceMatch() && ! match.isQuayCodeMatch()) {
                 String expected = match.getNetexQuay().getName();
                 String found = match.getOsmQuay().getQuayCode();
-                addIssue("UnexpectedQuayCode",
+                addIssue("UnexpectedQuayCode", new String[0],
                         match.getOsmQuay().getName(), Integer.toString(osmIndex + 1), expected, found);
             }
         }
 
         private void createMissingQuaysAtEndOfRouteIssue(int count) {
-            var sb = new StringBuilder();
+            var lines = new String[count];
             for (int i =0 ; i < count; i++) {
                 var netexQuay = netexQuays.get(netexIndex++);
                 quayMatches.add(new QuayMatch(null, netexQuay));
-                sb.append("\n").append(netexQuay.getName());
+                lines[i] = netexQuay.getName();
             }
-            addIssue("MissingQuaysAtEndOfRoute",
-                  Integer.toString(count), sb.toString());
+            addIssue("MissingQuaysAtEndOfRoute", lines,
+                  Integer.toString(count));
         }
 
         private void createUnexpectedQuaysAtEndOfRouteIssue(int count) {
-            var sb = new StringBuilder();
+            var lines = new String[count];
             for (int i =0 ; i < count; i++) {
                 var osmQuay = osmQuays.get(osmIndex++);
                 quayMatches.add(new QuayMatch(osmQuay, null));
-                sb.append("\n").append(osmQuay.getName());
+                lines[i] = osmQuay.getName();
             }
-            addIssue("UnexpectedQuaysAtEndOfRoute", Integer.toString(count), sb.toString());
+            addIssue("UnexpectedQuaysAtEndOfRoute", lines, Integer.toString(count));
         }
 
-        private RouteIssueData addIssue(String message, String... parameters) {
-            var issue = new RouteIssueData(routeMatch, issues.size(),
-                    message, parameters);
+        private RouteIssueDataDto addIssue(String message, String[] lines, String... parameters) {
+            var issue = new RouteIssueDataDto(routeMatch, issues.size(),
+                    message, parameters, lines);
             issues.add(issue);
             return issue;
         }

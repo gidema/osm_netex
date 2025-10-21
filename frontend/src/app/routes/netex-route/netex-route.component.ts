@@ -1,9 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { NetexRouteService } from '../netex-route.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { NetexRoute } from '../netex-route';
-import { NetexRouteQuay } from '../netex-route-quay';
-import { NetexRouteQuaysService } from '../netex-route-quays.service';
+import NetexRoute from '@routes/netex-route';
+import NetexRouteService from '@routes/netex-route.service';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-netex-route',
@@ -11,28 +10,19 @@ import { NetexRouteQuaysService } from '../netex-route-quays.service';
     templateUrl: './netex-route.component.html',
     styleUrl: './netex-route.component.css'
 })
-export class NetexRouteComponent implements OnInit {
+export default class NetexRouteComponent implements OnInit {
     private activatedRoute = inject(ActivatedRoute);
     private routeService = inject(NetexRouteService);
-    private routeQuaysService = inject(NetexRouteQuaysService);
-    routeId: string | null = null;
     format: string = "html";
     netexRoute!: NetexRoute;
-    routeQuays: NetexRouteQuay[] = [];
 
     ngOnInit() {
         this.activatedRoute.paramMap.subscribe((paramMap: ParamMap) => {
-            this.routeId = paramMap.get('routeId');
+            const id = paramMap.get('routeId') || "";
+            this.routeService.findById(id).subscribe(r => {
+                this.netexRoute = r;
+            })
         });
-        this.activatedRoute.queryParamMap.subscribe((paramMap: ParamMap) => {
-            this.format = paramMap.get('format') ?? "html";
-        });
-        this.routeService.findById(this.routeId || "").subscribe((data: NetexRoute) => {
-            this.netexRoute = new NetexRoute(data);
-        });
-        this.routeQuaysService.findByRouteId(this.routeId || "").subscribe((data: NetexRouteQuay[]) => {
-            this.routeQuays = data.flatMap(quay => new NetexRouteQuay(quay));
-    });
     }
 
 }

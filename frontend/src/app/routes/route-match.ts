@@ -1,22 +1,14 @@
-import { RouteIssueData } from './route-issue-data';
+import RouteIssueData from '@routes/route-issue-data';
+import LineMatch from '@lines/line-match';
+import OsmRoute from '@routes/osm-route';
+import NetexRouteVariant from '@routes/netex-route-variant';
 
-export class RouteMatch {
+export default class RouteMatch {
     id!: number;
-    lineId!: number;
-    osmRouteId!: number;
-    lineNumber!: String;
-    lineSort!: String;
-    variantId!: number;
+    lineMatch?: LineMatch;
+    osmRoute?: OsmRoute;
+    netexVariant?: NetexRouteVariant;
     matchRate!: number;
     matching!: string;
-    network!: string;
-    netexLineNumber!: string;
-    netexName!: string;
-    directionType!: string;
-    osmName!: string;
-    osmTransportMode!: string;
-    osmLineNumber!: string;
-    from!: string;
-    to!: string;
     issues?: RouteIssueData[];
 }

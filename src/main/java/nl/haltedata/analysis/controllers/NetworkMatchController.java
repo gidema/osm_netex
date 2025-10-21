@@ -9,15 +9,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.inject.Inject;
-import nl.haltedata.analysis.dto.NetworkMatch;
-import nl.haltedata.analysis.dto.NetworkMatchRepository;
+import nl.haltedata.analysis.dto.NetworkMatchDto;
+import nl.haltedata.analysis.services.NetworkMatchService;
 
 @RestController
 @RequestMapping("/network")
 public class NetworkMatchController {
     
     @Inject
-    private NetworkMatchRepository repository;
+    private NetworkMatchService service;
 
     /**
      * Endpoint to list the data.
@@ -29,14 +29,14 @@ public class NetworkMatchController {
     @SuppressWarnings("exports")
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping()
-    public Iterable<NetworkMatch> findAll() throws Exception {
-        return repository.findAllByOrderByName();
+    public Iterable<NetworkMatchDto> findAll() throws Exception {
+        return service.findAllByOrderByName();
     }
 
     @SuppressWarnings("exports")
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/{id}")
-    public Optional<NetworkMatch> findById(@PathVariable("id") String id) throws Exception {
-        return repository.findById(id);
+    public Optional<NetworkMatchDto> findById(@PathVariable("id") String id) throws Exception {
+        return service.findById(id);
     }
 }

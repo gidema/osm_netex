@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { NetexRoute } from './netex-route';
+import NetexRoute from '@routes/netex-route';
 import { HttpUrlEncodingCodec } from '@angular/common/http';
 
 const codec = new HttpUrlEncodingCodec();
@@ -10,7 +10,7 @@ const codec = new HttpUrlEncodingCodec();
     providedIn: 'root'
 })
 
-export class NetexRouteService {
+export default class NetexRouteService {
     private http = inject(HttpClient);
     private routeUrl: string = 'http://localhost:8080/netex/route';
 

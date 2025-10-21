@@ -1,12 +1,12 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { OsmRoute } from './osm-route';
+import OsmRoute from '@routes/osm-route';
 
 @Injectable({
     providedIn: 'root'
 })
-export class OsmRouteService {
+export default class OsmRouteService {
     private http = inject(HttpClient);
     private url: string = 'http://localhost:8080/osm/route';
 

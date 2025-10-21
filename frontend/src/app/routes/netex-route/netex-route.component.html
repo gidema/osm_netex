@@ -1,5 +1,4 @@
-@if (netexRoute) {
-    @if (format == "markdown") {
+@if (format == "markdown") {
 # {{ netexRoute.publicCode}} {{ netexRoute.name}} {{ netexRoute.directionType}}<br/>
 <br/>
 ## Network: {{ netexRoute.network}}<br/>
@@ -7,8 +6,8 @@
 Colour: &lt;span style = "color: #{{netexRoute.colour}};">#{{netexRoute.colour}}&lt;/span>; Id: {{ netexRoute.id}}<br/>
 &lt;br>
 <br/>
-@for (quay of routeQuays; track quay.pointOnRouteId) {
-<br/>    {{ quay.place }}, {{ quay.name }} ({{ quay.quayCode }} ) Links: [drgl](https://drgl.nl/stop/{{ quay.stopplaceCode }})
+@for (quay of netexRoute.routeQuays; track quay.pointOnRouteId) {
+<br/>    {{ quay.town }}, {{ quay.name }} ({{ quay.quayCode }} ) Links: [drgl](https://drgl.nl/stop/{{ quay.stopPlaceCode }})
                 [ u-ov](https://www.u-ov.info/halte/{{ quay.uov }})&lt;br>
     }
 <br/>
@@ -21,10 +20,10 @@ Colour: &lt;span style = "color: #{{netexRoute.colour}};">#{{netexRoute.colour}}
       <div class="card-body">
         <table class="table table-bordered table-striped">
           <tbody>
-            @for (quay of routeQuays; track quay.pointOnRouteId) {
+            @for (quay of netexRoute.routeQuays; track quay.pointOnRouteId) {
               <tr>
-                <td> {{ quay.place }}, {{ quay.name }} <span style="font-size: 12px;">({{ quay.quayCode }} )
-                    Links: <a href="https://drgl.nl/stop/{{ quay.stopplaceCode }}" target="_blank">drgl</a>
+                <td> {{ quay.town }}, {{ quay.name }} <span style="font-size: 12px;">({{ quay.quayCode }} )
+                    Links: <a href="https://drgl.nl/stop/{{ quay.stopPlaceCode }}" target="_blank">drgl</a>
                     <a href="https://9292.nl/{{ quay._9292 }}" target="_blank"> 9292.nl</a>
                     <a href="https://www.u-ov.info/halte/{{ quay.uov }}" target="_blank"> u-ov</a></span></td>
               </tr>
@@ -33,5 +32,4 @@ Colour: &lt;span style = "color: #{{netexRoute.colour}};">#{{netexRoute.colour}}
         </table>
       </div>
     </div>
-}
 }

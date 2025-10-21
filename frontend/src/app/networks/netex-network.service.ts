@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { NetexNetwork } from './netex-network';
+import NetexNetwork from '@networks/netex-network';
 import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class NetexNetworkService {
+export default class NetexNetworkService {
 
   private networksUrl: string;
 

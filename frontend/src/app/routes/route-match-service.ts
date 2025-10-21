@@ -1,15 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { RouteMatch } from '../routes/route-match';
+import RouteMatch from '@routes/route-match';
 
 @Injectable({
   providedIn: 'root'
 })
 
-export class RouteMatchService {
+export default class RouteMatchService {
     private http = inject(HttpClient);
-    private baseUrl: string = 'http://localhost:8080/route_match';
+    private baseUrl: string = 'http://localhost:8080/route-match';
 
     public findById(id: number): Observable<RouteMatch> {
         return this.http.get<RouteMatch>(`${this.baseUrl}/${id}`);

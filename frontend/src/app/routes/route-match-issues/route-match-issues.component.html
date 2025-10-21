@@ -1,0 +1,56 @@
+<div class="card my-5">
+  @if (match) {
+  <div class="card-body">
+    <h2 i18n="@@CheckingOSMRoute">Checking OSM route {{ match.osmRoute?.name }}</h2>
+    <p>
+    @for (issue of match.issues; track issue.id) {
+      @if(! $first) { <br/> }
+      @switch (issue.message) {
+        @case ('MissingRouteColour') {
+<ng-container i18n="@@MissingRouteColour">Missing route colour. Expected {{issue.parameters[0]}}</ng-container>
+        }
+        @case ('UnexpectedRouteColour1') {
+<ng-container i18n="@@UnexpectedRouteColour1">Unexpected route colour ({{issue.parameters[0]}}). There is no colour in the Netex data.</ng-container>
+        }
+        @case ('UnexpectedRouteColour2') {
+<ng-container i18n="@@UnexpectedRouteColour2">Differing route colour {{issue.parameters[1]}}. Netex colour = {{issue.parameters[0]}}.</ng-container>
+        }
+        @case ('DifferentQuay') {
+<ng-container i18n="@@DifferentQuay">Different quay ({{issue.parameters[2]}}) at position {{issue.parameters[0]}}. Netex quay = {{issue.parameters[1]}}.</ng-container>
+        }
+        @case ('UnexpectedQuay') {
+<ng-container i18n="@@UnexpectedQuay">Unexpected quay ({{issue.parameters[0]}}) at position {{issue.parameters[1]}} in OSM route.</ng-container>
+        }
+        @case ('UnexpectedQuays') {
+<ng-container i18n="@@UnexpectedQuays">{{issue.parameters[0]}} Unexpected quays starting at position {{issue.parameters[1]}} in OSM route:{{issue.parameters[2]}}</ng-container>
+        }
+        @case ('UnexpectedQuaysAtEndOfRoute') {
+<ng-container i18n="@@UnexpectedQuaysAtEndOfRoute">{{issue.parameters[0]}} Unexpected quays at end of OSM route:{{issue.parameters[1]}}</ng-container>
+        }
+        @case ('MissingQuay') {
+<ng-container i18n="@@MissingQuay">Missing quay ({{issue.parameters[0]}}) at position {{issue.parameters[1]}} in OSM route between {{issue.parameters[2]}} and {{issue.parameters[3]}}.</ng-container>
+        }
+        @case ('MissingQuays') {
+<ng-container i18n="@@MissingQuays">{{issue.parameters[0]}} missing quays starting at position {{issue.parameters[1]}} in OSM route between {{issue.parameters[2]}} and {{issue.parameters[3]}}: {{issue.parameters[4]}}</ng-container>
+        }
+        @case ('MissingMultipleQuay') {
+<ng-container i18n="@@MissingMultipleQuay">Missing quay ({{issue.parameters[0]}}) after {{issue.parameters[1]}} at position {{issue.parameters[2]}}.</ng-container>
+        }
+        @case ('MissingQuaysAtEndOfRoute') {
+<ng-container i18n="@@MissingQuaysAtEndOfRoute">{{issue.parameters[0]}} Missing quays at end of OSM route:{{issue.parameters[1]}}</ng-container>
+        }
+        @case ('UnexpectedQuayCode') {
+<ng-container i18n="@@UnexpectedQuayCode">Unexpected quay code for quay {{issue.parameters[0]}} at position {{issue.parameters[1]}}. Expected {{issue.parameters[2]}}, but found {{issue.parameters[3]}}.</ng-container>
+        }
+      }
+      @for (line of issue.lines; track $index) {
+        <br/><span style="margin-left: 1em;"> {{ line }} </span>
+      }
+    }
+    @empty {
+        <p i18n>No issues were found for this route.</p>
+    }
+    </p>
+  </div>
+}
+</div>

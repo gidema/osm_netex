@@ -4,7 +4,7 @@ body {
   direction: ltr;
   color: rgb(22, 22, 22);
   font-size: 14px;
-  line-height:14px;
+  line-height: normal;
   text-align: left;
 }
 

@@ -20,6 +20,9 @@
       <commons-net.version>3.6</commons-net.version>
       <osmosis.version>0.49.2</osmosis.version>
       <netex-java.version>2.0.15</netex-java.version>
+      <modelmapper.version>3.2.4</modelmapper.version>
+      <mapstruct.version>1.6.3</mapstruct.version>
+      <lombok-mapstruct.version>0.2.0</lombok-mapstruct.version>
     </properties>
   <parent>
     <groupId>org.springframework.boot</groupId>
@@ -137,12 +140,32 @@
   	<artifactId>chb_psa</artifactId>
   	<version>8.2.0</version>
   </dependency>
-  <dependency>
+<!--  <dependency>
     <groupId>org.entur</groupId>
     <artifactId>netex-java-model</artifactId>
     <version>${netex-java.version}</version>
+  </dependency>-->
+  <dependency>
+    <groupId>org.modelmapper</groupId>
+    <artifactId>modelmapper</artifactId>
+    <version>${modelmapper.version}</version>
   </dependency>
-</dependencies>
+  <dependency>
+    <groupId>org.mapstruct</groupId>
+    <artifactId>mapstruct</artifactId>
+    <version>${mapstruct.version}</version> 
+  </dependency>
+  <dependency>
+    <groupId>org.mapstruct</groupId>
+    <artifactId>mapstruct-processor</artifactId>
+    <version>${mapstruct.version}</version> 
+  </dependency>
+  <dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok-mapstruct-binding</artifactId>
+    <version>${lombok-mapstruct.version}</version>
+  </dependency>
+  </dependencies>
   <build>
     <plugins>
       <plugin>
@@ -154,15 +177,25 @@
         <configuration>
           <release>17</release>
           <parameters>true</parameters>
+          <annotationProcessorPaths>
+            <path>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>${mapstruct.version}</version>
+            </path>
+            <path>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </path>
+            <path>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok-mapstruct-binding</artifactId>
+                <version>${lombok-mapstruct.version}</version>
+            </path>
+          </annotationProcessorPaths>
         </configuration>
       </plugin>
     </plugins>
   </build>
-  <repositories>
-    <repository>
-      <id>gertjanidema.nl</id>
-      <url>http://maven.gertjanidema.nl/</url>
-    </repository>
-  </repositories>
-
 </project>

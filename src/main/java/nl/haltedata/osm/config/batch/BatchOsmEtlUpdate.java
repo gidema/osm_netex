@@ -75,21 +75,17 @@ SELECT rm.osm_route_master_id, mb.member_id
 
     private static String update_line_table_sql = """
 TRUNCATE TABLE osm_pt.osm_line;
-INSERT INTO osm_pt.osm_line (id, osm_transport_mode, netex_transport_mode, name, operator, line_number, network, colour, is_disused, administrative_zone, line_sort)
+INSERT INTO osm_pt.osm_line (id, osm_transport_mode, netex_transport_mode, name, operator, line_number, colour, is_disused, line_sort)
 SELECT rm.osm_route_master_id AS id,
   rm.transport_mode AS osm_transport_mode,
   otm.netex_transport_mode,
   rm."name",
   rm.operator,
   rm.ref AS line_number,
-  rm.network,
   rm.colour,
   rm.is_disused,
-  nw.administrative_zone,
   CASE WHEN rm.ref ~ '^[0-9]{1,5}$' THEN LPAD(rm.ref, 5, '0') ELSE rm.ref END AS line_sort
 FROM osm_pt.st_osm_route_master rm
-LEFT JOIN osm_pt.st_osm_network_line nl ON nl.route_master_id = rm.osm_route_master_id
-LEFT JOIN osm_pt.osm_network nw ON nw.id = nl.network_id 
 LEFT JOIN osm_pt.ref_osm_transport_mode otm ON otm.osm_transport_mode = rm.transport_mode
 WHERE rm.transport_mode IN ('bus', 'trolleybus', 'tram', 'subway', 'train', 'ferry')
 """;
@@ -109,7 +105,26 @@ FROM osm_pt.st_osm_network nw
   LEFT JOIN concessie ON nw.id = concessie.id
   WHERE nw.name != 'OV-concessies Nederland'
 """;
-            
+
+    private static String issue_route_in_multiple_lines = """
+TRUNCATE osm_pt.issue_route_in_multiple_lines;
+INSERT INTO osm_pt.issue_route_in_multiple_lines (route_id, "count")
+SELECT osm_route_id, count(*) AS "count"
+FROM osm_pt.osm_route_master_route
+GROUP BY osm_route_id
+HAVING count(*) > 1
+""";
+
+private static String update_line_in_network_sql = """
+TRUNCATE osm_pt.osm_line_in_network;
+INSERT INTO osm_pt.osm_line_in_network (line_id, network_id)
+SELECT DISTINCT oln.id AS line_id, nw.id AS network_id
+FROM osm_pt.osm_line oln
+JOIN osm_pt.st_osm_network_line nl ON nl.route_master_id = oln.id
+JOIN osm_pt.osm_network nw ON nw.id = nl.network_id
+WHERE nw.id IS NOT NULL
+""";
+
     private static String update_route_table_sql = """
 TRUNCATE TABLE osm_pt.osm_route;
 INSERT INTO osm_pt.osm_route (osm_route_id, transport_mode, name, operator, route_ref, network,
@@ -127,7 +142,9 @@ SELECT rt.id AS osm_route_id,
   exist(rt.tags, 'disused:route') AS is_disused 
 FROM relations rt
 LEFT JOIN osm_pt.osm_route_master_route rmr ON rmr.osm_route_id = rt.id
-WHERE rt.tags->'type' IN ('route', 'disused:route');
+WHERE rt.tags->'type' IN ('route', 'disused:route')
+    AND rt.tags->'route' IN ('bus', 'trolleybus', 'tram', 'subway', 'train', 'ferry')
+    AND rt.id NOT IN (SELECT route_id FROM osm_pt.issue_route_in_multiple_lines);
 """;
 
     private static String update_quays_table_sql = """
@@ -250,7 +267,7 @@ FROM data;
     private static String update_osm_route_data_table_sql = """
 TRUNCATE TABLE osm_pt.osm_route_data;
 INSERT INTO osm_pt.osm_route_data
-    SELECT route.line_number,
+    SELECT route.route_ref AS line_number,
       route.osm_route_id,
       route.network AS network,
       ARRAY_AGG(route_quay.quay_code ORDER BY route_quay.quay_index) quay_list,
@@ -259,16 +276,18 @@ INSERT INTO osm_pt.osm_route_data
       route.osm_line_id
     FROM osm_pt.osm_route AS route
     JOIN osm_pt.osm_route_quay AS route_quay ON route_quay.osm_route_id = route.osm_route_id
-    GROUP BY route.line_number, route.osm_route_id, route.osm_line_id, route.network;
+    GROUP BY route.route_ref, route.osm_route_id, route.osm_line_id, route.network;
 """;
 
     private static String update_osm_line_stop_place_sql = """
 TRUNCATE TABLE osm_pt.osm_line_stop_place;
 INSERT INTO osm_pt.osm_line_stop_place (administrative_zone, line_id, line_number, stop_place_code)
-SELECT DISTINCT ln.administrative_zone, ln.id AS line_id, ln.line_number, rq.stop_place
+SELECT DISTINCT nw.administrative_zone, ln.id AS line_id, ln.line_number, rq.stop_place
 FROM osm_pt.osm_route_quay rq
   JOIN osm_pt.st_osm_route_master_route rmr ON rq.osm_route_id = rmr.route_id
   JOIN osm_pt.osm_line ln ON ln.id = rmr.route_master_id
+  JOIN osm_pt.osm_line_in_network olin ON olin.line_id = ln.id
+  JOIN osm_pt.osm_network nw ON nw.id = olin.network_id
 WHERE rq.stop_place IS NOT NULL
 """;
 
@@ -340,9 +359,10 @@ LEFT JOIN osm_pt.osm_missing_ifopt_area_code mac2 ON mac2.osm_id = rf2.osm_platf
             .start(sqlUpdateStep("Stage networks",stage_networks_sql))
             .next(sqlUpdateStep("Stage network route masters",stage_network_route_masters_sql))
             .next(sqlUpdateStep("Stage route masters",stage_route_masters_sql))
-            
             .next(sqlUpdateStep("Update networks",update_network_table_sql))
             .next(sqlUpdateStep("Update lines",update_line_table_sql))
+            .next(sqlUpdateStep("Update lines in administrative zone",update_line_in_network_sql))
+            .next(sqlUpdateStep("Check route in multiple lines",issue_route_in_multiple_lines))
             .next(sqlUpdateStep("Update routes", update_route_table_sql))
             .next(sqlUpdateStep("Update routemaster routes", stage_route_master_routes_sql))
             .next(sqlUpdateStep("Update quays", update_quays_table_sql))

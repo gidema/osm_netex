@@ -1,13 +1,13 @@
-@if ( routeVariant ) {
+@if (routeVariant) {
 <h1> {{ routeVariant.directionType}}</h1>
 <p>Id = {{ routeVariant.id}} {{ routeVariant.directionType}}</p>
 <div class="card my-5">
   <div class="card-body">
     <table class="table table-bordered table-striped">
       <tbody>
-        @for (quay of quays; track quay.quayIndex) {
+        @for (quay of routeVariant.quays; track quay.quayIndex) {
           <tr>
-            <td> <a href="https://drgl.nl/stop/{{ quay.stopPlaceCode }}" target="_blank">{{ quay.town }} - {{ quay.quayName }} </a> @if (quay.stopSideCode) {(Perron {{quay.stopSideCode}}) } <span style="font-size: 12px;">({{ quay.quayCode }})</span></td>
+            <td>{{ quay.quayIndex }} <a href="https://drgl.nl/stop/{{ quay.stopPlaceCode }}" target="_blank">{{ quay.town }} - {{ quay.quayName }} </a> @if (quay.stopSideCode) {(Perron {{quay.stopSideCode}}) } <span style="font-size: 12px;">({{ quay.quayCode }})</span></td>
           </tr>
         }
       </tbody>

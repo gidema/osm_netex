@@ -1,24 +1,20 @@
 package nl.haltedata.netex.controllers;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.inject.Inject;
-import nl.haltedata.netex.dto.NetexLine;
-import nl.haltedata.netex.dto.NetexLineRepository;
+import nl.haltedata.netex.dto.NetexLineDto;
 
 @RestController
 public class NetexLineController {
     
     @Inject
-    private NetexLineRepository repository;
+    private NetexLineService service;
 
     /**
      * Endpoint to list the data.
@@ -29,16 +25,16 @@ public class NetexLineController {
     @SuppressWarnings("exports")
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/netex/line/{id}")
-    public ResponseEntity<NetexLine> getLine(@PathVariable("id") String id) throws Exception {
-        return repository.findById(id)
+    public ResponseEntity<NetexLineDto> findById(@PathVariable("id") String id) throws Exception {
+        return service.findById(id)
                 .map(route -> new ResponseEntity<>(route, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
     }
-    
-    @SuppressWarnings("exports")
-    @CrossOrigin(origins = "http://localhost:4200")
-    @GetMapping("/netex/line")
-    public List<NetexLine> findByAdministrativeZone(@RequestParam("administrativeZone") String administrativeZone) throws Exception {
-        return repository.findByAdministrativeZoneOrderByLineSort(administrativeZone);
-    }
+//    
+//    @SuppressWarnings("exports")
+//    @CrossOrigin(origins = "http://localhost:4200")
+//    @GetMapping("/netex/line")
+//    public List<NetexLineDto> findByAdministrativeZone(@RequestParam("administrativeZone") String administrativeZone) throws Exception {
+//        return service.findByAdministrativeZone(administrativeZone);
+//    }
 }

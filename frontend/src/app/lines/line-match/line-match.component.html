@@ -1,0 +1,34 @@
+<div class="container">
+@if (lineMatch) {
+  <h1>{{ lineMatch.network}}: Line {{ lineMatch.lineNumber }}</h1>
+  <h2>Routes</h2>
+  <table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col" i18n>Route id</th>
+        <th scope="col">Route direction</th>
+        <th scope="col">Match status</th>
+        <th scope="col">Netex route variant</th>
+        <th scope="col">Netex from</th>
+        <th scope="col">Netex to</th>
+        <th scope="col">Osm route id</th>
+        <th scope="col">Osm name</th>
+   </tr>
+    </thead>
+    <tbody>
+      @for (rm of lineMatch.routeMatches; track rm.id) {
+        <tr>
+          <td><a [routerLink] = "['/route-match', rm.id]"> {{ rm.id }} </a></td>
+          <td>{{ rm.netexVariant?.directionType }} </td>
+          <td>{{ rm.matching }}</td>
+          <td><a [routerLink] = "['/netex/route-variant', rm.netexVariant?.id]">{{ rm.netexVariant?.id }} </a></td>
+          <td><!-- {{ rm.netexVariant?.fromQuay?.name }} --></td>
+          <td><!-- {{ rm.netexVariant?.toQuay?.name }} --></td>
+          <td><a [routerLink] = "['/osm/route', rm.osmRoute?.osmRouteId]">{{ rm.osmRoute?.osmRouteId }} </a></td>
+          <td>{{ rm.osmRoute?.name }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
+</div>

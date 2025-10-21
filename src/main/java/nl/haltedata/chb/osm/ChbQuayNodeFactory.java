@@ -52,6 +52,7 @@ public class ChbQuayNodeFactory implements OsmNodeFactory<ChbQuay> {
 //            tags.add(new Tag("wheelchair", quay.getWheelchairBoarding() ? "yes" : "no"));            
 //        }
         var nodeData = new CommonEntityData(OsmIdFactory.getNodeId(), 0, timestamp, OsmUser.NONE, 0L, tags);
-        return new Node(nodeData, quay.getWgsLocation().getY(), quay.getWgsLocation().getX());
+//        return new Node(nodeData, quay.getWgsLocation().getY(), quay.getWgsLocation().getX());
+        return null;
     }
 }

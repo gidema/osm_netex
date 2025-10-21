@@ -1,7 +1,7 @@
-import { OsmPtNetwork } from './network';
+import OsmNetwork from '@networks/network';
 
 describe('Network', () => {
   it('should create an instance', () => {
-    expect(new OsmPtNetwork()).toBeTruthy();
+    expect(new OsmNetwork()).toBeTruthy();
   });
 });

@@ -2,20 +2,25 @@ package nl.haltedata.netex.dto;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import nl.haltedata.osm.dto.OsmLine;
 
 @Entity
 @Getter
 @Setter
-@Table(name="v_netex_route_variant_quay")
-@IdClass(NetexRouteVariantQuayId.class)
+@EqualsAndHashCode(of = "id")
+@Table(schema="netex")
 public class NetexRouteVariantQuay {
     @Id
-    private Long variantId;
-    @Id
+    private Long id;
+    @ManyToOne
+    @JoinColumn(name = "variant_id")
+    private NetexRouteVariant routeVariant;
     private Long quayIndex;
     private String lineNumber;
     private String quayCode;
@@ -24,12 +29,12 @@ public class NetexRouteVariantQuay {
     private String stopSideCode;
     private String stopPlaceCode;
 
-    public String getName() {
-        var sb = new StringBuilder();
-        sb.append(quayCode).append(" - ").append(getQuayName());
-        if (stopSideCode != null) {
-            sb.append(" (").append(stopSideCode).append(")");
-        }
-        return sb.toString();
-    }
+//    public String getName() {
+//        var sb = new StringBuilder();
+//        sb.append(quayCode).append(" - ").append(getQuayName());
+//        if (stopSideCode != null) {
+//            sb.append(" (").append(stopSideCode).append(")");
+//        }
+//        return sb.toString();
+//    }
 }

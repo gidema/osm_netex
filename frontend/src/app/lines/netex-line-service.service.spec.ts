@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { NetexLineServiceService } from './netex-line-service.service';
+import NetexLineServiceService from '@lines/netex-line-service.service';
 
 describe('NetexLineServiceService', () => {
   let service: NetexLineServiceService;

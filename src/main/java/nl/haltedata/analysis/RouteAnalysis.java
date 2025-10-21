@@ -2,18 +2,18 @@ package nl.haltedata.analysis;
 
 import java.util.List;
 
-import nl.haltedata.analysis.dto.RouteIssueData;
-import nl.haltedata.analysis.dto.RouteMatch;
-import nl.haltedata.osm.dto.OsmRoute;
+import nl.haltedata.analysis.dto.RouteIssueDataDto;
+import nl.haltedata.analysis.dto.RouteMatchDto;
+import nl.haltedata.osm.dto.OsmRouteDto;
 
 public class RouteAnalysis {
-    private final RouteMatch routeMatch;
-    private final OsmRoute osmRoute;
-    private final List<RouteIssueData> matchIssues;
+    private final RouteMatchDto routeMatch;
+    private final OsmRouteDto osmRoute;
+    private final List<RouteIssueDataDto> matchIssues;
     private final int quayCountDifference;
     
     @SuppressWarnings("exports")
-    public RouteAnalysis(RouteMatch routeMatch, OsmRoute osmRoute, List<RouteIssueData> matchIssues, int quayCountDifference) {
+    public RouteAnalysis(RouteMatchDto routeMatch, OsmRouteDto osmRoute, List<RouteIssueDataDto> matchIssues, int quayCountDifference) {
         super();
         this.routeMatch = routeMatch;
         this.osmRoute = osmRoute;
@@ -22,19 +22,19 @@ public class RouteAnalysis {
     }
 
     @SuppressWarnings("exports")
-    public RouteMatch getRouteMatch() {
+    public RouteMatchDto getRouteMatch() {
         return routeMatch;
     }
 
 
     @SuppressWarnings("exports")
-    public OsmRoute getOsmRoute() {
+    public OsmRouteDto getOsmRoute() {
         return osmRoute;
     }
 
 
     @SuppressWarnings("exports")
-    public List<RouteIssueData> getMatchIssues() {
+    public List<RouteIssueDataDto> getMatchIssues() {
         return matchIssues;
     }
 

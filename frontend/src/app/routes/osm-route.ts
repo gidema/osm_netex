@@ -1,4 +1,6 @@
-export class OsmRoute {
+import OsmRouteQuay from '@quays/osm-route-quay';
+
+export default class OsmRoute {
     constructor( 
         public osmRouteId: Number,
         public osmLineId: Number,
@@ -9,5 +11,6 @@ export class OsmRoute {
         public network: String,
         public from: String,
         public to: String,
-        public colour: String) {};
+        public colour: String,
+        public quays?: OsmRouteQuay[]) {};
 }

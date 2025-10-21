@@ -1,4 +1,6 @@
-export class NetexNetwork {
+import NetexLine from '@lines/netex-line';
+
+export default class NetexNetwork {
     id: string = "";
     name!: string;
     shortName!: string;
@@ -9,4 +11,5 @@ export class NetexNetwork {
     authorityRef!: string;
     fileSetId!: boolean;
     administrativeZone?: string;
+    lines?: NetexLine[];
 }

@@ -3,36 +3,58 @@ package nl.haltedata.analysis.dto;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.OneToOne;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import nl.haltedata.netex.dto.NetexLine;
+import nl.haltedata.osm.dto.OsmLine;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "v_line_match")
+@EqualsAndHashCode(of = "id")
+@NamedEntityGraph(
+        name = "lineMatch-without-routeMatches",
+        attributeNodes = {
+          @NamedAttributeNode("networkMatch"),
+          @NamedAttributeNode("osmLine"),
+          @NamedAttributeNode("netexLine")
+        })
+@NamedEntityGraph(
+        name = "lineMatch-with-routeMatches-issues",
+        attributeNodes = {
+          @NamedAttributeNode("networkMatch"),
+          @NamedAttributeNode("osmLine"),
+          @NamedAttributeNode("netexLine"),
+          @NamedAttributeNode("routeMatches"),
+        }
+)
 public class LineMatch {
     @Id
     Long id;
-    String administrativeZone;
-    String network;
+    @ManyToOne
+    @JoinColumn(name = "administrativeZone", referencedColumnName = "administrativeZone")
+    NetworkMatch networkMatch;
+//    String network;
     String lineNumber;
     String lineSort;
-    String netexLineId;
-    Long osmLineId;
-    String osmName;
-    String netexName;
-    String transportMode;
-    String netexColour;
-    String osmColour;
+    @OneToOne
+    @JoinColumn(name = "osm_line_id", referencedColumnName = "id")
+    private OsmLine osmLine;
+    @OneToOne
+    @JoinColumn(name = "netex_line_id", referencedColumnName = "id")
+    private NetexLine netexLine;
     String productCategory;
     @OneToMany(mappedBy = "lineMatch")
-    @JsonManagedReference
-    private List<RouteMatch> routes = new LinkedList<>();
+    private List<RouteMatch> routeMatches = new LinkedList<>();
+    private String transportMode;
 
 }

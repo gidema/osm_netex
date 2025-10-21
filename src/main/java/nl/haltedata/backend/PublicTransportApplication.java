@@ -11,10 +11,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = { "nl.haltedata.osm.dto", "nl.haltedata.chb.dto", "nl.haltedata.analysis.dto", "nl.haltedata.netex.dto",
-            "nl.haltedata.analysis.dto"})
+@EnableJpaRepositories(basePackages = { "nl.haltedata.osm.dto", "nl.haltedata.chb.dto", "nl.haltedata.analysis.dto", "nl.haltedata.netex.dto"})
 //@ComponentScan(basePackages = { "nl.haltedata.chb", "nl.haltedata.gtfs", "nl.haltedata.netex", "nl.haltedata.analysis", "nl.haltedata.osm", "nl.haltedata.validation"},
-@ComponentScan(basePackages = { "nl.haltedata.netex", "nl.haltedata.netex.controllers", "nl.haltedata.osm.controllers", "nl.haltedata.analysis.controllers"},
+@ComponentScan(basePackages = { "nl.haltedata.netex", "nl.haltedata.netex.controllers", "nl.haltedata.osm.controllers", "nl.haltedata.analysis.controllers", "nl.haltedata.analysis.services"},
     excludeFilters = { @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.gtfs.config.batch.*"),
         @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.netex.config.batch.*"),
         @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.chb.config.batch.*"),

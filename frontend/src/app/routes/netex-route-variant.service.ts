@@ -1,17 +1,18 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, Optional } from '@angular/core';
 import { Observable } from 'rxjs';
-import { NetexRouteVariant } from './netex-route-variant';
+import NetexRouteVariant from '@routes/netex-route-variant';
 
 @Injectable({
   providedIn: 'root'
 })
-export class NetexRouteVariantService {
+export default class NetexRouteVariantService {
 
     private http = inject(HttpClient);
     private routeUrl: string = 'http://localhost:8080/netex/route-variant';
 
     public findById(variantId: number): Observable<NetexRouteVariant> {
+        var routeVariant : NetexRouteVariant | undefined = undefined;
         return this.http.get<NetexRouteVariant>(this.routeUrl + "/" + variantId);
     }
 

@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { OsmNetwork } from './osm-network';
+import OsmNetwork from '@networks/osm-network';
 import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class OsmNetworkService {
+export default class OsmNetworkService {
 
   private networksUrl: string;
 

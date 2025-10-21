@@ -22,12 +22,22 @@
     "lib": [
       "ES2022",
       "dom"
-    ]
+    ],
+    "baseUrl": "./src/app",
+    "paths": {
+      "@lines/*": ["lines/*"],
+      "@networks/*": ["networks/*"],
+      "@quays/*": ["quays/*"],
+      "@routes/*": ["routes/*"],
+      "@page-not-found/*": ["page-not-found/*"],
+    }
+    
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
-  }
+  },
+  
 }

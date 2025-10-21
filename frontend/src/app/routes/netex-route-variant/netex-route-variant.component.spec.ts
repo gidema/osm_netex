@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NetexQuaySequenceComponent } from './netex-quay-sequence.component';
+import NetexQuaySequenceComponent from '@routes/netex-quay-sequence.component';
 
 describe('NetexQuaySequenceComponent', () => {
   let component: NetexQuaySequenceComponent;

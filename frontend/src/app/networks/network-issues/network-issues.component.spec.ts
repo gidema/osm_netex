@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NetworkIssuesComponent } from './network-issues.component';
+import NetworkIssuesComponent from '@networks/network-issues.component';
 
 describe('NetworkIssuesComponent', () => {
   let component: NetworkDetailComponent;

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { OsmRouteComponent } from './osm-route.component';
+import OsmRouteComponent from '@routes/osm-route.component';
 
 describe('OsmRouteComponent', () => {
   let component: OsmRouteComponent;

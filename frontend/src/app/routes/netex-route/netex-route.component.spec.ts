@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NetexRouteComponent } from './netex-route.component';
+import NetexRouteComponent from '@routes/netex-route.component';
 
 describe('NetexRouteComponent', () => {
   let component: NetexRouteComponent;

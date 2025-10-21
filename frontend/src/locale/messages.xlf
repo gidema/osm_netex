@@ -62,8 +62,14 @@
       <trans-unit id="1640609344969975994" datatype="html">
         <source>To</source>
       </trans-unit>
+      <trans-unit id="3515022086043476734" datatype="html">
+        <source>No issues were found for this route.</source>
+      </trans-unit>
       <trans-unit id="4309056618204845755" datatype="html">
         <source>NeTex network <x id="INTERPOLATION" equiv-text="{{ network.name }}"/> (<x id="INTERPOLATION_1" equiv-text="{{network.id}}"/>)</source>
+      </trans-unit>
+      <trans-unit id="4360910768159305670" datatype="html">
+        <source>Route id</source>
       </trans-unit>
       <trans-unit id="2155240986061455262" datatype="html">
         <source>These OSM bus lines are not in the NeTex data. They may be discontinued.</source>

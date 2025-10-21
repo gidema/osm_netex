@@ -2,8 +2,9 @@ package nl.haltedata.analysis;
 
 import java.util.Locale;
 
-import nl.haltedata.analysis.dto.NetworkMatch;
+import nl.haltedata.analysis.dto.NetworkMatchDto;
 
 public interface NetworkRouteReporter {
-    public CharSequence getReport(NetworkMatch networkMatch, Locale locale);
+    @SuppressWarnings("exports")
+    public CharSequence getReport(NetworkMatchDto networkMatch, Locale locale);
 }

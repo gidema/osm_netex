@@ -1,4 +1,6 @@
-export class OsmNetwork {
+import OsmLine from '@lines/osm-line';
+
+export default class OsmNetwork {
     id: number = 0;
     name!: string;
     shortName!: string;
@@ -8,4 +10,5 @@ export class OsmNetwork {
     wikidata!: string;
     note!: string;
     isConcessie!: boolean;
+    lines?: OsmLine[];
 }

@@ -7,7 +7,7 @@
 module HalteData {
 //    requires transitive chbhaltebestand;
     requires transitive spring.core;
-    requires transitive org.entur.netex.java.model;
+//    requires transitive org.entur.netex.java.model;
     requires spring.boot;
     requires spring.boot.starter;
     requires spring.data.jpa;
@@ -40,6 +40,8 @@ module HalteData {
     requires java.net.http;
     requires org.hibernate.orm.core;
     requires com.fasterxml.jackson.annotation;
+    requires modelmapper;
+    requires org.mapstruct;
 //    requires hibernate.spatial;
     
     exports nl.haltedata.cli;
@@ -57,6 +59,7 @@ module HalteData {
     exports nl.haltedata.osm.config.batch;
     exports nl.haltedata.analysis.controllers;
     exports nl.haltedata.analysis.etl;
+    exports nl.haltedata.analysis.services;
     
     opens nl.haltedata.cli to  spring.core;
     opens nl.haltedata.backend to spring.core;
@@ -81,4 +84,5 @@ module HalteData {
     opens nl.haltedata.netex.dto;
     opens nl.haltedata.osm.dto;
     opens nl.haltedata.analysis.dto;
+    opens nl.haltedata.analysis.services;
 }

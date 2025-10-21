@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { NetexRouteService } from './netex-route.service';
+import NetexRouteService from '@routes/netex-route.service';
 
 describe('NetexRouteService', () => {
   let service: NetexRouteService;

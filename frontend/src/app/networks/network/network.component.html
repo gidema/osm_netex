@@ -1,0 +1,29 @@
+<!-- @let josmRemote = "http://localhost:8111"-->
+<div class="container">
+@if (networkMatch) {
+  <h1>{{ networkMatch.name }} ({{ networkMatch.shortName }})</h1>
+  <p>OSM: <a [routerLink] =  "['/osm/network/', networkMatch.osmNetwork?.id ]">{{ networkMatch.osmNetwork?.name }}</a><br/>
+     NeTex: <a [routerLink] =  "['/netex/network/', networkMatch.netexNetwork?.id ]">{{ networkMatch.netexNetwork?.name }}</a></p>
+  
+  <table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Line number</th>
+        <th scope="col">Osm name</th>
+        <th scope="col">Netex name</th>
+        <th scope="col">Transport mode</th>
+       </tr>
+    </thead>
+    <tbody>
+      @for (lm of networkMatch.lineMatches | filterBy: ['transportMode']: 'bus'; track lm.id) {
+        <tr>
+          <td><a [routerLink] = "['/line-match', lm.id]">{{ lm.lineNumber }} </a> </td>
+          <td><a [routerLink] = "['/osm/line', lm.osmLine?.id]">{{ lm.osmLine?.name }} </a> </td>
+          <td><a [routerLink] = "['/netex/line', lm.netexLine?.id]">{{ lm.netexLine?.name }} </a> </td>
+          <td>{{ lm.transportMode }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
+</div>

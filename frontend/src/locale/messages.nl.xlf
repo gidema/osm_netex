@@ -10,9 +10,17 @@
         <source>These OSM bus lines are not in the NeTex data. They may be discontinued.</source>
         <target>De onderstaande OSM buslijnen komen niet (meer) voor in de NeTex data. Ze zijn mogelijk opgeheven.</target>
       </trans-unit>
+      <trans-unit id="3515022086043476734" datatype="html">
+        <source>No issues were found for this route.</source>
+        <target state="translated">Er zijn geen problemen gevonden voor deze route.</target>
+      </trans-unit>
       <trans-unit id="4309056618204845755" datatype="html">
         <source>NeTex network <x id="INTERPOLATION" equiv-text="{{ network.name }}"/> (<x id="INTERPOLATION_1" equiv-text="{{network.id}}"/>)</source>
         <target state="translated">NeTex netwerk <x id="INTERPOLATION" equiv-text="{{ network.name }}"/> (<x id="INTERPOLATION_1" equiv-text="{{network.id}}"/>)</target>
+      </trans-unit>
+      <trans-unit id="4360910768159305670" datatype="html">
+        <source>Route id</source>
+        <target state="translated">Route id</target>
       </trans-unit>
       <trans-unit id="5500959812310479663" datatype="html">
         <source>These Netex bus lines are not found in OSM. They may be missing.</source>
@@ -91,7 +99,7 @@
         <target state="translated">Onverwachte route kleur (<x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/>). Er is geen kleur in de Netex data.</target>
       </trans-unit>
       <trans-unit id="UnexpectedRouteColour2" datatype="html">
-        <source>Differing route colour #<x id="INTERPOLATION" equiv-text="{{issue.parameters[1]}}"/>. Netex colour = #<x id="INTERPOLATION_1" equiv-text="{{issue.parameters[0]}}"/>.</source>
+        <source>Differing route colour <x id="INTERPOLATION" equiv-text="{{issue.parameters[1]}}"/>. Netex colour = <x id="INTERPOLATION_1" equiv-text="{{issue.parameters[0]}}"/>.</source>
         <target state="translated">Afwijkende route kleur #<x id="INTERPOLATION" equiv-text="{{issue.parameters[1]}}"/>. Netex kleur = #<x id="INTERPOLATION_1" equiv-text="{{issue.parameters[0]}}"/>.</target>
       </trans-unit>
     </body>

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { OsmRouteService } from './osm-route.service';
+import OsmRouteService from '@routes/osm-route.service';
 
 describe('OsmRouteService', () => {
   let service: OsmRouteService;

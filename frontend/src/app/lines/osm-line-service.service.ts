@@ -2,12 +2,12 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {HttpParams} from "@angular/common/http";
-import { OsmLine } from './osm-line';
+import OsmLine from '@lines/osm-line';
 
 @Injectable({
   providedIn: 'root'
 })
-export class OsmLineService {
+export default class OsmLineService {
         private http = inject(HttpClient);
         private lineUrl: string = 'http://localhost:8080/osm/line';
 

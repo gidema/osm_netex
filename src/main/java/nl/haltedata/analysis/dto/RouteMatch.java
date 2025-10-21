@@ -1,61 +1,60 @@
 package nl.haltedata.analysis.dto;
 
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.OneToOne;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import nl.haltedata.netex.dto.NetexRouteVariant;
+import nl.haltedata.osm.dto.OsmRoute;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "v_route_match")
+@EqualsAndHashCode(of = "id")
+@NamedEntityGraph(
+        name = "routeMatch-with-issues",
+        attributeNodes = {
+          @NamedAttributeNode("lineMatch"),
+          @NamedAttributeNode("osmRoute"),
+          @NamedAttributeNode("netexVariant"),
+          @NamedAttributeNode("issues"),
+        })
 public class RouteMatch {
     @Id
     private Long id;
-    @ManyToOne
-    @JoinColumn(name = "line_id")
-    @JsonBackReference
-    private LineMatch lineMatch;
-    private String lineNumber;
-    private String lineSort;
-    private Long osmRouteId;
-    private Long netexVariantId;
-    private String network;
     private String administrativeZone;
-    private Double matchRate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "line_id")
+    private LineMatch lineMatch;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "osm_route_id", referencedColumnName = "osmRouteId")
+    private OsmRoute osmRoute;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "variant_id", referencedColumnName = "id")
+    private NetexRouteVariant netexVariant;
     private String matching;
-    private String netexLineNumber;
-    private String netexName;
-    private String directionType;
-    private String osmName;
-    private String osmTransportMode;
-    private String osmLineNumber;
-    private String from;
-    private String to;
+    private Double matchRate;
     
-    @OneToMany(mappedBy = "routeMatch")
-//    @JsonManagedReference
-    @JsonBackReference
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "routeMatch")
     private List<RouteIssueData> issues = new LinkedList<>();
     
-    public static class LineSortComparator implements Comparator<RouteMatch> {
-        @Override
-        public int compare(RouteMatch rm1, RouteMatch rm2) {
-            var lineSort1 = Objects.requireNonNullElse(rm1.getLineSort(), "");
-            var lineSort2 = Objects.requireNonNullElse(rm2.getLineSort(), "");
-            return lineSort1.compareTo(lineSort2);
-        }
-    }
+//    public static class LineSortComparator implements Comparator<RouteMatch> {
+//        @Override
+//        public int compare(RouteMatch rm1, RouteMatch rm2) {
+//            var lineSort1 = Objects.requireNonNullElse(rm1.getLineSort(), "");
+//            var lineSort2 = Objects.requireNonNullElse(rm2.getLineSort(), "");
+//            return lineSort1.compareTo(lineSort2);
+//        }
+//    }
 }

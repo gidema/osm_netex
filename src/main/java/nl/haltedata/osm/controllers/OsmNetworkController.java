@@ -9,15 +9,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.inject.Inject;
-import nl.haltedata.osm.dto.OsmNetwork;
-import nl.haltedata.osm.dto.OsmNetworkRepository;
+import nl.haltedata.osm.dto.OsmNetworkDto;
 
 @RestController
 @RequestMapping("/osm/network")
 public class OsmNetworkController {
     
     @Inject
-    private OsmNetworkRepository networkRepository;
+    private OsmNetworkService networkService;
 
     /**
      *
@@ -27,7 +26,7 @@ public class OsmNetworkController {
     @SuppressWarnings("exports")
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/{id}")
-    public Optional<OsmNetwork> getById(@PathVariable Long id) throws Exception {
-            return networkRepository.findById(id);
+    public Optional<OsmNetworkDto> getById(@PathVariable Long id) throws Exception {
+        return networkService.findById(id);
     }
 }
