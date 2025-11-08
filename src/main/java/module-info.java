@@ -41,7 +41,8 @@ module HalteData {
     requires org.hibernate.orm.core;
     requires com.fasterxml.jackson.annotation;
     requires modelmapper;
-    requires org.mapstruct;
+    requires com.fasterxml.jackson.databind;
+    requires com.fasterxml.jackson.core;
 //    requires hibernate.spatial;
     
     exports nl.haltedata.cli;

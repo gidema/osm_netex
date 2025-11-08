@@ -21,7 +21,7 @@
         <source><x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/> Missing quays at end of OSM route:<x id="INTERPOLATION_1" equiv-text="{{issue.parameters[1]}}"/></source>
       </trans-unit>
       <trans-unit id="MissingRouteColour" datatype="html">
-        <source>Missing route colour. Expected #<x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/></source>
+        <source>Missing route colour. Expected <x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/></source>
       </trans-unit>
       <trans-unit id="NetexName" datatype="html">
         <source>Netex name</source>
@@ -50,11 +50,11 @@
       <trans-unit id="UnexpectedQuaysAtEndOfRoute" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/> Unexpected quays at end of OSM route:<x id="INTERPOLATION_1" equiv-text="{{issue.parameters[1]}}"/></source>
       </trans-unit>
-      <trans-unit id="UnexpectedRouteColour1" datatype="html">
+      <trans-unit id="UnexpectedRouteColour" datatype="html">
         <source>Unexpected route colour (<x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/>). There is no colour in the Netex data.</source>
       </trans-unit>
-      <trans-unit id="UnexpectedRouteColour2" datatype="html">
-        <source>Differing route colour #<x id="INTERPOLATION" equiv-text="{{issue.parameters[1]}}"/>. Netex colour = #<x id="INTERPOLATION_1" equiv-text="{{issue.parameters[0]}}"/>.</source>
+      <trans-unit id="DifferentRouteColour" datatype="html">
+        <source>Different route colour <x id="INTERPOLATION" equiv-text="{{issue.parameters[1]}}"/>. Netex colour = <x id="INTERPOLATION_1" equiv-text="{{issue.parameters[0]}}"/>.</source>
       </trans-unit>
       <trans-unit id="5867469663045133204" datatype="html">
         <source>Route name</source>

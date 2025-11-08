@@ -27,9 +27,9 @@ import lombok.RequiredArgsConstructor;
 public class AnalysisEtlUpdateJob {
 
     private static String check_route_in_multiple_lines = """
-DELETE FROM route_issues WHERE "message" = 'RouteInMultipleLines';
-INSERT INTO route_issues (entity_id, "sequence", "message", parameters)
-SELECT route_id, 1 AS "sequence", 'RouteInMultipleLines', ARRAY["count"] AS parameters
+DELETE FROM route_issue WHERE "issue_type" = 'RouteInMultipleLines';
+INSERT INTO route_issue (entity_id, "sequence", issue_type, parameters, severity)
+SELECT route_id, 1 AS "sequence", 'RouteInMultipleLines', ARRAY["count"] AS parameters, 'major'
 FROM osm_pt.issue_route_in_multiple_lines;
 """;
     
@@ -152,103 +152,6 @@ FROM osm_pt.osm_route
 WHERE osm_route_id NOT IN (SELECT osm_route_id FROM route_match)*/;
 """;
   
-  private static String update_route_validation_table_sql = """
--- Clear the table
-TRUNCATE TABLE route_validation;
--- Get the best matches from the route match candidates
--- INSERT INTO route_validation (line_id, osm_route_id, matching, variant_id, link_count, match_rate)
-INSERT INTO route_validation
-SELECT sub.line_id, sub.osm_route_id, sub.matching, sub.variant_id, sub.link_count, sub.match_rate
-FROM (
-  SELECT osm_route_id, variant_id, link_count, match_rate, line_id, matching,
-          ROW_NUMBER() OVER (
-          PARTITION BY osm_route_id
-          ORDER BY match_rate DESC
-        ) AS "rank1",
-          ROW_NUMBER() OVER (
-          PARTITION BY variant_id
-          ORDER BY match_rate DESC
-        ) AS "rank2",
-        COUNT(*) OVER (
-          PARTITION BY osm_route_id
-        ) AS candidate_count
-  FROM route_match_candidate) AS sub
-JOIN osm_pt.osm_route ort ON ort.osm_route_id = sub.osm_route_id
-WHERE sub.rank1 = 1 AND sub.rank2 = 1;
--- Add the un-matched OSM routes
-INSERT INTO route_match (line_id, osm_route_id, matching, variant_id, link_count, match_rate)
-SELECT NULL, osm_route_id, 'No Netex match for OSM route', null, 0, 0.0
-FROM osm_pt.osm_route
-WHERE osm_route_id NOT IN (SELECT osm_route_id FROM route_match);
-""";
-  
-//    private static String update_route_match_table_sql = """;
-//          
-//-- Clear the table
-//TRUNCATE TABLE route_match;
-//-- Add routes with an exact quay match between Netex and OSM
-//INSERT INTO route_match (line_id, osm_route_id, variant_id, matching)
-//SELECT line.id, osm.osm_route_id, ntx.id AS netex_route_id,
-//   'Quays match' AS matching
-//FROM osm_pt.osm_route_data osm
-//JOIN netex.netex_route_variant ntx ON ntx.line_number = osm.line_number
-//  AND ntx.quay_list = osm.quay_list
-//LEFT JOIN line_match line ON line.osm_line_id = osm.osm_line_id
-//WHERE osm.osm_route_id NOT IN (SELECT osm_route_id FROM osm_pt.osm_duplicate_bus_route);
-//
-//-- Add routes with an exact stop_place match between Netex and OSM
-//INSERT INTO route_match (line_id, osm_route_id, netex_route_id, matching)
-//SELECT line.id, osm.osm_route_id, ntx.id AS netex_route_id,
-//   'Stopplaces match' AS matching
-//FROM osm_pt.osm_route_data osm
-//JOIN netex.netex_route_variant ntx ON ntx.line_number = osm.line_number
-//  AND ntx.stop_place_list = osm.stop_place_list
-//LEFT JOIN line_match line ON line.osm_line_id = osm.osm_line_id
-//WHERE osm.osm_route_id NOT IN (SELECT osm_route_id FROM osm_pt.osm_duplicate_bus_route)
-//  AND osm.osm_route_id NOT IN (SELECT osm_route_id FROM route_match)
-//  AND ntx.id NOT IN (SELECT netex_route_id FROM route_match);
-//
-//-- Add routes with matching start- and end stop_places an matching quay count
-//INSERT INTO route_match (line_id, osm_route_id, netex_route_id, matching)
-//SELECT line.id, osm.osm_route_id, ntx.id AS netex_route_id,
-//   'Endpoints and quay count match' AS matching
-//FROM osm_pt.osm_route_data osm
-//JOIN netex.netex_route_variant ntx ON ntx.line_number = osm.line_number
-//  AND ntx.start_stop_place_code = osm.start_stop_place_code
-//  AND ntx.end_stop_place_code = osm.end_stop_place_code
-//  AND ntx.quay_count = osm.quay_count
-//LEFT JOIN line_match line ON line.osm_line_id = osm.osm_line_id
-//WHERE osm.osm_route_id NOT IN (SELECT osm_route_id FROM osm_pt.osm_duplicate_bus_route)
-//  AND osm.osm_route_id NOT IN (SELECT osm_route_id FROM route_match)
-//  AND ntx.id NOT IN (SELECT netex_route_id FROM route_match);
-//
-//-- Add routes with matching start- and end stop_places
-//INSERT INTO route_match (line_id, osm_route_id, netex_route_id, matching)
-//SELECT line.id, osm.osm_route_id, ntx.id AS netex_route_id,
-//   'Endpoints match' AS matching
-//FROM osm_pt.osm_route_data osm
-//JOIN netex.netex_route_variant ntx ON ntx.line_number = osm.line_number
-//  AND ntx.start_stop_place_code = osm.start_stop_place_code
-//  AND ntx.end_stop_place_code = osm.end_stop_place_code
-//LEFT JOIN line_match line ON line.osm_line_id = osm.osm_line_id
-//WHERE osm.osm_route_id NOT IN (SELECT osm_route_id FROM osm_pt.osm_duplicate_bus_route)
-//  AND osm.osm_route_id NOT IN (SELECT osm_route_id FROM route_match)
-//  AND ntx.id NOT IN (SELECT netex_route_id FROM route_match);
-//""";
-////-- Add non-matching Netex routes
-////INSERT INTO all_routes (line_id, osm_route_id, netex_route_id, matching)
-////SELECT line.id, NULL, ntx.id, 'No matching OSM route'
-////FROM netex.netex_route_variant ntx
-////WHERE ntx.id NOT IN (SELECT netex_route_id FROM all_routes);
-////-- Add non-matching OSM routes
-////INSERT INTO all_routes (line_id, osm_route_id, netex_route_id, matching)
-////SELECT line.id, osm.osm_route_id, NULL, 'No matching Netex route'
-////FROM osm_pt.osm_route_data osm
-////LEFT JOIN all_lines line ON line.osm_line_id = osm.osm_line_id
-////WHERE osm.osm_route_id NOT IN (SELECT osm_route_id FROM osm_pt.osm_duplicate_bus_route)
-////  AND osm.osm_route_id NOT IN (SELECT osm_route_id FROM all_routes);
-////""";
-    
     private static String update_table_osm_missing_quay_code = """
 -- Compare osm and netex link to find quay codes for osm quays with missing quay codes
 TRUNCATE TABLE osm_pt.osm_missing_quay_code;
@@ -293,10 +196,11 @@ FROM candidates
      * @return a configured Job for importing contacts.
      */
     @Bean
-    Job updateComparisonEtlJob(JobRepository jobRepository) { 
+    Job updateAnalysisEtlJob(JobRepository jobRepository) { 
         return new JobBuilder("comparisonEtlUpdate", jobRepository)
-            .start(sqlUpdateStep("Check route in multipe lines", check_route_in_multiple_lines))
-            .next(sqlUpdateStep("Update network match", update_network_match_table_sql))
+//            .start(sqlUpdateStep("Check route in multipe lines", check_route_in_multiple_lines))
+//            .next(sqlUpdateStep("Update network match", update_network_match_table_sql))
+            .start(sqlUpdateStep("Update network match", update_network_match_table_sql))
             .next(sqlUpdateStep("Update line match", update_line_match_table_sql))
             .next(sqlUpdateStep("Update line matches", update_route_match_candidate_table_sql))
             .next(sqlUpdateStep("Update route_matches", update_route_match_table_sql))
@@ -325,9 +229,9 @@ FROM candidates
     @SuppressWarnings("static-method")
     @Bean 
     TransactionTemplate transactionTemplate(PlatformTransactionManager transactionManager) {
-        return new TransactionTemplate(transactionManager);       
+        return new TransactionTemplate(transactionManager);
     }
-    
+
     private Tasklet sqlTasklet(TransactionTemplate transactionTemplate, String query) {
         return new Tasklet() {
 

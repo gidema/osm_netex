@@ -1,7 +1,12 @@
 package nl.haltedata.analysis.dto;
 
 import java.util.List;
+import java.util.Map;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -39,4 +44,7 @@ public class NetworkMatch {
     NetexNetwork netexNetwork;
     @OneToMany(mappedBy = "networkMatch")
     List<LineMatch> lineMatches;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Convert(converter = IssueStatsConverter.class)
+    Map<String, Integer> issueStats;
 }

@@ -3,7 +3,9 @@ import { RouterModule } from '@angular/router';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import NetworkMatch from '@networks/network-match';
 import NetworkMatchService from '@networks/network-match.service';
+import IssueStat from '@issues/issue-stats';
 import { Observable } from 'rxjs';
+import { NgPipesModule } from 'ngx-pipes';
 
 @Component({
     selector: 'app-network',
@@ -15,8 +17,11 @@ export default class NetworkComponent implements OnInit {
     private activatedRoute = inject(ActivatedRoute);
     private networkMatchService = inject(NetworkMatchService);
     networkMatch!: NetworkMatch;
+    showMinor: Boolean = true;
 
     ngOnInit() {
+        const snapshot = this.activatedRoute.snapshot;
+        this.showMinor = JSON.parse(snapshot.queryParamMap.get('show_minor') ?? "true");
         this.activatedRoute.paramMap.subscribe((route: ParamMap) => {
             const networkId = route.get('networkId') ?? "";
             this.networkMatchService.findById(networkId).subscribe(n => {

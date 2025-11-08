@@ -15,8 +15,11 @@ export default class LineMatchComponent implements OnInit {
     private activatedRoute = inject(ActivatedRoute);
     private lineMatchService = inject(LineMatchService);
     lineMatch!: LineMatch;
+    showMinor: Boolean = true;
 
     ngOnInit() {
+        const snapshot = this.activatedRoute.snapshot;
+        this.showMinor = JSON.parse(snapshot.queryParamMap.get('show_minor') ?? "true");
         this.activatedRoute.paramMap.subscribe((route: ParamMap) => {
             var lineId = parseInt(route.get('id') ?? "0");
             this.lineMatchService.getById(lineId).subscribe(lm => {

@@ -14,7 +14,6 @@ import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import nl.haltedata.chb.dto.ChbQuay;
 
 @Entity
 @Table(schema="netex")

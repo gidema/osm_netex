@@ -48,7 +48,7 @@ public class HtmlNetworkRouteReporter implements NetworkRouteReporter {
         else {
             sb.append("<p>");
             matchIssues.forEach(issue -> {
-                var msg = i18n.tr(issue.getMessage(), issue.getParameters());
+                var msg = i18n.tr(issue.getIssueType(), issue.getParameters());
                 sb.append(msg.replace("\n", "</br>")).append("\n</br>");
             });
             sb.append("<p>\n");

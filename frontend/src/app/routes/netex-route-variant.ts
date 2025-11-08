@@ -7,6 +7,7 @@ export default class NetexRouteVariant {
     public lineNumber!: string;
     public lineRef!: string;
     public directionType!: string;
+    public quayCount!: number;
     public quays: NetexRouteQuay[] = [];
         
     public get fromQuay(): NetexRouteQuay {

@@ -2,6 +2,7 @@ package nl.haltedata.analysis.dto;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -26,4 +27,5 @@ public class RouteMatchDto {
     private Double matchRate;
     @JsonManagedReference
     private List<RouteIssueDataDto> issues = new LinkedList<>();
+    Map<String, Integer> issueStats;
 }

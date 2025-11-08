@@ -29,6 +29,7 @@
       "@networks/*": ["networks/*"],
       "@quays/*": ["quays/*"],
       "@routes/*": ["routes/*"],
+      "@issues/*": ["issues/*"],
       "@page-not-found/*": ["page-not-found/*"],
     }
     

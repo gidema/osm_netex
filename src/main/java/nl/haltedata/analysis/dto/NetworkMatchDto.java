@@ -1,6 +1,7 @@
 package nl.haltedata.analysis.dto;
 
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -22,4 +23,5 @@ public class NetworkMatchDto {
     NetexNetworkDto netexNetwork;
     @JsonManagedReference
     List<LineMatchDto> lineMatches;
+    Map<String, Integer> issueStats;
 }

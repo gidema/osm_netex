@@ -12,6 +12,14 @@ export default class NetworkMatchService {
   public findById(id: string): Observable<NetworkMatch> {
     return this.http.get<NetworkMatch>(this.networksUrl + `/${id}`);
   }
+  
+  public findByAdministrativeZone(administrativeZone: string): Observable<NetworkMatch> {
+    return this.http.get<NetworkMatch>(`${this.networksUrl}/zone/${administrativeZone}`);
+  }
+  
+  public findIssues(administrativeZone: string): Observable<NetworkMatch> {
+    return this.http.get<NetworkMatch>(`${this.networksUrl}/zone/${administrativeZone}/issues`);
+  }
 
   public findAll(): Observable<NetworkMatch[]> {
     return this.http.get<NetworkMatch[]>(this.networksUrl);

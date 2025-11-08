@@ -107,9 +107,9 @@ FROM osm_pt.st_osm_network nw
 """;
 
     private static String issue_route_in_multiple_lines = """
-TRUNCATE osm_pt.issue_route_in_multiple_lines;
-INSERT INTO osm_pt.issue_route_in_multiple_lines (route_id, "count")
-SELECT osm_route_id, count(*) AS "count"
+DELETE FROM osm_pt.osm_route_issue WHERE issue_type = 'RouteInMultipleLines';
+INSERT INTO osm_pt.osm_route_issue (route_id, issue_type, severity)
+SELECT osm_route_id, 'RouteInMultipleLines', 'major'
 FROM osm_pt.osm_route_master_route
 GROUP BY osm_route_id
 HAVING count(*) > 1
@@ -143,8 +143,14 @@ SELECT rt.id AS osm_route_id,
 FROM relations rt
 LEFT JOIN osm_pt.osm_route_master_route rmr ON rmr.osm_route_id = rt.id
 WHERE rt.tags->'type' IN ('route', 'disused:route')
-    AND rt.tags->'route' IN ('bus', 'trolleybus', 'tram', 'subway', 'train', 'ferry')
-    AND rt.id NOT IN (SELECT route_id FROM osm_pt.issue_route_in_multiple_lines);
+    AND (rt.tags->'route' IN ('bus', 'trolleybus', 'tram', 'subway', 'train', 'ferry')
+      OR (rt.tags->'route' IS NULL AND rt.tags->'name' LIKE 'Bus%')
+      OR (rt.tags->'route' IS NULL AND rt.tags->'name' LIKE 'Tram%')
+      OR (rt.tags->'route' IS NULL AND rt.tags->'name' LIKE 'Flixbus%'))
+    AND rt.id NOT IN (
+      SELECT route_id 
+      FROM osm_pt.osm_route_issue 
+      WHERE issue_type = 'RouteInMultipleLines');
 """;
 
     private static String update_quays_table_sql = """

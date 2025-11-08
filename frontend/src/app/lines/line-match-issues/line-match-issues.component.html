@@ -1,0 +1,22 @@
+<div class="card my-5">
+  @if (match) {
+    @for (rm of match.routeMatches; track rm.id) {
+      @if(rm.issueStats?.major || showMinor) {
+        <div class="card-body">
+          <h2 i18n="@@CheckingOSMRoute">Checking OSM route {{ rm.osmRoute?.name }}</h2>
+          <p>
+            @for (issue of rm.issues; track issue.id) {
+              @if(! $first) { <br/> }
+              @if(issue.severity == "major" || showMinor) {
+                <app-route-issue [issue]=issue/>
+              }
+            }
+            @empty {
+              <p i18n>No issues were found for this route.</p>
+            }
+          </p>
+        </div>
+      }
+    }
+  }
+</div>

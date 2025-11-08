@@ -2,7 +2,12 @@ package nl.haltedata.analysis.dto;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -45,16 +50,9 @@ public class RouteMatch {
     private NetexRouteVariant netexVariant;
     private String matching;
     private Double matchRate;
-    
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "routeMatch")
     private List<RouteIssueData> issues = new LinkedList<>();
-    
-//    public static class LineSortComparator implements Comparator<RouteMatch> {
-//        @Override
-//        public int compare(RouteMatch rm1, RouteMatch rm2) {
-//            var lineSort1 = Objects.requireNonNullElse(rm1.getLineSort(), "");
-//            var lineSort2 = Objects.requireNonNullElse(rm2.getLineSort(), "");
-//            return lineSort1.compareTo(lineSort2);
-//        }
-//    }
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Convert(converter = IssueStatsConverter.class)
+    Map<String, Integer> issueStats;
 }

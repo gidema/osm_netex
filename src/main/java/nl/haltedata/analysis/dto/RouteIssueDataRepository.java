@@ -2,13 +2,13 @@ package nl.haltedata.analysis.dto;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 public interface RouteIssueDataRepository extends CrudRepository<RouteIssueData, Long> {
-    List<RouteIssueData> findByRouteMatchId(Long routeMatchId);
     
     @Modifying
     @Query(value = """
@@ -26,7 +26,7 @@ WHERE route_match_id IN (
      * Select issues by route matches.
      */
     @Query(value = """
-SELECT DISTINCT RouteIssueData
+SELECT DISTINCT rid
 FROM RouteIssueData rid
 JOIN FETCH RouteMatch rm
 WHERE rm IN(:routeMatches)
@@ -34,10 +34,35 @@ WHERE rm IN(:routeMatches)
     List<RouteIssueData> findByRouteMatches(@Param("routeMatches") List<RouteMatch> routeMatches);
     
     /**
+     * Select issues by route.
+     */
+    @Query(value = """
+SELECT rid
+FROM RouteIssueData rid
+JOIN RouteMatch rm ON rid.routeMatch = rm
+  WHERE rm.id = :routeMatchId
+""")
+    @EntityGraph(value = "routeIssueData")
+    List<RouteIssueData> findByRouteMatchId(@Param("routeMatchId") Long routeMatchId);
+    
+    /**
      * Select issues by line.
      */
     @Query(value = """
-SELECT DISTINCT RouteIssueData
+SELECT rid
+FROM RouteIssueData rid
+JOIN RouteMatch rm ON rid.routeMatch = rm
+JOIN LineMatch lm ON rm.lineMatch = lm
+  WHERE lm.id = :lineMatchId
+""")
+    @EntityGraph(value = "routeIssueData")
+    List<RouteIssueData> findByLineMatchId(@Param("lineMatchId") Long lineMatchId);
+    
+    /**
+     * Select issues by line.
+     */
+    @Query(value = """
+SELECT DISTINCT rid
 FROM RouteIssueData rid, RouteMatch rm, LineMatch lm
   WHERE rm.id = :lineId
 """)
@@ -47,13 +72,11 @@ FROM RouteIssueData rid, RouteMatch rm, LineMatch lm
      * Select issues by administrative zone.
      */
     @Query(value = """
-SELECT DISTINCT RouteIssueData
+SELECT DISTINCT rid
 FROM RouteIssueData rid
-WHERE routeMatch IN (
-  SELECT RouteMatch
-  FROM RouteMatch rm
-    JOIN LineMatch lm ON lm = rm.lineMatch
-  WHERE lm.networkMatch.administrativeZone = :administrativeZone)
+JOIN RouteMatch rm ON rm = rid.routeMatch
+JOIN LineMatch lm ON lm = rm.lineMatch
+  WHERE lm.networkMatch.administrativeZone = :administrativeZone
 """)
     List<RouteIssueData> findByAdministrativeZone(@Param("administrativeZone") String administrativeZone);
 

@@ -16,14 +16,12 @@ import org.springframework.stereotype.Component;
 import jakarta.inject.Inject;
 import nl.haltedata.analysis.NetworkRouteReporter;
 import nl.haltedata.analysis.dto.NetworkMatchDto;
-import nl.haltedata.analysis.etl.NetworkRouteAnalyzerFactory;
 import nl.haltedata.analysis.services.NetworkMatchService;
 
 @Component
 public class IssueReporter implements ApplicationRunner, InitializingBean {
 
     @Inject NetworkMatchService networkService;
-    @Inject NetworkRouteAnalyzerFactory analizerFactory;
     @Inject NetworkRouteReporter reporter;
     
     @Value("${osm_netex.path.results}")

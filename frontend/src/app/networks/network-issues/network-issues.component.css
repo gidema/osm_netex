@@ -1,0 +1,28 @@
+h1 {
+  margin-top: 12px;
+  margin-bottom: 12px;
+  font-size: 24px;
+}
+
+h2 {
+  margin-top: 9px;
+  margin-bottom: 9px;
+  font-size: 21px;
+}
+
+h3 {
+  margin-top: 6px;
+  margin-bottom: 6px;
+  font-size: 18px;
+}
+
+p {
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+a.link {
+  font-size: 50%;
+  vertical-align: super;
+  margin-left: 1em;
+}

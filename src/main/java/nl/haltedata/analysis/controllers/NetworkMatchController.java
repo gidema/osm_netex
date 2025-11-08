@@ -39,4 +39,11 @@ public class NetworkMatchController {
     public Optional<NetworkMatchDto> findById(@PathVariable("id") String id) throws Exception {
         return service.findById(id);
     }
+
+    @SuppressWarnings("exports")
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/zone/{administrativeZone}/issues")
+    public Optional<NetworkMatchDto> findIssues(@PathVariable("administrativeZone") String administrativeZone) throws Exception {
+        return service.findIssues(administrativeZone);
+    }
 }

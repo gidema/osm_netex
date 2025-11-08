@@ -5,39 +5,24 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 public interface RouteMatchRepository extends CrudRepository<RouteMatch, Long> {
-//    @Override
-//    @Query("""
-//      SELECT rm
-//      FROM RouteMatch rm
-//      LEFT JOIN FETCH rm.issues
-//      WHERE rm.id = :id
-//""")
     @Override
-//    @EntityGraph(value = "routeMatch-with-issues")
-//    @Query("""
-//      SELECT rm
-//      FROM RouteMatch rm
-//      WHERE rm.id = :id
-//""")
     Optional<RouteMatch> findById(Long id);
 
     @EntityGraph(value = "routeMatch-with-issues")
     List<RouteMatch> findByLineMatch(LineMatch lineMatch);
 
-//    @EntityGraph(value = "routeMatch-with-issues")
     @Query("""
 SELECT rm
 FROM RouteMatch rm
 WHERE rm.lineMatch.id = :id
 """)
     List<RouteMatch> findByLineMatchId(Long id);
-
-//    List<RouteMatch> findByOsmRouteId(Long osmRouteId);
 
     @Query(value = """
 SELECT DISTINCT RouteMatch
@@ -50,7 +35,26 @@ WHERE lm IN(:lineMatches)
     List<RouteMatch> findByAdministrativeZone(String administrativeZone);
     
     @Override
-//    @EntityGraph(value = "routeMatch-with-issues")
     Set<RouteMatch> findAll();
+
+    @Modifying
+    @Query(nativeQuery = true, value = """
+UPDATE route_match
+SET issue_stats = NULL;
+WITH stats AS (
+  SELECT sub.route_match_id, JSON_AGG(json_build_object(sub.severity,sub.count)) AS issue_stats
+  FROM (
+    SELECT rm.id AS route_match_id, rid.severity, COUNT(*)
+    FROM public.route_issue_data rid
+    JOIN route_match rm ON rm.id = rid.route_match_id
+    GROUP BY rm.id, severity
+    ORDER BY severity) AS sub
+  GROUP BY sub.route_match_id)
+UPDATE route_match rm
+SET issue_stats = stats.issue_stats
+FROM stats
+WHERE stats.route_match_id = rm.id;
+""")
+    void updateIssueStatistics();
 
 }

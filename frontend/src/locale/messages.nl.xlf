@@ -55,7 +55,7 @@
         <target state="translated"><x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/> ontbrekende haltes aan het eind van de OSM route: <x id="INTERPOLATION_1" equiv-text="{{issue.parameters[1]}}"/></target>
       </trans-unit>
       <trans-unit id="MissingRouteColour" datatype="html">
-        <source>Missing route colour. Expected #<x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/></source>
+        <source>Missing route colour: <x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/></source>
         <target state="translated">Ontbrekende route kleur: <x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/></target>
       </trans-unit>
       <trans-unit id="NetexName" datatype="html">
@@ -94,13 +94,13 @@
         <source><x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/> Unexpected quays at end of OSM route:<x id="INTERPOLATION_1" equiv-text="{{issue.parameters[1]}}"/></source>
         <target state="translated"><x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/> ontbrekende haltes aan het eind van de OSM route:<x id="INTERPOLATION_1" equiv-text="{{issue.parameters[1]}}"/></target>
       </trans-unit>
-      <trans-unit id="UnexpectedRouteColour1" datatype="html">
+      <trans-unit id="UnexpectedRouteColour" datatype="html">
         <source>Unexpected route colour (<x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/>). There is no colour in the Netex data.</source>
         <target state="translated">Onverwachte route kleur (<x id="INTERPOLATION" equiv-text="{{issue.parameters[0]}}"/>). Er is geen kleur in de Netex data.</target>
       </trans-unit>
-      <trans-unit id="UnexpectedRouteColour2" datatype="html">
+      <trans-unit id="DifferentRouteColour" datatype="html">
         <source>Differing route colour <x id="INTERPOLATION" equiv-text="{{issue.parameters[1]}}"/>. Netex colour = <x id="INTERPOLATION_1" equiv-text="{{issue.parameters[0]}}"/>.</source>
-        <target state="translated">Afwijkende route kleur #<x id="INTERPOLATION" equiv-text="{{issue.parameters[1]}}"/>. Netex kleur = #<x id="INTERPOLATION_1" equiv-text="{{issue.parameters[0]}}"/>.</target>
+        <target state="translated">Afwijkende route kleur <x id="INTERPOLATION" equiv-text="{{issue.parameters[1]}}"/>. Netex kleur = <x id="INTERPOLATION_1" equiv-text="{{issue.parameters[0]}}"/>.</target>
       </trans-unit>
     </body>
   </file>

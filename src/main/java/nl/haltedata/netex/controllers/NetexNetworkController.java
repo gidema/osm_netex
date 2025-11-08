@@ -28,7 +28,7 @@ public class NetexNetworkController {
 //    @CrossOrigin(origins = "http://localhost:4200")
 //    @GetMapping()
 //    public List<NetexNetwork> getNetworks() throws Exception {
-//            return (List<NetexNetwork>) networkService.findAllByOrderByName();
+//            return (List<NetexNetwork>) networkMatchService.findAllByOrderByName();
 //    }
     
     /**

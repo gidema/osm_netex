@@ -2,8 +2,14 @@ package nl.haltedata.analysis.dto;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -40,21 +46,23 @@ import nl.haltedata.osm.dto.OsmLine;
 public class LineMatch {
     @Id
     Long id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "administrativeZone", referencedColumnName = "administrativeZone")
     NetworkMatch networkMatch;
 //    String network;
     String lineNumber;
     String lineSort;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "osm_line_id", referencedColumnName = "id")
     private OsmLine osmLine;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "netex_line_id", referencedColumnName = "id")
     private NetexLine netexLine;
     String productCategory;
     @OneToMany(mappedBy = "lineMatch")
     private List<RouteMatch> routeMatches = new LinkedList<>();
     private String transportMode;
-
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Convert(converter = IssueStatsConverter.class)
+    Map<String, Integer> issueStats;
 }

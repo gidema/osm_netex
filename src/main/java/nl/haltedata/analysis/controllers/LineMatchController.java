@@ -30,7 +30,7 @@ public class LineMatchController {
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/line-match")
     @Transactional(readOnly = true)
-    public List<LineMatchDto> findByQuery(@RequestParam(name = "administrativeZone") String administrativeZone) throws Exception {
+    public List<LineMatchDto> findByAdministrativeZone(@RequestParam(name = "administrativeZone") String administrativeZone) throws Exception {
         return lineMatchService.findByAdministrativeZone(administrativeZone);
     }
     
@@ -46,6 +46,23 @@ public class LineMatchController {
     @Transactional(readOnly = true)
     public ResponseEntity<LineMatchDto> findById(@PathVariable("id") Long lineId) throws Exception {
         var response = lineMatchService.findById(lineId)
+                .map(route -> new ResponseEntity<>(route, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
+        return response;
+    }
+    
+    /**
+     * Endpoint to list the data.
+     * @return 
+     *
+     * @return
+     * @throws Exception if any error occurs during job launch.
+     */
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/line-match/{id}/issues")
+    @Transactional(readOnly = true)
+    public ResponseEntity<LineMatchDto> findIssues(@PathVariable("id") Long lineId) throws Exception {
+        var response = lineMatchService.findIssues(lineId)
                 .map(route -> new ResponseEntity<>(route, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
         return response;

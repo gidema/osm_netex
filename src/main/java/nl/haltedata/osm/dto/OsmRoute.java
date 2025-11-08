@@ -3,6 +3,7 @@ package nl.haltedata.osm.dto;
 import java.util.List;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -27,7 +28,7 @@ import lombok.Setter;
 public class OsmRoute {
     @Id
     private Long osmRouteId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "osm_line_id")
     private OsmLine osmLine;
     private String name;

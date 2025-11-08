@@ -3,12 +3,13 @@
   <div class="card-body">
     <h2 i18n="@@OSMRoute">OSM route {{ match.osmRoute?.name }}</h2>
     <p i18n="@@NetexRoute">Netex route: {{ match.osmRoute?.name }}</p>
-    @if (match.issues && match.issues.length > 0) {
-      <p i18n="@@RouteHasIssues">This route has {{ match.issues.length }} <a [routerLink] = "['/route-match', match.id, 'issues']">issues</a></p>
-    }
-    @else {
-        <p i18n>No issues were found for this route.</p>
-    }
+  @if (match.issueStats) {
+    @let stats = match.issueStats;
+    <p i18n="@@RouteHasIssues">This network has {{ stats?.major || 0}} major and {{ stats?.minor || 0}} minor <a [routerLink] = "['/route-match', match.id, 'issues']">issues.</a></p>
+  }
+  @else {
+    <p i18n>No issues were found for this route.</p>
+  }
   </div>
 }
 </div>

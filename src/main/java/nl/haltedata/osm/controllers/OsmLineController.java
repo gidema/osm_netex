@@ -32,6 +32,6 @@ public class OsmLineController {
 //    @CrossOrigin(origins = "http://localhost:4200")
 //    @GetMapping("/osm/line")
 //    public List<OsmLineDto> findByNetwork(@RequestParam("networkId") Long id) throws Exception {
-//        return lineService.findByOsmNetworkIdOrderByLineSort(id);
+//        return lineMatchService.findByOsmNetworkIdOrderByLineSort(id);
 //    }
 }

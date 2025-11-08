@@ -15,6 +15,10 @@ export default class LineMatchService {
         return this.http.get<LineMatch>(this.lineUrl + "/" + id);
     }
 
+    public findIssues(id: number): Observable<LineMatch> {
+        return this.http.get<LineMatch>(`${this.lineUrl}/${id}/issues`);
+    }
+
     public findByAdministrativeZone(administrativeZone: string): Observable<LineMatch[]> {
         const options = { params: new HttpParams().set('administrativeZone', administrativeZone) };
         return this.http.get<LineMatch[]>(this.lineUrl, options);

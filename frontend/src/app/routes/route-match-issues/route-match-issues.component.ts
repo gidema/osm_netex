@@ -4,10 +4,11 @@ import { Observable } from 'rxjs';
 
 import RouteMatchService from '@routes/route-match-service';
 import RouteMatch from '@routes/route-match';
+import RouteIssueComponent from '@issues/route-issue/route-issue.component';
 
 @Component({
     selector: 'app-route-match-issues',
-    imports: [ ],
+    imports: [ RouteIssueComponent ],
     templateUrl: './route-match-issues.component.html',
     styleUrl: './route-match-issues.component.css'
 })

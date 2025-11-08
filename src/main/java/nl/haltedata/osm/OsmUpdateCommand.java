@@ -7,15 +7,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 
 @SpringBootApplication
 @ComponentScan(basePackages = { "nl.haltedata.osm" },
 excludeFilters = { @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "nl.haltedata.osm.config.batch.*")})
+@EntityScan({"nl.haltedata.osm.dto", "nl.haltedata.analysis.dto", "nl.haltedata.netex.dto"})
 public class OsmUpdateCommand implements CommandLineRunner {
 
     private static Logger LOG = LoggerFactory

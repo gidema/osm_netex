@@ -104,14 +104,14 @@ public class RouteAnalyzer {
                 // Ignore Netex colour with value "000000" (black).
                 // Some operators use this on every route
                 if (!netexColour.equals("000000")) {
-                    addIssue("MissingRouteColour", new String[0], "#" + netexColour);
+                    addIssue("MissingRouteColour", "minor", new String[0], "#" + netexColour);
                 }
             }
             else if (osmColour != null && netexColour == null) {
-                addIssue("UnexpectedRouteColour1", new String[0], osmColour);
+                addIssue("UnexpectedRouteColour", "minor", new String[0], osmColour);
             }
             else if (!ColourMap.normalizeColour(osmColour).equals("#" + netexColour)) {
-                addIssue("UnexpectedRouteColour2", new String[0], "#" + netexColour, osmColour);
+                addIssue("DifferentRouteColour", "minor", new String[0], "#" + netexColour, osmColour);
             }
         }
         
@@ -130,7 +130,7 @@ public class RouteAnalyzer {
                 var netexOffset = findNetexOffset(osmQuay);
                 var osmOffset = findOsmOffset(netexQuay);
                 if (netexOffset == 1 && osmOffset == 1) {
-                    addIssue("DifferentQuay", new String[0], Integer.toString(osmIndex + 1), netexQuay.getName(), osmQuay.getName());
+                    addIssue("DifferentQuay", "major", new String[0], Integer.toString(osmIndex + 1), netexQuay.getName(), osmQuay.getName());
                     osmIndex++;
                     netexIndex++;
                 }
@@ -143,7 +143,7 @@ public class RouteAnalyzer {
                         quayMatches.add(new QuayMatch(osmQuay, null));
                         lines[i] = osmQuay.getName();
                     }
-                    addIssue("UnexpectedQuays", lines, Integer.toString(osmOffset), Integer.toString(location));
+                    addIssue("UnexpectedQuays", "major", lines, Integer.toString(osmOffset), Integer.toString(location));
                     continue;
                 }
                 // Missing quays in the OSM route
@@ -157,13 +157,13 @@ public class RouteAnalyzer {
                         quayMatches.add(new QuayMatch(null, netexQuay));
                         lines[i] =netexQuay.getName();
                     }
-                    addIssue("MissingQuays", lines,
+                    addIssue("MissingQuays", "major", lines,
                             Integer.toString(netexOffset), Integer.toString(location), quayBefore, quayAfter);
                     continue;
                 }
                 else if (netexOffset == -1 && osmOffset == -1) {
                     quayMatches.add(new QuayMatch(osmQuay, netexQuay));
-                    addIssue("DifferentQuay", new String[0], Integer.toString(osmIndex + 1), netexQuay.getName(), osmQuay.getName());
+                    addIssue("DifferentQuay", "major", new String[0], Integer.toString(osmIndex + 1), netexQuay.getName(), osmQuay.getName());
                     osmIndex++;
                     netexIndex++;
                     continue;
@@ -176,7 +176,7 @@ public class RouteAnalyzer {
                         quayMatches.add(new QuayMatch(osmQuay, null));
                         lines[i] = osmQuay.getName();
                     }
-                    addIssue("UnexpectedQuays", lines, Integer.toString(osmOffset), Integer.toString(location));
+                    addIssue("UnexpectedQuays", "major", lines, Integer.toString(osmOffset), Integer.toString(location));
                     continue;
                 }
                 else if (osmOffset > netexOffset) {
@@ -189,7 +189,7 @@ public class RouteAnalyzer {
                         quayMatches.add(new QuayMatch(null, netexQuay));
                         lines[i] = netexQuay.getName();
                     }
-                    addIssue("MissingQuays", lines,
+                    addIssue("MissingQuays", "major", lines,
                             Integer.toString(netexOffset), Integer.toString(location), quayBefore, quayAfter);
                 }
                 else {
@@ -237,7 +237,7 @@ public class RouteAnalyzer {
             if (match.isStopPlaceMatch() && ! match.isQuayCodeMatch()) {
                 String expected = match.getNetexQuay().getName();
                 String found = match.getOsmQuay().getQuayCode();
-                addIssue("UnexpectedQuayCode", new String[0],
+                addIssue("UnexpectedQuayCode", "minor", new String[0],
                         match.getOsmQuay().getName(), Integer.toString(osmIndex + 1), expected, found);
             }
         }
@@ -249,7 +249,7 @@ public class RouteAnalyzer {
                 quayMatches.add(new QuayMatch(null, netexQuay));
                 lines[i] = netexQuay.getName();
             }
-            addIssue("MissingQuaysAtEndOfRoute", lines,
+            addIssue("MissingQuaysAtEndOfRoute", "major", lines,
                   Integer.toString(count));
         }
 
@@ -260,12 +260,12 @@ public class RouteAnalyzer {
                 quayMatches.add(new QuayMatch(osmQuay, null));
                 lines[i] = osmQuay.getName();
             }
-            addIssue("UnexpectedQuaysAtEndOfRoute", lines, Integer.toString(count));
+            addIssue("UnexpectedQuaysAtEndOfRoute", "major", lines, Integer.toString(count));
         }
 
-        private RouteIssueDataDto addIssue(String message, String[] lines, String... parameters) {
+        private RouteIssueDataDto addIssue(String message, String severity, String[] lines, String... parameters) {
             var issue = new RouteIssueDataDto(routeMatch, issues.size(),
-                    message, parameters, lines);
+                    message, parameters, lines, severity);
             issues.add(issue);
             return issue;
         }

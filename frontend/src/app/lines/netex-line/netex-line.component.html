@@ -5,10 +5,11 @@
     <table class="table table-bordered table-striped">
     <thead class="thead-dark">
       <tr>
-        <th scope="col">Variant id</th>
-        <th scope="col">Direction type</th>
-        <th scope="col">From</th>
-        <th scope="col">To</th>
+        <th scope="col" i18n>Variant id</th>
+        <th scope="col" i18n>Direction type</th>
+        <th scope="col" i18n># Quays</th>
+        <th scope="col" i18n>From</th>
+        <th scope="col" i18n>To</th>
        </tr>
     </thead>
     <tbody>
@@ -16,6 +17,7 @@
         <tr>
           <td><a [routerLink] = "['/netex/route-variant', routeVariant.id]">{{ routeVariant.id }} </a> </td>
           <td>{{ routeVariant.directionType }} </td>
+          <td>{{ routeVariant.quayCount }} </td>
           <td><!-- {{ routeVariant.fromQuay.town }}, {{ routeVariant.fromQuay.quayName }} --></td>
           <td><!-- {{ routeVariant.toQuay.town }}, {{ routeVariant.toQuay.quayName }} --></td>
         </tr>

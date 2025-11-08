@@ -1,0 +1,24 @@
+<div class="card my-5">
+  <div class="card-body">
+    <table class="table table-bordered table-striped">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col" i18n="@@NetworkName">Network name</th>
+          <th scope="col" i18n="@@majorIssues">Major issues</th>
+          <th scope="col" i18n="@@minorIssues">Minor issues</th>
+          <th scope="col" i18n="@@totalIssues">Total issues</th>
+         </tr>
+      </thead>
+      <tbody>
+        @for (network of networkMatches; track network.id) {
+          <tr>
+            <td><a [routerLink] =  "['/network/', network.id ]">{{ network.name }}</a></td>
+            <td>{{ network.issueStats?.major || 0 }}</td>
+             <td>{{ network.issueStats?.minor || 0 }}</td>
+            <td>{{ (network.issueStats?.major || 0) + (network.issueStats?.minor || 0) }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

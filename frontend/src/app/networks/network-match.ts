@@ -1,6 +1,7 @@
 import OsmNetwork from '@networks/osm-network';
 import NetexNetwork from '@networks/netex-network';
 import LineMatch from '@lines/line-match';
+import IssueStats from '@issues/issue-stats';
 
 export default class NetworkMatch {
     id!: string;
@@ -10,4 +11,5 @@ export default class NetworkMatch {
     osmNetwork?: OsmNetwork;
     netexNetwork?: NetexNetwork;
     lineMatches!: LineMatch[];
+    issueStats?: IssueStats;
 }

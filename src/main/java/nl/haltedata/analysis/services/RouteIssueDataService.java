@@ -35,7 +35,17 @@ public class RouteIssueDataService implements InitializingBean {
             return modelMapper.map(data, RouteIssueDataDto.class);
         });
     }
+    
+    @SuppressWarnings("exports")
+    @Transactional(readOnly = true) // Important: perform within a transaction
+    public List<RouteIssueDataDto> findByRouteMatchId(Long id) {
+        return routeIssueDataRepository.findByRouteMatchId(id).stream().map(data -> {
+            return modelMapper.map(data, RouteIssueDataDto.class);
+        })
+        .toList();
+    }
 
+    @Transactional // Important: perform within a transaction
     public void saveAll(@SuppressWarnings("exports") List<RouteIssueDataDto> issues) {
         var allIssues = issues.stream().map(data -> {
             var issue = modelMapper.map(data, RouteIssueData.class);

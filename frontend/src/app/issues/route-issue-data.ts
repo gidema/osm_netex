@@ -4,7 +4,8 @@ export default class RouteIssueData {
     id!: number;
     routeMatch?: RouteMatch;
     sequence!: number;
-    message!: string;
+    issueType!: string;
     parameters!: string[];
     lines!: string[];
+    severity!: string;
 }

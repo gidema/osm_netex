@@ -1,6 +1,7 @@
 import RouteMatch from '@routes/route-match';
 import OsmLine from '@lines/osm-line';
 import NetexLine from '@lines/netex-line';
+import IssueStats from '@issues/issue-stats';
 
 export default class LineMatch {
     id!: number;
@@ -14,4 +15,5 @@ export default class LineMatch {
     netexLine?: NetexLine;
     productCategory!: string;
     routeMatches?: RouteMatch[];
+    issueStats: IssueStats = new IssueStats();
 }

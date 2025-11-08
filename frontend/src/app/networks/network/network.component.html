@@ -4,24 +4,37 @@
   <h1>{{ networkMatch.name }} ({{ networkMatch.shortName }})</h1>
   <p>OSM: <a [routerLink] =  "['/osm/network/', networkMatch.osmNetwork?.id ]">{{ networkMatch.osmNetwork?.name }}</a><br/>
      NeTex: <a [routerLink] =  "['/netex/network/', networkMatch.netexNetwork?.id ]">{{ networkMatch.netexNetwork?.name }}</a></p>
-  
+    @if (networkMatch.issueStats) {
+      @let nmStats = networkMatch.issueStats;
+      <p i18n="@@RNetworkHasIssues">This network has {{ nmStats.major || 0 }} major and {{ nmStats.minor || 0}} minor <a [routerLink] = "['/network/zone', networkMatch.administrativeZone, 'issues']">issues.</a></p>
+    }
+    @else {
+      <p i18n>No issues were found for this route.</p>
+    }
   <table class="table table-bordered table-striped">
     <thead class="thead-dark">
       <tr>
-        <th scope="col">Line number</th>
-        <th scope="col">Osm name</th>
-        <th scope="col">Netex name</th>
-        <th scope="col">Transport mode</th>
+        <th i18n scope="col">Line number</th>
+        <th i18n scope="col">Osm name</th>
+        <th i18n scope="col">Netex name</th>
+        <th i18n scope="col">Major issues</th>
+        <th i18n scope="col">Minor issues</th>
+        <th i18n scope="col">Transport mode</th>
        </tr>
     </thead>
     <tbody>
       @for (lm of networkMatch.lineMatches | filterBy: ['transportMode']: 'bus'; track lm.id) {
-        <tr>
-          <td><a [routerLink] = "['/line-match', lm.id]">{{ lm.lineNumber }} </a> </td>
-          <td><a [routerLink] = "['/osm/line', lm.osmLine?.id]">{{ lm.osmLine?.name }} </a> </td>
-          <td><a [routerLink] = "['/netex/line', lm.netexLine?.id]">{{ lm.netexLine?.name }} </a> </td>
-          <td>{{ lm.transportMode }}</td>
-        </tr>
+        @let lmStats = lm.issueStats;
+        @if(lmStats.major > 0 || (lmStats.minor > 0 && showMinor)) {
+          <tr>
+            <td><a [routerLink] = "['/line-match', lm.id]">{{ lm.lineNumber }} </a> </td>
+            <td><a [routerLink] = "['/osm/line', lm.osmLine?.id]">{{ lm.osmLine?.name }} </a> </td>
+            <td><a [routerLink] = "['/netex/line', lm.netexLine?.id]">{{ lm.netexLine?.name }} </a> </td>
+            <td>{{ lmStats.major }}</td>
+            <td>{{ lmStats.minor }}</td>
+            <td>{{ lm.transportMode }}</td>
+          </tr>
+        }
       }
     </tbody>
   </table>

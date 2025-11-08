@@ -11,9 +11,16 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.inject.Inject;
 import nl.haltedata.analysis.dto.LineMatch;
 import nl.haltedata.analysis.dto.LineMatchDto;
+import nl.haltedata.analysis.dto.LineMatchRepository;
 import nl.haltedata.analysis.dto.NetworkMatch;
 import nl.haltedata.analysis.dto.NetworkMatchDto;
 import nl.haltedata.analysis.dto.NetworkMatchRepository;
+import nl.haltedata.analysis.dto.RouteIssueData;
+import nl.haltedata.analysis.dto.RouteIssueDataDto;
+import nl.haltedata.analysis.dto.RouteIssueDataRepository;
+import nl.haltedata.analysis.dto.RouteMatch;
+import nl.haltedata.analysis.dto.RouteMatchDto;
+import nl.haltedata.analysis.dto.RouteMatchRepository;
 import nl.haltedata.netex.dto.NetexLine;
 import nl.haltedata.netex.dto.NetexLineDto;
 import nl.haltedata.netex.dto.NetexNetwork;
@@ -22,15 +29,22 @@ import nl.haltedata.osm.dto.OsmLine;
 import nl.haltedata.osm.dto.OsmLineDto;
 import nl.haltedata.osm.dto.OsmNetwork;
 import nl.haltedata.osm.dto.OsmNetworkDto;
+import nl.haltedata.osm.dto.OsmRoute;
+import nl.haltedata.osm.dto.OsmRouteDto;
+import nl.haltedata.osm.dto.OsmRouteRepository;
 
 @Service
 public class NetworkMatchService {
-    @Inject
-    private NetworkMatchRepository networkMatchRepository;
-
     private static final ModelMapper singleNetworkMapper = createSingleNetworkMapper();
     private static final ModelMapper multipleNetworkMapper = createMultipleNetworkMapper();
+    private static final ModelMapper issuesMapper = createIssuesMapper();
     
+    @Inject private NetworkMatchRepository networkMatchRepository;
+    @Inject private LineMatchRepository lineMatchRepository;
+    @Inject private RouteMatchRepository routeMatchRepository;
+    @Inject private OsmRouteRepository osmRouteRepository;
+    @Inject private RouteIssueDataRepository routeIssueDataRepository;
+
     @SuppressWarnings("exports")
     @Transactional(readOnly = true) // Important: perform within a transaction
     public Optional<NetworkMatchDto> findById(String id) {
@@ -49,6 +63,25 @@ public class NetworkMatchService {
                 return match;
             })
             .collect(Collectors.toList());
+    }
+    
+    @SuppressWarnings("exports")
+    @Transactional(readOnly = true) // Important: perform within a transaction
+    public Optional<NetworkMatchDto> findIssues(String administrativeZone) {
+        routeIssueDataRepository.findByAdministrativeZone(administrativeZone);
+        osmRouteRepository.findByAdministrativeZone(administrativeZone);
+        routeMatchRepository.findByAdministrativeZone(administrativeZone);
+        lineMatchRepository.findByAdministrativeZone(administrativeZone);
+        var network = networkMatchRepository.findByAdministrativeZone(administrativeZone);
+        return network.map(networkMatch -> {
+            var dto = issuesMapper.map(networkMatch, NetworkMatchDto.class);
+            return dto;
+        });
+    }
+    
+    @Transactional(readOnly = false) // Important: perform within a transaction
+    public void updateIssueStatistics() {
+        networkMatchRepository.updateIssueStatistics();
     }
     
     private static ModelMapper createSingleNetworkMapper() {
@@ -86,6 +119,30 @@ public class NetworkMatchService {
             .implicitMappings();
         mapper.emptyTypeMap(NetworkMatch.class, NetworkMatchDto.class)
             .addMappings(n -> n.skip(NetworkMatchDto::setLineMatches))
+            .implicitMappings();
+         return mapper;
+    }
+    
+    private static ModelMapper createIssuesMapper() {
+        var mapper = new ModelMapper();
+        mapper.emptyTypeMap(RouteIssueData.class, RouteIssueDataDto.class)
+            .addMappings(r -> r.skip(RouteIssueDataDto::setRouteMatch))
+            .implicitMappings();
+        mapper.emptyTypeMap(OsmRoute.class, OsmRouteDto.class)
+            .addMappings(r -> r.skip(OsmRouteDto::setOsmLine))
+            .addMappings(r -> r.skip(OsmRouteDto::setQuays))
+            .implicitMappings();
+        mapper.emptyTypeMap(RouteMatch.class, RouteMatchDto.class)
+            .addMappings(r -> r.skip(RouteMatchDto::setNetexVariant))
+            .addMappings(r -> r.skip(RouteMatchDto::setLineMatch))
+            .implicitMappings();
+        mapper.emptyTypeMap(LineMatch.class, LineMatchDto.class)
+            .addMappings(r -> r.skip(LineMatchDto::setNetexLine))
+            .addMappings(r -> r.skip(LineMatchDto::setOsmLine))
+            .implicitMappings();
+        mapper.emptyTypeMap(NetworkMatch.class, NetworkMatchDto.class)
+            .addMappings(n -> n.skip(NetworkMatchDto::setOsmNetwork))
+            .addMappings(n -> n.skip(NetworkMatchDto::setNetexNetwork))
             .implicitMappings();
          return mapper;
     }

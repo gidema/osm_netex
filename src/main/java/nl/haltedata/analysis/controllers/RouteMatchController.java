@@ -32,12 +32,12 @@ public class RouteMatchController {
      * @return
      * @throws Exception if any error occurs during job launch.
      */
-//    @SuppressWarnings("exports")
-//    @CrossOrigin(origins = "http://localhost:4200")
-//    @GetMapping("/network/{administrativeZone}/route_match")
-//    public List<RouteMatchDto> findByAdministrativeZone(@PathVariable("administrativeZone") String administrativeZone) throws Exception {
-//        return service.findByAdministrativeZone(administrativeZone);
-//    }
+    @SuppressWarnings("exports")
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/route_match")
+    public List<RouteMatchDto> findAll() {
+        return service.findAll(true);
+    }
 
     /**
      * End point to list the data.

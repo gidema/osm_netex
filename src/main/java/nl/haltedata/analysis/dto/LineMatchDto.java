@@ -2,6 +2,7 @@ package nl.haltedata.analysis.dto;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -24,4 +25,5 @@ public class LineMatchDto {
     private NetexLineDto netexLine;
     @JsonManagedReference
     private List<RouteMatchDto> routeMatches = new LinkedList<>();
+    Map<String, Integer> issueStats;
 }
